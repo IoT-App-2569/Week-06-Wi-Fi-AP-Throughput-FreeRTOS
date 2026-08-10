@@ -6,8 +6,8 @@
 
 | อุปกรณ์ที่ใช้ทดสอบ (เช่น iPhone/Android) | MAC Address ที่ดักจับได้ | Association ID (AID) | หมายเลข IP Address ที่ได้ (ถ้าทราบ) |
 | :--- | :--- | :---: | :---: |
-| **อุปกรณ์ที่ 1** | | | |
-| **อุปกรณ์ที่ 2** | | | |
+| **อุปกรณ์ที่ 1** | 6E:1E:69:E8:4F:5A | 1 | 192.168.4.2 |
+| **อุปกรณ์ที่ 2** | 9E:77:02:1D:12:B8 | 1 | 192.168.4.2 |
 
 #### Log
 ```
@@ -102,11 +102,27 @@ I (1144) LAB_SOFTAP:   ESP32 SoftAP Running! SSID: "ESP32_AP_0351", Channel: 1
 I (1154) LAB_SOFTAP: ==================================================================
 I (1164) main_task: Returned from app_main()
 I (1164) LAB_SOFTAP: [TCP SERVER]: Listening on 192.168.4.1:8080
+I (299414) wifi:new:<1,0>, old:<1,1>, ap:<1,0>, sta:<255,255>, prof:1, snd_ch_cfg:0x0
+I (299414) wifi:station: 6e:1e:69:e8:4f:5a join, AID=1, bgn, 20
+I (299454) LAB_SOFTAP: =======================================================
+I (299454) LAB_SOFTAP: [FORENSIC EVENT]: Client Connected to ESP32 SoftAP!
+I (299454) LAB_SOFTAP:   -> Client MAC Address : 6E:1E:69:E8:4F:5A
+I (299464) LAB_SOFTAP:   -> Assigned AID       : 1
+I (299464) LAB_SOFTAP: =======================================================
+I (299724) wifi:<ba-add>idx:2 (ifx:1, 6e:1e:69:e8:4f:5a), tid:6, ssn:0, winSize:64
+I (300744) esp_netif_lwip: DHCP server assigned IP to a client, IP is: 192.168.4.2
+I (302914) wifi:<ba-add>idx:3 (ifx:1, 6e:1e:69:e8:4f:5a), tid:0, ssn:2, winSize:64
+I (303024) wifi:<ba-clr>idx:3, tid:0, ssn:2, winSize:64
 ```
 ---
 
 ### 7. คำถามท้ายการทดลอง (Post-Lab Questions)
 
 1. เหตุใด IP Address เริ่มต้นของ ESP32 SoftAP จึงเป็น `192.168.4.1` และ DHCP Server บน ESP32 เริ่มแจกจ่าย IP ที่หมายเลขใด?
+   **ตอบ:** ค่า `192.168.4.1` เป็นค่าเริ่มต้น (Default IP) ที่กำหนดไว้ในเฟรมเวิร์ก ESP-IDF (lwIP) สำหรับอินเทอร์เฟซ SoftAP เพื่อป้องกันไม่ให้ไอพีไปชนกับเราเตอร์ตามบ้านส่วนใหญ่ที่มักจะใช้ช่วง `192.168.1.1` หรือ `192.168.0.1` ส่วน DHCP Server ของ ESP32 จะเริ่มแจกจ่ายหมายเลข IP ให้กับ Client เริ่มต้นที่หมายเลข `192.168.4.2`
+
 2. สมาชิกตัวแปร `mac` ในโครงสร้าง `wifi_event_ap_staconnected_t` สามารถนำไปประยุกต์ใช้ทำระบบความปลอดภัยขั้นสูง (เช่น MAC Filtering) ได้อย่างไร?
+   **ตอบ:** ตัวแปร `mac` จะเก็บค่า MAC Address ของอุปกรณ์ที่กำลังเชื่อมต่อเข้ามา เราสามารถเขียนเงื่อนไขใน Event Handler เพื่อนำค่า `mac` นี้ไปตรวจสอบกับรายการ "อนุญาตให้เข้าถึง (Whitelist)" หรือ "บล็อก (Blacklist)" ได้ หากพบว่าเป็น MAC Address ที่ไม่อนุญาต โปรแกรมสามารถสั่งเตะอุปกรณ์นั้นออกโดยเรียกใช้ฟังก์ชัน `esp_wifi_deauth_sta()` ได้ทันที
+
 3. หากมี Client พยายามเชื่อมต่อเป็นเครื่องที่ 5 (เกินค่า `max_connection = 4`) จะเกิดเหตุการณ์ใดขึ้นในระดับสัญญาณวิทยุ?
+   **ตอบ:** ในระดับโปรโตคอล 802.11 ESP32 จะปฏิเสธคำขอเชื่อมต่อจาก Client เครื่องที่ 5 โดย Access Point จะตอบกลับเฟรม Association Response ไปยัง Client พร้อมกับแนบ Status Code ที่แปลว่า "AP ไม่สามารถรองรับสถานีที่เชื่อมต่อได้เพิ่มเติมแล้ว (AP is unable to handle additional associated stations)" ทำให้ Client เครื่องนั้นถูกตัดการเชื่อมต่อตั้งแต่ยังไม่ได้รับ IP Address
