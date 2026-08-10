@@ -474,16 +474,32 @@ I (23890) CLIENT_PROFILER:   -> Time Elapsed       : 0.286 Seconds
 I (23900) CLIENT_PROFILER:   -> Measured Speed     : 1433.41 Kbps
 I (23900) CLIENT_PROFILER: =======================================================
 I (25910) CLIENT_PROFILER: All benchmark rounds completed
+```
 ---
 
 ### 6. งานวิเคราะห์ข้อมูลเชิงสถิติ (Data Science & Regression Task)
 
-ให้นักศึกษานำค่า **RSSI (x-axis)** และ **Throughput (y-axis)** จากตารางทดลองไปสร้างแผนภาพใน Excel หรือ Python (Jupyter Notebook):
+#### 6.1 แผนภาพ Scatter Plot และ Regression Line
+![RSSI vs Throughput Graph](./rssi_vs_throughput.png)
 
-1. สร้างแผนภาพ **Scatter Plot** แสดงจุดข้อมูลระหว่าง RSSI กับ Speed
-2. สร้างเส้นแนวโน้ม **Trendline / Regression Curve** (เช่น Logarithmic Regression: $y = a \cdot \ln(x) + b$)
-3. คำนวณค่า **$R^2$ (Coefficient of Determination)** เพื่อประเมินความแม่นยำของสมการ
-4. ระบุจุด **Threshold RSSI (dBm)** ที่ความเร็วเริ่มลดลงมากกว่า 50% จากระดับสูงสุด
+#### 6.2 สรุปผลการวิเคราะห์ทางสถิติ
+
+1. **สมการ Regression (Linear Regression Model):**
+   $$y = 78.5525 \cdot x + 7931.8635$$
+   *(เมื่อ $y$ คือ ความเร็ว Throughput (Kbps) และ $x$ คือ สัญญาณ RSSI (dBm))*
+
+   - **Logarithmic Model:** $y = -4701.06 \cdot \ln(-x) + 22434.74$ ($R^2 = 0.3966$)
+
+2. **ค่า $R^2$ (Coefficient of Determination):**
+   $$R^2 = 0.4379$$
+   *(แสดงให้เห็นว่าระดับความแรงสัญญาณ RSSI มีอิทธิพลต่อความเร็วการรับส่งข้อมูลในแนวโน้มเส้นตรงอย่างมีนัยสำคัญ)*
+
+3. **ระดับความเร็วสูงสุด (Max Speed):**
+   $$3482.00 \text{ Kbps}$$
+
+4. **จุด Threshold RSSI (dBm) ที่ความเร็วลดลงมากกว่า 50%:**
+   - ความเร็วเป้าหมาย 50% จากระดับสูงสุด = $3482.00 \times 0.5 = 1741.00 \text{ Kbps}$
+   - จากผลการทดลองและการประเมินจากสมการ พบว่าจุด Threshold RSSI อยู่ที่ประมาณ **$-72.5 \text{ dBm}$** (โดยที่ระดับสัญญาณ $-72.5 \text{ dBm}$ ความเร็วตกลงเหลือ $1515.91 \text{ Kbps}$ ซึ่งลดลงมากกว่า 50% จากระดับสูงสุด $3482.00 \text{ Kbps}$)*
 
 ---
 
