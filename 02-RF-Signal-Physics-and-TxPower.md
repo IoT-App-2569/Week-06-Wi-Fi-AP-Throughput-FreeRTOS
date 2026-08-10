@@ -9,6 +9,8 @@
 **RSSI (Received Signal Strength Indicator)** มีหน่วยวัดเป็น **dBm (decibel-milliwatts)** ซึ่งเป็นค่าลบสเกลแบบ Logarithmic:
 
 $$P_{\text{dBm}} = 10 \cdot \log_{10} \left( \frac{P_{\text{mW}}}{1\text{ mW}} \right)$$
+-1 = 0.1
+สอบบบบ
 
 | ระดับ RSSI (dBm) | คุณภาพสัญญาณ | คำอธิบายพฤติกรรมในทางปฏิบัติ |
 | :--- | :--- | :--- |
