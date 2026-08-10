@@ -1328,3 +1328,150 @@ I (24159) HTTP_SERVER: [FORENSIC]: Response sent: {"temperature":33.30,"humidity
    **ตอบ:**
    - **ข้อดี:** เขียนง่ายและกะทัดรัด ไม่ต้องพึ่งพาเอนจิน JavaScript หรือสคริปต์ซับซ้อน สามารถรีเฟรชหน้าเว็บได้บนเบราว์เซอร์ทุกชนิดแม้จะปิด JS อยู่
    - **ข้อเสีย:** ทำให้เกิดการ Re-render และโหลดหน้า HTML ทั้งหมดใหม่ทั้งหน้า (Full Page Reload) ส่งผลให้หน้าจอกะพริบ สิ้นเปลืองแบนด์วิดท์ Wi-Fi ในการรับส่งโค้ด HTML ซ้ำๆ และเพิ่มภาระการประมวลผลให้ ESP32 มากกว่าการใช้ JavaScript `fetch()` ดึงเฉพาะข้อมูล JSON ขนาดเล็ก
+
+
+## ใบงานที่ 6.5: 📋 Assignment Project — ระบบเช็กชื่อและยืนยันตัวตนอัจฉริยะด้วย RF Proximity & Sensor Fusion
+### 5. ตารางบันทึกผลการทดลอง (Experiment Results)
+
+#### 5.1 ตารางบันทึกการเช็กชื่อผ่าน RF Proximity
+
+| ลำดับที่ | ชื่อสมาร์ตโฟน / MAC Address | ระดับ RSSI (dBm) | ระยะทางประเมิน (Near/Far) | ผลการลงชื่อ (Passed/Rejected) |
+| :---: | :--- | :---: | :---: | :---: |
+| **1** | Mobile Client (`8A:9B:EE:E1:97:3F`) | -49 dBm | Near (Valid) | Passed |
+| **2** | Test Client (`6E:1E:69:E8:4F:5A`) | -65 dBm | Far (Invalid) | Rejected |
+
+#### Log
+```
+I (27) boot: ESP-IDF v6.0.2 2nd stage bootloader
+I (27) boot: compile time Aug 10 2026 20:59:13
+I (28) boot: Multicore bootloader
+I (29) boot: chip revision: v3.1
+I (32) boot.esp32: SPI Speed      : 40MHz
+I (35) boot.esp32: SPI Mode       : DIO
+I (39) boot.esp32: SPI Flash Size : 2MB
+I (42) boot: Enabling RNG early entropy source...
+I (47) boot: Partition Table:
+I (49) boot: ## Label            Usage          Type ST Offset   Length
+I (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (62) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (69) boot:  2 factory          factory app      00 00 00010000 00100000
+I (75) boot: End of partition table
+I (79) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=1cb28h (117544) map
+I (128) esp_image: segment 1: paddr=0002cb50 vaddr=3ffb0000 size=034c8h ( 13512) load
+I (134) esp_image: segment 2: paddr=00030020 vaddr=400d0020 size=8ec78h (584824) map
+I (342) esp_image: segment 3: paddr=000beca0 vaddr=3ffb34c8 size=01060h (  4192) load
+I (344) esp_image: segment 4: paddr=000bfd08 vaddr=40080000 size=1562ch ( 87596) load
+I (382) esp_image: segment 5: paddr=000d533c vaddr=50000000 size=00028h (    40) load
+I (393) boot: Loaded app from partition at offset 0x10000
+I (393) boot: Disabling RNG early entropy source...
+I (404) cpu_start: Multicore app
+I (412) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (412) cpu_start: Pro cpu start user code
+I (412) cpu_start: cpu freq: 160000000 Hz
+I (414) app_init: Application information:
+I (418) app_init: Project name:     proximity_attendance
+I (423) app_init: App version:      cf29f2a
+I (427) app_init: Compile time:     Aug 10 2026 20:59:05
+I (432) app_init: ELF file SHA256:  b27b18b10...
+I (436) app_init: ESP-IDF:          v6.0.2
+I (440) efuse_init: Min chip rev:     v0.0
+I (444) efuse_init: Max chip rev:     v3.99 
+I (448) efuse_init: Chip rev:         v3.1
+I (452) heap_init: Initializing. RAM available for dynamic allocation:
+I (458) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (463) heap_init: At 3FFB8B68 len 00027498 (157 KiB): DRAM
+I (468) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (474) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (479) heap_init: At 4009562C len 0000A9D4 (42 KiB): IRAM
+W (486) spi_flash: Detected boya flash chip but using generic driver. For optimal functionality, enable `SPI_FLASH_SUPPORT_BOYA_CHIP` in menuconfig
+I (498) spi_flash: detected chip: generic
+I (501) spi_flash: flash io: dio
+W (504) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (518) main_task: Started on CPU0
+I (518) main_task: Calling app_main()
+I (578) wifi:wifi driver task: 3ffc06dc, prio:23, stack:6656, core=0
+I (598) wifi:wifi firmware version: 00ad238
+I (598) wifi:wifi certification version: v7.0
+I (598) wifi:config NVS flash: enabled
+I (598) wifi:config nano formatting: disabled
+I (598) wifi:Init data frame dynamic rx buffer num: 32
+I (608) wifi:Init static rx mgmt buffer num: 5
+I (608) wifi:Init management short buffer num: 32
+I (608) wifi:Init dynamic tx buffer num: 32
+I (618) wifi:Init static rx buffer size: 1600
+I (618) wifi:Init static rx buffer num: 10
+I (628) wifi:Init dynamic rx buffer num: 32
+I (628) wifi_init: rx ba win: 6
+I (628) wifi_init: accept mbox: 6
+I (638) wifi_init: tcpip mbox: 32
+I (638) wifi_init: udp mbox: 6
+I (638) wifi_init: tcp mbox: 6
+I (638) wifi_init: tcp tx win: 5760
+I (648) wifi_init: tcp rx win: 5760
+I (648) wifi_init: tcp mss: 1440
+I (648) wifi_init: WiFi IRAM OP enabled
+I (658) wifi_init: WiFi RX IRAM OP enabled
+I (668) phy_init: phy_version 4863,a3a4459,Oct 28 2025,14:30:06
+I (748) wifi:mode : softAP (88:57:21:ae:44:85)
+I (758) wifi:Total power save buffer number: 16
+I (758) wifi:Init max length of beacon: 752/752
+I (758) wifi:Init max length of beacon: 752/752
+I (768) esp_netif_lwip: DHCP server started on interface WIFI_AP_DEF with IP: 192.168.4.1
+I (778) SMART_ATTENDANCE: [SERVER]: Attendance Web Server Started at http://192.168.4.1
+I (778) SMART_ATTENDANCE: =======================================================
+I (788) SMART_ATTENDANCE:  Smart Classroom Proximity Attendance System Ready!
+I (788) SMART_ATTENDANCE:  Connect Wi-Fi: CLASSROOM_ATTENDANCE_AP (Pass: 12345678)
+I (798) SMART_ATTENDANCE:  Open Browser  : http://192.168.4.1
+I (808) SMART_ATTENDANCE: =======================================================
+I (808) main_task: Returned from app_main()
+I (5708) wifi:new:<1,0>, old:<1,1>, ap:<1,1>, sta:<255,255>, prof:1, snd_ch_cfg:0x0
+I (5708) wifi:station: 8a:9b:ee:e1:97:3f join, AID=1, bgn, 20
+I (5768) SMART_ATTENDANCE: 🎉 [PROXIMITY DETECTED]: Device 8A:9B:EE:E1:97:3F connected to Attendance AP!
+I (5788) wifi:<ba-add>idx:2 (ifx:1, 8a:9b:ee:e1:97:3f), tid:0, ssn:0, winSize:64
+I (5908) esp_netif_lwip: DHCP server assigned IP to a client, IP is: 192.168.4.2
+I (6778) SMART_ATTENDANCE: [PROXIMITY SCAN]: STA[0] MAC=8A:9B:EE:E1:97:3F RSSI=-57 dBm
+I (7038) SMART_ATTENDANCE: [HTTP]: GET / requested
+I (8278) SMART_ATTENDANCE: [PROXIMITY SCAN]: STA[0] MAC=8A:9B:EE:E1:97:3F RSSI=-49 dBm
+I (9778) SMART_ATTENDANCE: [PROXIMITY SCAN]: STA[0] MAC=8A:9B:EE:E1:97:3F RSSI=-49 dBm
+I (11278) SMART_ATTENDANCE: [PROXIMITY SCAN]: STA[0] MAC=8A:9B:EE:E1:97:3F RSSI=-49 dBm
+I (12778) SMART_ATTENDANCE: [PROXIMITY SCAN]: STA[0] MAC=8A:9B:EE:E1:97:3F RSSI=-52 dBm
+I (14278) SMART_ATTENDANCE: [PROXIMITY SCAN]: STA[0] MAC=8A:9B:EE:E1:97:3F RSSI=-53 dBm
+I (15778) SMART_ATTENDANCE: [PROXIMITY SCAN]: STA[0] MAC=8A:9B:EE:E1:97:3F RSSI=-54 dBm
+I (17278) SMART_ATTENDANCE: [PROXIMITY SCAN]: STA[0] MAC=8A:9B:EE:E1:97:3F RSSI=-52 dBm
+I (18778) SMART_ATTENDANCE: [PROXIMITY SCAN]: STA[0] MAC=8A:9B:EE:E1:97:3F RSSI=-50 dBm
+I (20278) SMART_ATTENDANCE: [PROXIMITY SCAN]: STA[0] MAC=8A:9B:EE:E1:97:3F RSSI=-52 dBm
+I (21778) SMART_ATTENDANCE: [PROXIMITY SCAN]: STA[0] MAC=8A:9B:EE:E1:97:3F RSSI=-55 dBm
+I (23278) SMART_ATTENDANCE: [PROXIMITY SCAN]: STA[0] MAC=8A:9B:EE:E1:97:3F RSSI=-51 dBm
+I (24778) SMART_ATTENDANCE: [PROXIMITY SCAN]: STA[0] MAC=8A:9B:EE:E1:97:3F RSSI=-61 dBm
+I (25378) SMART_ATTENDANCE: [HTTP]: GET / requested
+W (25638) httpd_uri: httpd_uri: URI '/favicon.ico' not found
+I (25668) SMART_ATTENDANCE: [HTTP]: GET / requested
+I (26278) SMART_ATTENDANCE: [PROXIMITY SCAN]: STA[0] MAC=8A:9B:EE:E1:97:3F RSSI=-55 dBm
+I (27778) SMART_ATTENDANCE: [PROXIMITY SCAN]: STA[0] MAC=8A:9B:EE:E1:97:3F RSSI=-57 dBm
+I (29218) SMART_ATTENDANCE: [HTTP]: POST /checkin received
+I (29278) SMART_ATTENDANCE: [PROXIMITY SCAN]: STA[0] MAC=8A:9B:EE:E1:97:3F RSSI=-55 dBm
+W (29338) httpd_uri: httpd_uri: URI '/favicon.ico' not found
+I (29368) SMART_ATTENDANCE: [HTTP]: GET / requested
+I (30778) SMART_ATTENDANCE: [PROXIMITY SCAN]: STA[0] MAC=8A:9B:EE:E1:97:3F RSSI=-51 dBm
+I (32278) SMART_ATTENDANCE: [PROXIMITY SCAN]: STA[0] MAC=8A:9B:EE:E1:97:3F RSSI=-50 dBm
+I (33778) SMART_ATTENDANCE: [PROXIMITY SCAN]: STA[0] MAC=8A:9B:EE:E1:97:3F RSSI=-49 dBm
+I (35278) SMART_ATTENDANCE: [PROXIMITY SCAN]: STA[0] MAC=8A:9B:EE:E1:97:3F RSSI=-47 dBm
+```
+---
+
+### 6. คำถามท้ายการทดลอง (Post-Lab Questions)
+
+1. การใช้ **RF Signal Proximity (RSSI)** ร่วมกับ **HTTP Web Server** บน ESP32 แก้ปัญหาการฝากเช็กชื่อแทนกันในห้องเรียนได้อย่างไร?
+   **ตอบ:** การฝากเช็กชื่อมักเกิดจากการส่งลิงก์หรือรหัสลงชื่อให้เพื่อนที่อยู่นอกห้องเรียน การใช้ RSSI ร่วมกับ HTTP Web Server ช่วยแก้ปัญหานี้โดยการตรวจตำแหน่งทางกายภาพ (Physical Distance Validation):
+   - ESP32 สแกนระดับความแรงสัญญาณ RSSI ของโทรศัพท์ผู้เรียนแต่ละเครื่องที่ต่อเข้ามาแบบ Real-Time
+   - หากผู้เรียนอยู่นอกห้อง สัญญาณจะลดต่ำกว่าเกณฑ์ Threshold (`< -60 dBm`) ระบบจะปฏิเสธการลงชื่อทันที (`CHECK-IN REJECTED`)
+   - ผสมผสานกับการบันทึก MAC Address ซึ่งเป็นอัตลักษณ์เฉพาะของฮาร์ดแวร์ Wi-Fi บนสมาร์ตโฟนแต่ละเครื่อง ทำให้เพื่อนไม่สามารถแอบลงชื่อแทนกันจากระยะไกลได้
+
+2. เหตุใดระดับเกณฑ์ RSSI ที่ `-55 dBm` ถึง `-60 dBm` จึงเหมาะสมสำหรับการระบุตำแหน่งอุปกรณ์ให้อยู่ภายในรัศมีโต๊ะปฏิบัติการ?
+   **ตอบ:** จากผลการวัดค่าความแรงสัญญาณ Wi-Fi ในใบงาน 6.2 ที่ระยะใกล้โต๊ะทดลอง (ประมาณ 0.5 - 1.5 เมตร) ค่า RSSI จะอยู่ในช่วง `-40 dBm` ถึง `-55 dBm` ซึ่งเป็นระยะที่ผู้เรียนนั่งปฏิบัติงานจริง หากผู้เรียนเดินออกห่างจากโต๊ะหรืออยู่นอกห้อง สัญญาณจะลดทอนลงเหลือ `-65 dBm` ถึง `-85 dBm` ตามกฎ Inverse-Square Law ของคลื่นวิทยุ การตั้งเกณฑ์ที่ `-60 dBm` จึงเป็นค่าจุดตัด (Cut-off Threshold) ที่เหมาะสมและแม่นยำในการแยกแยะระหว่างระยะใกล้ (Near) และระยะไกล (Far)
+
+3. หากต้องการต่อยอดมินิโปรเจกต์นี้ในอนาคต ให้สามารถบันทึกข้อมูลการเข้าเรียนลงระบบ Cloud (เช่น Google Sheets หรือ Firebase) จะต้องเพิ่มส่วนเชื่อมต่อใดบ้าง?
+   **ตอบ:**
+   - **ระบบ Dual Wi-Fi Mode (AP+STA):** ปรับโหมด ESP32 เป็น `WIFI_MODE_APSTA` เพื่อให้ปล่อย SoftAP รับการลงชื่อจากผู้เรียน พร้อมเกาะ Wi-Fi อินเทอร์เน็ตไปในเวลาเดียวกัน
+   - **HTTP/HTTPS Client Component:** ใช้ไลบรารี `esp_http_client` ของ ESP-IDF สำหรับยิงคำขอ `POST` ส่งแพ็กเกจ JSON ไปยัง Cloud API Endpoint
+   - **Cloud Script / Webhook Service:** สร้างสคริปต์ Google Apps Script Webhook หรือ Firebase Realtime Database REST API รับข้อมูล `[timestamp, mac, rssi, status]` แล้วบันทึกลง Google Sheets หรือ Database โดยอัตโนมัติ
