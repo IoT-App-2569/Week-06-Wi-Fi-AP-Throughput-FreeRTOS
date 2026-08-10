@@ -140,7 +140,7 @@ I (303024) wifi:<ba-clr>idx:3, tid:0, ssn:2, winSize:64
 | **4** | 5 dBm | -66.3 | 0.147 | 3175.07 |
 | **5** | 2 dBm (Min) | -61.3 | 0.149 | 3100.10 |
 
-Log
+#### Log
 - Node A
 ```
 I (27) boot: ESP-IDF v6.0.2 2nd stage bootloader
@@ -524,7 +524,7 @@ I (25910) CLIENT_PROFILER: All benchmark rounds completed
 | **`SensorCollectorTask`** | 3072 | 2028 words (2028 bytes) | ปลอดภัย (คงเหลือ ~66%) |
 | **`NetworkCommTask`** | 4096 | 3080 words (3080 bytes) | ปลอดภัย (คงเหลือ ~75%) |
 
-Log
+#### Log
 
 ```
 I (49) boot: ## Label            Usage          Type ST Offset   Length
@@ -1314,6 +1314,8 @@ I (24149) HTTP_SERVER: [FORENSIC]: GET /api/data requested
 I (24149) HTTP_SERVER: [FORENSIC]: Mutex acquired & released for /api/data
 I (24159) HTTP_SERVER: [FORENSIC]: Response sent: {"temperature":33.30,"humidity":50.40,"light_lux":572,"timestamp_ms":23100}
 ```
+#### Webapp
+![alt text](image-1.png)
 ---
 
 ## 8. คำถามท้ายการทดลอง (Post-Lab Questions)
@@ -1457,7 +1459,8 @@ I (32278) SMART_ATTENDANCE: [PROXIMITY SCAN]: STA[0] MAC=8A:9B:EE:E1:97:3F RSSI=
 I (33778) SMART_ATTENDANCE: [PROXIMITY SCAN]: STA[0] MAC=8A:9B:EE:E1:97:3F RSSI=-49 dBm
 I (35278) SMART_ATTENDANCE: [PROXIMITY SCAN]: STA[0] MAC=8A:9B:EE:E1:97:3F RSSI=-47 dBm
 ```
----
+#### Webapp
+![alt text](image-2.png)
 
 ### 6. คำถามท้ายการทดลอง (Post-Lab Questions)
 
