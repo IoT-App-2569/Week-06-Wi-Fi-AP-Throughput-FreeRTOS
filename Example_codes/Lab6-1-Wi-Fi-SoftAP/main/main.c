@@ -179,6 +179,15 @@ void app_main(void) {
     ESP_LOGI(TAG, "[FORENSIC]: Call esp_wifi_start()");
     ESP_ERROR_CHECK(esp_wifi_start());
 
+    // --- เพิ่มสำหรับการทดลอง Lab 6.2: ปรับลดกำลังส่ง Tx Power (2 dBm - Min) ---
+    esp_err_t pwr_err = esp_wifi_set_max_tx_power(8);
+    if (pwr_err == ESP_OK) {
+        ESP_LOGI(TAG, "[LAB 6.2]: Set Max Tx Power to 8 (2 dBm) successful");
+    } else {
+        ESP_LOGE(TAG, "[LAB 6.2]: Failed to set Tx Power (err=0x%x)", pwr_err);
+    }
+    // -------------------------------------------------------------------
+
     ESP_LOGI(TAG, "==================================================================");
     ESP_LOGI(TAG, "  ESP32 SoftAP Running! SSID: \"%s\", Channel: %d",
              EXAMPLE_ESP_WIFI_SSID, wifi_config.ap.channel);
