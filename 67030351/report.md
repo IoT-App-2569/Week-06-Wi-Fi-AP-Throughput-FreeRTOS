@@ -974,4 +974,357 @@ I (51692) FORENSIC_STACK:   -> NetworkTask Stack Remaining: 3080 words (3080 byt
    - หากตั้งค่า `ticksToWait = 0` (Non-blocking): `vSensorTask` จะข้ามการส่งข้อมูลรอบนั้นไป (Drop Data) เพื่อไม่ให้กระทบการทำงานของระบบ
    - หากตั้งค่า `ticksToWait > 0` (Blocking): `vSensorTask` จะถูกเปลี่ยนสถานะเป็น Blocked เพื่อหยุดรอจนกว่า `vNetworkTask` จะดึงข้อมูลออกจาก Queue จนมีพื้นที่ว่าง
 
+---
 
+## ใบงานที่ 6.4: IoT Sensor Dashboard — แสดงผลค่าเซนเซอร์แบบ Real-Time ผ่าน Web Browser บนมือถือ
+
+### 7. ตารางบันทึกผลการทดลอง (Experiment Results)
+
+#### 7.1 บันทึกข้อมูลจาก Dashboard
+
+| ครั้งที่ | Temperature (°C) | Humidity (%) | Light Lux | Timestamp (ms) |
+| :------: | :--------------: | :----------: | :-------: | :------------: |
+|  **1**   | 25.50            | 57.10        | 421       | 18570          |
+|  **2**   | 30.70            | 65.30        | 667       | 21590          |
+|  **3**   | 33.30            | 50.40        | 572       | 23100          |
+
+#### 7.2 ทดสอบ JSON API (`/api/data`)
+
+บันทึก Raw JSON Response จาก Browser:
+
+```json
+{
+  "temperature": 33.30,
+  "humidity": 50.40,
+  "light_lux": 572,
+  "timestamp_ms": 23100
+}
+```
+#### Log
+```
+I (27) boot: ESP-IDF v6.0.2 2nd stage bootloader
+I (27) boot: compile time Aug 10 2026 20:28:46
+I (27) boot: Multicore bootloader
+I (29) boot: chip revision: v3.1
+I (32) boot.esp32: SPI Speed      : 40MHz
+I (35) boot.esp32: SPI Mode       : DIO
+I (39) boot.esp32: SPI Flash Size : 2MB
+I (42) boot: Enabling RNG early entropy source...
+I (47) boot: Partition Table:
+I (49) boot: ## Label            Usage          Type ST Offset   Length
+I (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (62) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (69) boot:  2 factory          factory app      00 00 00010000 00100000
+I (75) boot: End of partition table
+I (79) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=1d598h (120216) map
+I (129) esp_image: segment 1: paddr=0002d5c0 vaddr=3ffb0000 size=02a58h ( 10840) load
+I (133) esp_image: segment 2: paddr=00030020 vaddr=400d0020 size=8ef50h (585552) map
+I (342) esp_image: segment 3: paddr=000bef78 vaddr=3ffb2a58 size=01ad0h (  6864) load
+I (345) esp_image: segment 4: paddr=000c0a50 vaddr=40080000 size=1562ch ( 87596) load
+I (382) esp_image: segment 5: paddr=000d6084 vaddr=50000000 size=00028h (    40) load
+I (393) boot: Loaded app from partition at offset 0x10000
+I (393) boot: Disabling RNG early entropy source...
+I (404) cpu_start: Multicore app
+I (412) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (412) cpu_start: Pro cpu start user code
+I (412) cpu_start: cpu freq: 160000000 Hz
+I (414) app_init: Application information:
+I (418) app_init: Project name:     iot_sensor_dashboard
+I (423) app_init: App version:      6b8d9b1-dirty
+I (427) app_init: Compile time:     Aug 10 2026 20:28:39
+I (432) app_init: ELF file SHA256:  e9d990914...
+I (437) app_init: ESP-IDF:          v6.0.2
+I (441) efuse_init: Min chip rev:     v0.0
+I (444) efuse_init: Max chip rev:     v3.99 
+I (448) efuse_init: Chip rev:         v3.1
+I (453) heap_init: Initializing. RAM available for dynamic allocation:
+I (459) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (464) heap_init: At 3FFB8A38 len 000275C8 (157 KiB): DRAM
+I (469) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (474) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (480) heap_init: At 4009562C len 0000A9D4 (42 KiB): IRAM
+W (486) spi_flash: Detected boya flash chip but using generic driver. For optimal functionality, enable `SPI_FLASH_SUPPORT_BOYA_CHIP` in menuconfig
+I (498) spi_flash: detected chip: generic
+I (502) spi_flash: flash io: dio
+W (505) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (519) main_task: Started on CPU0
+I (519) main_task: Calling app_main()
+I (519) MAIN: [FORENSIC]: Call nvs_flash_init()
+I (579) MAIN: =======================================================
+I (579) MAIN:   Lab 6-4: IoT Sensor Dashboard
+I (579) MAIN:   SoftAP + FreeRTOS Queue + HTTP Server
+I (589) MAIN: =======================================================
+I (589) MAIN: [FORENSIC]: Call xSemaphoreCreateMutex()
+I (599) MAIN: [FORENSIC]: Mutex created at 0x3ffbbf3c
+I (599) MAIN: [FORENSIC]: Call xQueueCreate(10, sizeof(sensor_data_t))
+I (609) MAIN: [FORENSIC]: Queue created at 0x3ffbbf94
+I (609) SOFTAP: [FORENSIC]: Call esp_netif_init()
+I (619) SOFTAP: [FORENSIC]: Call esp_event_loop_create_default()
+I (619) SOFTAP: [FORENSIC]: Call esp_netif_create_default_wifi_ap()
+I (629) SOFTAP: [FORENSIC]: SoftAP netif created at 0x3ffbdf24 (IP: 192.168.4.1)
+I (639) SOFTAP: [FORENSIC]: Call esp_wifi_init()
+I (649) wifi:wifi driver task: 3ffc06a8, prio:23, stack:6656, core=0
+I (669) wifi:wifi firmware version: 00ad238
+I (669) wifi:wifi certification version: v7.0
+I (669) wifi:config NVS flash: enabled
+I (669) wifi:config nano formatting: disabled
+I (679) wifi:Init data frame dynamic rx buffer num: 32
+I (679) wifi:Init static rx mgmt buffer num: 5
+I (679) wifi:Init management short buffer num: 32
+I (689) wifi:Init dynamic tx buffer num: 32
+I (689) wifi:Init static rx buffer size: 1600
+I (699) wifi:Init static rx buffer num: 10
+I (699) wifi:Init dynamic rx buffer num: 32
+I (709) wifi_init: rx ba win: 6
+I (709) wifi_init: accept mbox: 6
+I (709) wifi_init: tcpip mbox: 32
+I (709) wifi_init: udp mbox: 6
+I (719) wifi_init: tcp mbox: 6
+I (719) wifi_init: tcp tx win: 5760
+I (719) wifi_init: tcp rx win: 5760
+I (719) wifi_init: tcp mss: 1440
+I (729) wifi_init: WiFi IRAM OP enabled
+I (729) wifi_init: WiFi RX IRAM OP enabled
+I (739) SOFTAP: [FORENSIC]: Call esp_event_handler_instance_register(WIFI_EVENT)
+I (739) SOFTAP: [FORENSIC]: Call esp_wifi_set_mode(WIFI_MODE_AP)
+I (749) SOFTAP: [FORENSIC]: Call esp_wifi_set_config(WIFI_IF_AP)
+I (759) SOFTAP: [FORENSIC]: Call esp_wifi_start()
+I (759) phy_init: phy_version 4863,a3a4459,Oct 28 2025,14:30:06
+I (849) phy_init: Saving new calibration data due to checksum failure or outdated calibration data, mode(0)
+I (869) wifi:mode : softAP (88:57:21:ae:44:85)
+I (879) wifi:Total power save buffer number: 16
+I (879) wifi:Init max length of beacon: 752/752
+I (879) wifi:Init max length of beacon: 752/752
+I (879) SOFTAP: =======================================================
+I (879) esp_netif_lwip: DHCP server started on interface WIFI_AP_DEF with IP: 192.168.4.1
+I (889) SOFTAP:   SoftAP Running! SSID: "ESP32_AP_0351", Channel: 1
+I (899) SOFTAP:   -> Connect your phone to: ESP32_AP_0351
+I (899) SOFTAP:   -> Then open browser:      http://192.168.4.1
+I (909) SOFTAP: =======================================================
+I (919) HTTP_SERVER: [FORENSIC]: Call httpd_start()
+I (929) HTTP_SERVER: =======================================================
+I (929) HTTP_SERVER: [HTTP SERVER]: Started successfully
+I (929) HTTP_SERVER:   -> Dashboard : http://192.168.4.1/
+I (939) HTTP_SERVER:   -> JSON API  : http://192.168.4.1/api/data
+I (939) HTTP_SERVER: =======================================================
+I (949) MAIN: [FORENSIC]: Call xTaskCreate(vSensorTask)  Stack=3072
+I (959) SENSOR_TASK: [FORENSIC]: Sensor Collector Task started on Core 0
+I (959) SENSOR_TASK: [SENSOR TASK]: Pushing -> Temp: 29.5 C, Hum: 62.4 %, Lux: 553
+I (969) FORENSIC_STACK:   -> SensorTask Stack Remaining: 2028 words (2028 bytes)
+I (979) MAIN: [FORENSIC]: Call xTaskCreate(vNetworkTask) Stack=4096
+I (979) NETWORK_TASK: [FORENSIC]: Network Task started on Core 0
+I (989) NETWORK_TASK: =======================================================
+I (999) NETWORK_TASK: [NETWORK TASK]: Data Received from Queue!
+I (999) NETWORK_TASK:   -> Timestamp   : 440 ms
+I (1009) NETWORK_TASK:   -> Temperature : 29.50 degC
+I (1009) NETWORK_TASK:   -> Humidity    : 62.40 %
+I (1019) NETWORK_TASK:   -> Light Lux   : 553 lux
+I (1019) NETWORK_TASK: [NETWORK TASK]: g_latest_data updated (Mutex OK)
+I (1029) NETWORK_TASK: =======================================================
+I (1029) FORENSIC_STACK:   -> NetworkTask Stack Remaining: 3072 words (3072 bytes)
+I (1039) MAIN: =======================================================
+I (1049) MAIN:   System Ready! Open browser at http://192.168.4.1
+I (1049) MAIN: =======================================================
+I (1059) main_task: Returned from app_main()
+I (2479) SENSOR_TASK: [SENSOR TASK]: Pushing -> Temp: 28.7 C, Hum: 59.0 %, Lux: 570
+I (2479) NETWORK_TASK: =======================================================
+I (2479) FORENSIC_STACK:   -> SensorTask Stack Remaining: 2028 words (2028 bytes)
+I (2479) NETWORK_TASK: [NETWORK TASK]: Data Received from Queue!
+I (2489) NETWORK_TASK:   -> Timestamp   : 1960 ms
+I (2499) NETWORK_TASK:   -> Temperature : 28.70 degC
+I (2499) NETWORK_TASK:   -> Humidity    : 59.00 %
+I (2509) NETWORK_TASK:   -> Light Lux   : 570 lux
+I (2509) NETWORK_TASK: [NETWORK TASK]: g_latest_data updated (Mutex OK)
+I (2519) NETWORK_TASK: =======================================================
+I (2519) FORENSIC_STACK:   -> NetworkTask Stack Remaining: 3072 words (3072 bytes)
+I (3989) SENSOR_TASK: [SENSOR TASK]: Pushing -> Temp: 27.4 C, Hum: 61.7 %, Lux: 444
+I (3989) NETWORK_TASK: =======================================================
+I (3989) FORENSIC_STACK:   -> SensorTask Stack Remaining: 2028 words (2028 bytes)
+I (3989) NETWORK_TASK: [NETWORK TASK]: Data Received from Queue!
+I (3999) NETWORK_TASK:   -> Timestamp   : 3470 ms
+I (4009) NETWORK_TASK:   -> Temperature : 27.40 degC
+I (4009) NETWORK_TASK:   -> Humidity    : 61.70 %
+I (4019) NETWORK_TASK:   -> Light Lux   : 444 lux
+I (4019) NETWORK_TASK: [NETWORK TASK]: g_latest_data updated (Mutex OK)
+I (4029) NETWORK_TASK: =======================================================
+I (4029) FORENSIC_STACK:   -> NetworkTask Stack Remaining: 3072 words (3072 bytes)
+I (5499) SENSOR_TASK: [SENSOR TASK]: Pushing -> Temp: 33.8 C, Hum: 57.3 %, Lux: 474
+I (5499) NETWORK_TASK: =======================================================
+I (5499) FORENSIC_STACK:   -> SensorTask Stack Remaining: 2028 words (2028 bytes)
+I (5499) NETWORK_TASK: [NETWORK TASK]: Data Received from Queue!
+I (5509) NETWORK_TASK:   -> Timestamp   : 4980 ms
+I (5519) NETWORK_TASK:   -> Temperature : 33.80 degC
+I (5519) NETWORK_TASK:   -> Humidity    : 57.30 %
+I (5529) NETWORK_TASK:   -> Light Lux   : 474 lux
+I (5529) NETWORK_TASK: [NETWORK TASK]: g_latest_data updated (Mutex OK)
+I (5539) NETWORK_TASK: =======================================================
+I (5539) FORENSIC_STACK:   -> NetworkTask Stack Remaining: 3072 words (3072 bytes)
+I (6409) wifi:new:<1,0>, old:<1,1>, ap:<1,1>, sta:<255,255>, prof:1, snd_ch_cfg:0x0
+I (6409) wifi:station: 72:ae:79:ae:4e:ed join, AID=1, bgn, 20
+I (6449) SOFTAP: =======================================================
+I (6449) SOFTAP: [FORENSIC EVENT]: Client Connected to SoftAP!
+I (6459) SOFTAP:   -> Client MAC : 72:AE:79:AE:4E:ED
+I (6459) SOFTAP:   -> AID        : 1
+I (6459) SOFTAP: =======================================================
+I (6469) wifi:<ba-add>idx:2 (ifx:1, 72:ae:79:ae:4e:ed), tid:0, ssn:0, winSize:64
+I (6589) esp_netif_lwip: DHCP server assigned IP to a client, IP is: 192.168.4.2
+I (7009) SENSOR_TASK: [SENSOR TASK]: Pushing -> Temp: 30.1 C, Hum: 50.5 %, Lux: 360
+I (7009) NETWORK_TASK: =======================================================
+I (7009) FORENSIC_STACK:   -> SensorTask Stack Remaining: 2028 words (2028 bytes)
+I (7009) NETWORK_TASK: [NETWORK TASK]: Data Received from Queue!
+I (7019) NETWORK_TASK:   -> Timestamp   : 6490 ms
+I (7029) NETWORK_TASK:   -> Temperature : 30.10 degC
+I (7029) NETWORK_TASK:   -> Humidity    : 50.50 %
+I (7039) NETWORK_TASK:   -> Light Lux   : 360 lux
+I (7039) NETWORK_TASK: [NETWORK TASK]: g_latest_data updated (Mutex OK)
+I (7049) NETWORK_TASK: =======================================================
+I (7049) FORENSIC_STACK:   -> NetworkTask Stack Remaining: 3072 words (3072 bytes)
+I (7759) HTTP_SERVER: [FORENSIC]: GET / (Dashboard) requested
+I (7769) HTTP_SERVER: [FORENSIC]: HTML Dashboard sent (2730 bytes)
+I (8519) SENSOR_TASK: [SENSOR TASK]: Pushing -> Temp: 29.0 C, Hum: 61.9 %, Lux: 642
+I (8519) NETWORK_TASK: =======================================================
+I (8519) FORENSIC_STACK:   -> SensorTask Stack Remaining: 2028 words (2028 bytes)
+I (8519) NETWORK_TASK: [NETWORK TASK]: Data Received from Queue!
+I (8529) NETWORK_TASK:   -> Timestamp   : 8000 ms
+I (8539) NETWORK_TASK:   -> Temperature : 29.00 degC
+I (8539) NETWORK_TASK:   -> Humidity    : 61.90 %
+I (8549) NETWORK_TASK:   -> Light Lux   : 642 lux
+I (8549) NETWORK_TASK: [NETWORK TASK]: g_latest_data updated (Mutex OK)
+I (8559) NETWORK_TASK: =======================================================
+I (8559) FORENSIC_STACK:   -> NetworkTask Stack Remaining: 3072 words (3072 bytes)
+I (10029) SENSOR_TASK: [SENSOR TASK]: Pushing -> Temp: 33.8 C, Hum: 68.8 %, Lux: 443
+I (10029) NETWORK_TASK: =======================================================
+I (10029) FORENSIC_STACK:   -> SensorTask Stack Remaining: 2028 words (2028 bytes)
+I (10029) NETWORK_TASK: [NETWORK TASK]: Data Received from Queue!
+I (10039) NETWORK_TASK:   -> Timestamp   : 9510 ms
+I (10049) NETWORK_TASK:   -> Temperature : 33.80 degC
+I (10049) NETWORK_TASK:   -> Humidity    : 68.80 %
+I (10059) NETWORK_TASK:   -> Light Lux   : 443 lux
+I (10059) NETWORK_TASK: [NETWORK TASK]: g_latest_data updated (Mutex OK)
+I (10069) NETWORK_TASK: =======================================================
+I (10069) FORENSIC_STACK:   -> NetworkTask Stack Remaining: 3072 words (3072 bytes)
+I (11539) SENSOR_TASK: [SENSOR TASK]: Pushing -> Temp: 30.1 C, Hum: 63.2 %, Lux: 682
+I (11539) NETWORK_TASK: =======================================================
+I (11539) FORENSIC_STACK:   -> SensorTask Stack Remaining: 2028 words (2028 bytes)
+I (11539) NETWORK_TASK: [NETWORK TASK]: Data Received from Queue!
+I (11549) NETWORK_TASK:   -> Timestamp   : 11020 ms
+I (11559) NETWORK_TASK:   -> Temperature : 30.10 degC
+I (11559) NETWORK_TASK:   -> Humidity    : 63.20 %
+I (11569) NETWORK_TASK:   -> Light Lux   : 682 lux
+I (11569) NETWORK_TASK: [NETWORK TASK]: g_latest_data updated (Mutex OK)
+I (11579) NETWORK_TASK: =======================================================
+I (11579) FORENSIC_STACK:   -> NetworkTask Stack Remaining: 3072 words (3072 bytes)
+I (13049) SENSOR_TASK: [SENSOR TASK]: Pushing -> Temp: 29.0 C, Hum: 66.6 %, Lux: 447
+I (13049) NETWORK_TASK: =======================================================
+I (13049) FORENSIC_STACK:   -> SensorTask Stack Remaining: 2028 words (2028 bytes)
+I (13049) NETWORK_TASK: [NETWORK TASK]: Data Received from Queue!
+I (13059) NETWORK_TASK:   -> Timestamp   : 12530 ms
+I (13069) NETWORK_TASK:   -> Temperature : 29.00 degC
+I (13069) NETWORK_TASK:   -> Humidity    : 66.60 %
+I (13079) NETWORK_TASK:   -> Light Lux   : 447 lux
+I (13079) NETWORK_TASK: [NETWORK TASK]: g_latest_data updated (Mutex OK)
+I (13089) NETWORK_TASK: =======================================================
+I (13089) FORENSIC_STACK:   -> NetworkTask Stack Remaining: 3072 words (3072 bytes)
+I (14559) SENSOR_TASK: [SENSOR TASK]: Pushing -> Temp: 33.1 C, Hum: 58.0 %, Lux: 272
+I (14559) NETWORK_TASK: =======================================================
+I (14559) FORENSIC_STACK:   -> SensorTask Stack Remaining: 2028 words (2028 bytes)
+I (14559) NETWORK_TASK: [NETWORK TASK]: Data Received from Queue!
+I (14569) NETWORK_TASK:   -> Timestamp   : 14040 ms
+I (14579) NETWORK_TASK:   -> Temperature : 33.10 degC
+I (14579) NETWORK_TASK:   -> Humidity    : 58.00 %
+I (14589) NETWORK_TASK:   -> Light Lux   : 272 lux
+I (14589) NETWORK_TASK: [NETWORK TASK]: g_latest_data updated (Mutex OK)
+I (14599) NETWORK_TASK: =======================================================
+I (14599) FORENSIC_STACK:   -> NetworkTask Stack Remaining: 3072 words (3072 bytes)
+I (16069) SENSOR_TASK: [SENSOR TASK]: Pushing -> Temp: 25.8 C, Hum: 57.3 %, Lux: 559
+I (16069) NETWORK_TASK: =======================================================
+I (16069) FORENSIC_STACK:   -> SensorTask Stack Remaining: 2028 words (2028 bytes)
+I (16069) NETWORK_TASK: [NETWORK TASK]: Data Received from Queue!
+I (16079) NETWORK_TASK:   -> Timestamp   : 15550 ms
+I (16089) NETWORK_TASK:   -> Temperature : 25.80 degC
+I (16089) NETWORK_TASK:   -> Humidity    : 57.30 %
+I (16099) NETWORK_TASK:   -> Light Lux   : 559 lux
+I (16099) NETWORK_TASK: [NETWORK TASK]: g_latest_data updated (Mutex OK)
+I (16109) NETWORK_TASK: =======================================================
+I (16109) FORENSIC_STACK:   -> NetworkTask Stack Remaining: 3072 words (3072 bytes)
+I (17579) SENSOR_TASK: [SENSOR TASK]: Pushing -> Temp: 30.4 C, Hum: 55.7 %, Lux: 334
+I (17579) NETWORK_TASK: =======================================================
+I (17579) FORENSIC_STACK:   -> SensorTask Stack Remaining: 2028 words (2028 bytes)
+I (17579) NETWORK_TASK: [NETWORK TASK]: Data Received from Queue!
+I (17589) NETWORK_TASK:   -> Timestamp   : 17060 ms
+I (17599) NETWORK_TASK:   -> Temperature : 30.40 degC
+I (17599) NETWORK_TASK:   -> Humidity    : 55.70 %
+I (17609) NETWORK_TASK:   -> Light Lux   : 334 lux
+I (17609) NETWORK_TASK: [NETWORK TASK]: g_latest_data updated (Mutex OK)
+I (17619) NETWORK_TASK: =======================================================
+I (17619) FORENSIC_STACK:   -> NetworkTask Stack Remaining: 3072 words (3072 bytes)
+I (19089) SENSOR_TASK: [SENSOR TASK]: Pushing -> Temp: 25.5 C, Hum: 57.1 %, Lux: 421
+I (19089) NETWORK_TASK: =======================================================
+I (19089) FORENSIC_STACK:   -> SensorTask Stack Remaining: 2028 words (2028 bytes)
+I (19089) NETWORK_TASK: [NETWORK TASK]: Data Received from Queue!
+I (19099) NETWORK_TASK:   -> Timestamp   : 18570 ms
+I (19109) NETWORK_TASK:   -> Temperature : 25.50 degC
+I (19109) NETWORK_TASK:   -> Humidity    : 57.10 %
+I (19119) NETWORK_TASK:   -> Light Lux   : 421 lux
+I (19119) NETWORK_TASK: [NETWORK TASK]: g_latest_data updated (Mutex OK)
+I (19129) NETWORK_TASK: =======================================================
+I (19129) FORENSIC_STACK:   -> NetworkTask Stack Remaining: 3072 words (3072 bytes)
+I (19969) HTTP_SERVER: [FORENSIC]: GET / (Dashboard) requested
+I (19979) HTTP_SERVER: [FORENSIC]: HTML Dashboard sent (2730 bytes)
+I (20179) HTTP_SERVER: [FORENSIC]: GET /api/data requested
+I (20179) HTTP_SERVER: [FORENSIC]: Mutex acquired & released for /api/data
+I (20189) HTTP_SERVER: [FORENSIC]: Response sent: {"temperature":25.50,"humidity":57.10,"light_lux":421,"timestamp_ms":18570}
+I (20599) SENSOR_TASK: [SENSOR TASK]: Pushing -> Temp: 34.5 C, Hum: 60.3 %, Lux: 652
+I (20599) NETWORK_TASK: =======================================================
+I (20599) FORENSIC_STACK:   -> SensorTask Stack Remaining: 2028 words (2028 bytes)
+I (20599) NETWORK_TASK: [NETWORK TASK]: Data Received from Queue!
+I (20609) NETWORK_TASK:   -> Timestamp   : 20080 ms
+I (20619) NETWORK_TASK:   -> Temperature : 34.50 degC
+I (20619) NETWORK_TASK:   -> Humidity    : 60.30 %
+I (20629) NETWORK_TASK:   -> Light Lux   : 652 lux
+I (20629) NETWORK_TASK: [NETWORK TASK]: g_latest_data updated (Mutex OK)
+I (20639) NETWORK_TASK: =======================================================
+I (20639) FORENSIC_STACK:   -> NetworkTask Stack Remaining: 3072 words (3072 bytes)
+I (22109) SENSOR_TASK: [SENSOR TASK]: Pushing -> Temp: 30.7 C, Hum: 65.3 %, Lux: 667
+I (22109) NETWORK_TASK: =======================================================
+I (22109) FORENSIC_STACK:   -> SensorTask Stack Remaining: 2028 words (2028 bytes)
+I (22109) NETWORK_TASK: [NETWORK TASK]: Data Received from Queue!
+I (22119) NETWORK_TASK:   -> Timestamp   : 21590 ms
+I (22129) NETWORK_TASK:   -> Temperature : 30.70 degC
+I (22129) NETWORK_TASK:   -> Humidity    : 65.30 %
+I (22139) NETWORK_TASK:   -> Light Lux   : 667 lux
+I (22139) NETWORK_TASK: [NETWORK TASK]: g_latest_data updated (Mutex OK)
+I (22149) NETWORK_TASK: =======================================================
+I (22149) HTTP_SERVER: [FORENSIC]: GET /api/data requested
+I (22149) FORENSIC_STACK:   -> NetworkTask Stack Remaining: 3072 words (3072 bytes)
+I (22159) HTTP_SERVER: [FORENSIC]: Mutex acquired & released for /api/data
+I (22179) HTTP_SERVER: [FORENSIC]: Response sent: {"temperature":30.70,"humidity":65.30,"light_lux":667,"timestamp_ms":21590}
+I (23619) SENSOR_TASK: [SENSOR TASK]: Pushing -> Temp: 33.3 C, Hum: 50.4 %, Lux: 572
+I (23619) NETWORK_TASK: =======================================================
+I (23619) FORENSIC_STACK:   -> SensorTask Stack Remaining: 2028 words (2028 bytes)
+I (23619) NETWORK_TASK: [NETWORK TASK]: Data Received from Queue!
+I (23629) NETWORK_TASK:   -> Timestamp   : 23100 ms
+I (23639) NETWORK_TASK:   -> Temperature : 33.30 degC
+I (23639) NETWORK_TASK:   -> Humidity    : 50.40 %
+I (23649) NETWORK_TASK:   -> Light Lux   : 572 lux
+I (23649) NETWORK_TASK: [NETWORK TASK]: g_latest_data updated (Mutex OK)
+I (23659) NETWORK_TASK: =======================================================
+I (23659) FORENSIC_STACK:   -> NetworkTask Stack Remaining: 3072 words (3072 bytes)
+I (24149) HTTP_SERVER: [FORENSIC]: GET /api/data requested
+I (24149) HTTP_SERVER: [FORENSIC]: Mutex acquired & released for /api/data
+I (24159) HTTP_SERVER: [FORENSIC]: Response sent: {"temperature":33.30,"humidity":50.40,"light_lux":572,"timestamp_ms":23100}
+```
+---
+
+## 8. คำถามท้ายการทดลอง (Post-Lab Questions)
+
+1. เหตุใดจึงต้องใช้ **Mutex** ในการป้องกันการเข้าถึงตัวแปร `g_latest_data` ร่วมกันระหว่าง `vNetworkTask` และ HTTP Handler? ถ้าไม่ใช้จะเกิดอะไรขึ้น?
+   **ตอบ:** เพราะ `vNetworkTask` (ฝั่งอัปเดตข้อมูลจาก Queue) และ HTTP Handler (ฝั่งอ่านข้อมูลส่งออกเว็บ) ทำงานแยกกันคนละ Task/Thread แบบ Asynchronous การใช้ Mutex จะช่วยสร้าง Critical Section เพื่อให้การอ่านและเขียนตัวแปรโครงสร้าง `g_latest_data` เป็นไปแบบ Atomic (Thread-Safe) หากไม่ใช้ Mutex อาจเกิดปัญหา **Race Condition / Torn Read** โดย HTTP Handler อาจอ่านข้อมูลออกไปในขณะที่ `vNetworkTask` กำลังเขียนข้อมูลค้างอยู่ครึ่งๆ กลางๆ ส่งผลให้ได้ข้อมูลที่ไม่สมบูรณ์หรือค่าบิดเบือนไปแสดงบนเบราว์เซอร์
+
+2. `esp_http_server` รัน Handler บน Thread ใด — เป็น Thread เดียวกับ FreeRTOS Task ของเราหรือไม่?
+   **ตอบ:** `esp_http_server` รันบน FreeRTOS Task ของระบบ HTTPD เอง (ชื่อ Task `httpd` แยกต่างหากที่เปิดพอร์ต 80) ซึ่ง**เป็นคนละ Thread** กับ FreeRTOS Task ของเรา (`vSensorTask` หรือ `vNetworkTask`)
+
+3. การที่ Dashboard ใช้ `<meta http-equiv="refresh" content="2">` แทนที่จะใช้ JavaScript `fetch()` มีข้อดีและข้อเสียอย่างไร?
+   **ตอบ:**
+   - **ข้อดี:** เขียนง่ายและกะทัดรัด ไม่ต้องพึ่งพาเอนจิน JavaScript หรือสคริปต์ซับซ้อน สามารถรีเฟรชหน้าเว็บได้บนเบราว์เซอร์ทุกชนิดแม้จะปิด JS อยู่
+   - **ข้อเสีย:** ทำให้เกิดการ Re-render และโหลดหน้า HTML ทั้งหมดใหม่ทั้งหน้า (Full Page Reload) ส่งผลให้หน้าจอกะพริบ สิ้นเปลืองแบนด์วิดท์ Wi-Fi ในการรับส่งโค้ด HTML ซ้ำๆ และเพิ่มภาระการประมวลผลให้ ESP32 มากกว่าการใช้ JavaScript `fetch()` ดึงเฉพาะข้อมูล JSON ขนาดเล็ก

@@ -41,8 +41,8 @@ static const char *TAG_STACK  = "FORENSIC_STACK";
 // =============================================================
 //  Configuration
 // =============================================================
-#define AP_SSID            "MY_ESP32_SENSOR_AP"
-#define AP_PASS            "12345678"
+#define AP_SSID            "ESP32_AP_0351"
+#define AP_PASS            "123456789"
 #define AP_MAX_CONN        4
 #define SENSOR_INTERVAL_MS 1500
 
