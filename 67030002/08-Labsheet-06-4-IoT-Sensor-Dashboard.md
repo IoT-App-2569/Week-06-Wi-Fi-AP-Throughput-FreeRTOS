@@ -98,15 +98,17 @@ xSemaphoreGive(mutex)           xSemaphoreGive(mutex)
 
 | ครั้งที่ | Temperature (°C) | Humidity (%) | Light Lux | Timestamp (ms) |
 | :------: | :--------------: | :----------: | :-------: | :------------: |
-|  **1**   |                  |              |           |                |
-|  **2**   |                  |              |           |                |
-|  **3**   |                  |              |           |                |
+|  **1**   |    32.7          | 60.7         |  664      |  70120         |
+|  **2**   |    29.3          | 61.6         |  304      |   73130        |
+|  **3**   |    27.1          | 68.1         |  336      |  74640         |
 
 ### 7.2 ทดสอบ JSON API (`/api/data`)
 
 บันทึก Raw JSON Response จาก Browser:
 
 ```json
+
+{"temperature":26.40,"humidity":55.80,"light_lux":301,"timestamp_ms":95660}
 
 ```
 
@@ -115,9 +117,13 @@ xSemaphoreGive(mutex)           xSemaphoreGive(mutex)
 ## 8. คำถามท้ายการทดลอง (Post-Lab Questions)
 
 1. เหตุใดจึงต้องใช้ **Mutex** ในการป้องกันการเข้าถึงตัวแปร `g_latest_data` ร่วมกันระหว่าง `vNetworkTask` และ HTTP Handler? ถ้าไม่ใช้จะเกิดอะไรขึ้น?
-2. `esp_http_server` รัน Handler บน Thread ใด — เป็น Thread เดียวกับ FreeRTOS Task ของเราหรือไม่?
-3. การที่ Dashboard ใช้ `<meta http-equiv="refresh" content="2">` แทนที่จะใช้ JavaScript `fetch()` มีข้อดีและข้อเสียอย่างไร?
+ต้องใช้ Mutex เพื่อป้องกันการเข้าถึงตัวแปร g_latest_data พร้อมกันระหว่าง vNetworkTask ซึ่งทำหน้าที่เขียนหรืออัปเดตข้อมูล และ HTTP Handler ซึ่งทำหน้าที่อ่านข้อมูลไปส่งให้ Browser หากไม่มี Mutex อาจเกิด Race Condition ทำให้ HTTP Handler อ่านข้อมูลในขณะที่ vNetworkTask กำลังเขียนข้อมูลอยู่ ส่งผลให้ได้ข้อมูลที่ไม่สมบูรณ์หรือไม่ถูกต้อง เช่น เกิด Torn Read หรือค่าของข้อมูลแต่ละส่วนไม่สอดคล้องกัน
 
+2. `esp_http_server` รัน Handler บน Thread ใด — เป็น Thread เดียวกับ FreeRTOS Task ของเราหรือไม่?
+esp_http_server ทำงานผ่าน FreeRTOS Task ของ HTTP Server เอง ซึ่งถูกสร้างขึ้นเมื่อเรียก httpd_start() ดังนั้น HTTP Handler ไม่ได้รันอยู่ใน Task เดียวกับ vSensorTask หรือ vNetworkTask ที่ผู้พัฒนาสร้างขึ้น แต่สามารถทำงานพร้อมกันได้ จึงต้องใช้ Mutex เมื่อต้องเข้าถึงข้อมูลที่ใช้ร่วมกัน เช่น g_latest_data
+
+3. การที่ Dashboard ใช้ `<meta http-equiv="refresh" content="2">` แทนที่จะใช้ JavaScript `fetch()` มีข้อดีและข้อเสียอย่างไร?
+การใช้ <meta http-equiv="refresh" content="2"> มีข้อดีคือ เขียนง่าย ไม่ต้องใช้ JavaScript และเหมาะกับ Dashboard ที่ต้องการอัปเดตข้อมูลเป็นระยะ ๆ ทุก 2 วินาที แต่ข้อเสียคือ Browser จะ โหลดหน้า HTML ใหม่ทั้งหมดทุกครั้ง ทำให้ใช้ทรัพยากรและ Bandwidth มากกว่า และการอัปเดตอาจไม่ราบรื่นเท่าการใช้ JavaScript fetch() ซึ่งสามารถร้องขอเฉพาะข้อมูลจาก /api/data แล้วอัปเดตเฉพาะส่วนที่เปลี่ยนแปลงบนหน้าเว็บได้
 ---
 
 ## 9. ความรู้เพิ่มเติม: ESP-IDF `esp_http_server` API
