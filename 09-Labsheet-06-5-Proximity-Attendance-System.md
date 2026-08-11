@@ -185,8 +185,8 @@ void app_main(void) {
 
 | ลำดับที่ | ชื่อสมาร์ตโฟน / MAC Address | ระดับ RSSI (dBm) | ระยะทางประเมิน (Near/Far) | ผลการลงชื่อ (Passed/Rejected) |
 | :---: | :--- | :---: | :---: | :---: |
-| **1** | | | | |
-| **2** | | | | |
+| **1** | ipad gen 9 3A:2E:69:64:07:60 | -45 | Near | Passed |
+| **2** | iphon 11 46:7A:1A:BA:24:F2 | -45 | Near | Passed |
 
 ---
 
