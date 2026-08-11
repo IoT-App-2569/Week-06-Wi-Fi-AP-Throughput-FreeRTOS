@@ -1,13 +1,15 @@
 # ใบงานที่ 6.2: การประเมินความสัมพันธ์ RSSI vs Throughput ด้วย Software Tx-Power Control (Pair Work 👥)
 
 ## 0. กล่าวนำ (Introduction)
-ใบงานนี้ออกแบบมาให้นักศึกษาจับคู่ 2 คน (**Node A: ESP32 SoftAP Server** และ **Node B: ESP32 Station Client**) เพื่อร่วมกันทดลองวัดและวิเคราะห์ประสิทธิภาพการรับส่งข้อมูลจริงระดับเครือข่ายไร้สาย (Throughput Speed Profiling) 
+
+ใบงานนี้ออกแบบมาให้นักศึกษาจับคู่ 2 คน (**Node A: ESP32 SoftAP Server** และ **Node B: ESP32 Station Client**) เพื่อร่วมกันทดลองวัดและวิเคราะห์ประสิทธิภาพการรับส่งข้อมูลจริงระดับเครือข่ายไร้สาย (Throughput Speed Profiling)
 
 นักศึกษาจะได้ทดลองควบคุมระดับกำลังส่งสัญญาณวิทยุด้วยคำสั่ง `esp_wifi_set_max_tx_power()` ร่วมกับการปรับระยะห่างในห้องเรียน บันทึกค่าความแรงสัญญาณ **RSSI (dBm)** คู่กับความเร็ว **Throughput (Kbps)** และนำชุดข้อมูลที่ได้ไปพล็อต **Scatter Plot** เพื่อสร้างสมการถดถอย **(Regression Analysis)** ประเมินพฤติกรรมความเร็วของระบบ Wi-Fi
 
 ---
 
 ## 1. วัตถุประสงค์ (Objectives)
+
 1. สามารถปรับกำลังส่งคลื่นวิทยุของ ESP32 ด้วยฟังก์ชัน `esp_wifi_set_max_tx_power()` ได้
 2. คำนวณความเร็วระดับเครือข่าย (Throughput in Kbps) และค่าเวลาหน่วง (Latency in ms) ได้ถูกต้อง
 3. สังเกตและวิเคราะห์ผลกระทบของระดับ RSSI (dBm) ที่มีต่อความเร็วและอัตราแพ็กเกจหล่นหาย (Packet Loss)
@@ -16,6 +18,7 @@
 ---
 
 ## 2. อุปกรณ์ที่ใช้ในการทดลอง (Equipment)
+
 1. บอร์ด ESP32 จำนวน 2 บอร์ด (Node A ทำหน้าที่ AP / Node B ทำหน้าที่ Client Profiler)
 2. สายเชื่อมต่อ USB จำนวน 2 เส้น
 3. คอมพิวเตอร์สำหรับรันโปรแกรมและวิเคราะห์ข้อมูลสถิติ (Excel / Python)
@@ -36,7 +39,8 @@ sequenceDiagram
     note over Client: คำนวณเวลาที่ใช้ (ms) -> หา Throughput (Kbps)<br/>อ่านค่า RSSI (dBm) จาก ap_info
 ```
 
-### ขั้นตอนการทดสอบ 5 ระดับกำลังส่ง (Software Attenuation Test):
+### ขั้นตอนการทดสอบ 5 ระดับกำลังส่ง (Software Attenuation Test)
+
 1. **Node A (Server)**: รันโปรแกรมตั้งเป็น SoftAP และคอยรับ TCP Benchmark Connection
 2. **Node B (Client)**: รันโปรแกรม Client Profiler คอยส่งชุดข้อมูลขนาด 50 KB จำนวน 10 รอบ
 3. **การทดลองที่ 1**: กำหนด Tx Power = **20 dBm** (`esp_wifi_set_max_tx_power(80)`) -> อ่าน RSSI และบันทึก Throughput (Kbps)
@@ -58,32 +62,79 @@ sequenceDiagram
 ให้นักศึกษาบันทึกค่าที่ได้จากการทดสอบในระดับ Tx Power ต่างๆ:
 
 | การทดลองที่ | ค่า Tx Power ที่ตั้ง (dBm) | ค่า RSSI ที่อ่านได้จริง (dBm) | เวลาที่ใช้ (Seconds) | ความเร็วที่วัดได้ Throughput (Kbps) |
-| :---: | :---: | :---: | :---: | :---: |
-| **1** | 20 dBm (Max) | | | |
-| **2** | 15 dBm | | | |
-| **3** | 10 dBm | | | |
-| **4** | 5 dBm | | | |
-| **5** | 2 dBm (Min) | | | |
+| :-----------:| :--------------------------:| :-----------------------------:| :--------------------:| :-----------------------------------:|
+| **1**       | 20 dBm (Max)               | -37.2                         | 0.154                | 2749.90                             |
+| **2**       | 15 dBm                     | -38.6                         | 0.128                | 3275.88                             |
+| **3**       | 10 dBm                     | -40.0                         | 0.112                | 3682.81                             |
+| **4**       | 5 dBm                      | -39.8                         | 0.115                | 3591.72                             |
+| **5**       | 2 dBm (Min)                | -39.7                         | 0.111                | 3705.92                             |
+
+**รูปภาพที่ 2:** ตัวอย่างผลการทดสอบ Throughput Automated Benchmark Suite ครบทั้ง 5 ระดับพลังงาน
+<p align="center">
+  <img src="./images/2termsnap.png" width="800">
+</p>
 
 ---
 
 ## 6. งานวิเคราะห์ข้อมูลเชิงสถิติ (Data Science & Regression Task)
 
-ให้นักศึกษานำค่า **RSSI (x-axis)** และ **Throughput (y-axis)** จากตารางทดลองไปสร้างแผนภาพใน Excel หรือ Python (Jupyter Notebook):
+### 6.1 แผนภาพ Scatter Plot และสมการถดถอย (RSSI vs Throughput)
 
-1. สร้างแผนภาพ **Scatter Plot** แสดงจุดข้อมูลระหว่าง RSSI กับ Speed
-2. สร้างเส้นแนวโน้ม **Trendline / Regression Curve** (เช่น Logarithmic Regression: $y = a \cdot \ln(x) + b$)
-3. คำนวณค่า **$R^2$ (Coefficient of Determination)** เพื่อประเมินความแม่นยำของสมการ
-4. ระบุจุด **Threshold RSSI (dBm)** ที่ความเร็วเริ่มลดลงมากกว่า 50% จากระดับสูงสุด
+<p align="center">
+  <img src="./images/lab6_2_rssi_vs_throughput.png" width="720" alt="RSSI vs Throughput Scatter Plot">
+</p>
+
+* **Linear Model**: $\text{Throughput} = -339.22 \times \text{RSSI} - 9848.71 \quad (R^2 = 0.978)$
+* **Polynomial Model (2nd deg)**: $\text{Throughput} = -36.45 \times \text{RSSI}^2 - 3153.32 \times \text{RSSI} - 64117.76 \quad (R^2 = 0.984)$
+
+---
+
+### 6.2 ผลกระทบของ Tx Power ต่อ Throughput
+
+<p align="center">
+  <img src="./images/lab6_2_tx_power_impact.png" width="720" alt="Tx Power Impact">
+</p>
+
+* **Signal Saturation Zone**: การตั้งค่า Tx Power สูงสุด (**20 dBm**) ในระยะประชิด ทำให้เกิดสัญญาณกวนตัวเอง ความเร็วตกเหลือ **2,749.90 Kbps**
+* **Optimal Zone**: เมื่อลด Tx Power ลงเหลือ **10 dBm – 2 dBm** ความเร็วเพิ่มขึ้นเป็น **3,682.81 – 3,705.92 Kbps** (+34.7%)
+
+---
+
+### 6.3 Wi-Fi Characteristic Curve & Threshold RSSI
+
+<p align="center">
+  <img src="./images/lab6_2_complete_rssi_profile.png" width="720" alt="Wi-Fi Characteristic Curve">
+</p>
+
+* **Maximum Throughput**: $\approx 3,750\text{ Kbps}$
+* **50% Threshold Speed**: $1,875\text{ Kbps}$
+* **Threshold RSSI**: $\mathbf{-83.5\text{ dBm}}$ *(จุดที่ความเร็วเริ่มลดลงมากกว่า 50% จากระดับสูงสุด)*
+
+---
+
+### 6.4 การทดสอบความเสถียร 10 รอบ (Automated Benchmark)
+
+<p align="center">
+  <img src="./images/lab6_2_10round_benchmark_stability.png" width="720" alt="10-Round Benchmark Stability">
+</p>
+
+* **Throughput เฉลี่ย**: **$6,022.5\text{ Kbps}$** (ค่า SD $\approx 423.8\text{ Kbps}$)
 
 ---
 
 ## 7. คำถามท้ายการทดลอง (Post-Lab Questions)
 
 1. เมื่อลดระดับ Tx Power ลงจาก 20 dBm เหลือ 2 dBm ค่า RSSI ลดลงกี่ dBm และส่งผลต่อความเร็ว Throughput อย่างไร?
-2. เหตุใดในระดับ RSSI ที่อ่อนกว่า `-80 dBm` ความเร็ว Throughput ถึงตกลงอย่างกะทันหันในโปรโตคอล TCP?
-3. สมการ Regression ที่ได้จากการทดลองสามารถนำไปประยุกต์ใช้ทำนายคุณภาพการเชื่อมต่อในแอปพลิเคชัน IoT ได้อย่างไร?
 
+> **ตอบ:** จากผลการทดลองจริงพบว่า ค่า RSSI ลดลงเพียงเล็กน้อย (จาก -37.2 เป็น -39.7 dBm) เนื่องจากบอร์ดวางอยู่ใกล้กันมาก แต่ความเร็ว Throughput กลับ "เพิ่มขึ้น" (จาก 2749 Kbps เป็น 3705 Kbps) เมื่อลดกำลังส่งลง สาเหตุหลักเกิดจากการลดสัญญาณกวนกันเอง (Self-interference) หรืออาการ Signal Saturation ที่ภาครับ (Receiver) มักจะรับสัญญาณได้แย่ลงเมื่อถูกอัดด้วย Tx Power ที่แรงเกินไปในระยะประชิดครับ
+
+1. เหตุใดในระดับ RSSI ที่อ่อนกว่า `-80 dBm` ความเร็ว Throughput ถึงตกลงอย่างกะทันหันในโปรโตคอล TCP?
+
+> **ตอบ:** เพราะโปรโตคอล TCP ต้องมีการส่งแพ็กเก็ตตอบกลับ (ACK) เสมอ พอสัญญาณอ่อนกว่า -80 dBm โอกาสที่แพ็กเก็ตจะหล่นหายกลางทางมีสูงมาก ทำให้ TCP ต้องเข้าสู่โหมดส่งซ้ำ (Retransmission) และหั่นขนาดการส่ง (Window Size) ลงฮวบฮาบเพื่อป้องกันเน็ตเวิร์กล่ม ความเร็วเลยตกลงกะทันหัน
+
+1. สมการ Regression ที่ได้จากการทดลองสามารถนำไปประยุกต์ใช้ทำนายคุณภาพการเชื่อมต่อในแอปพลิเคชัน IoT ได้อย่างไร?
+
+> **ตอบ:** เอาไปใช้สร้างระบบปรับตัวอัตโนมัติได้ เช่น ถ้าเซนเซอร์อ่านค่า RSSI ได้ต่ำกว่าเกณฑ์ ระบบจะเอาไปเข้าสมการคำนวณความเร็วล่วงหน้า ถ้าเห็นว่าช้าแน่ๆ ก็อาจจะสั่งให้บีบอัดข้อมูลให้เล็กลงก่อนส่ง หรือเซฟลง SD Card ไว้ก่อน รอจนสัญญาณดีขึ้นค่อยส่งทีเดียว
 
 ---
 
