@@ -98,26 +98,38 @@ xSemaphoreGive(mutex)           xSemaphoreGive(mutex)
 
 | ครั้งที่ | Temperature (°C) | Humidity (%) | Light Lux | Timestamp (ms) |
 | :------: | :--------------: | :----------: | :-------: | :------------: |
-|  **1**   |                  |              |           |                |
-|  **2**   |                  |              |           |                |
-|  **3**   |                  |              |           |                |
+|   **1**  |       28.40      |     63.70    |    524    |      4,500     |
+|   **2**  |       31.80      |     57.20    |    410    |     184,600    |
+|   **3**  |       33.50      |     56.60    |    275    |     155,910    |
+
 
 ### 7.2 ทดสอบ JSON API (`/api/data`)
 
 บันทึก Raw JSON Response จาก Browser:
 
-```json
-
-```
+{
+  "temperature": 28.40,
+  "humidity": 63.70,
+  "light_lux": 524,
+  "timestamp_ms": 4500
+}
 
 ---
 
 ## 8. คำถามท้ายการทดลอง (Post-Lab Questions)
 
 1. เหตุใดจึงต้องใช้ **Mutex** ในการป้องกันการเข้าถึงตัวแปร `g_latest_data` ร่วมกันระหว่าง `vNetworkTask` และ HTTP Handler? ถ้าไม่ใช้จะเกิดอะไรขึ้น?
+ตอบ เหตุผล: ป้องกัน Race Condition เพราะ Task ฝั่งเขียนข้อมูล และ Handler ฝั่งอ่านข้อมูล ทำงานพร้อมกันแบบขนาน
+ถ้าไม่ใช้: ข้อมูลที่อ่านได้จะเพี้ยน/ไม่สมบูรณ์ (Torn Read) ได้ค่าขยะไปแสดงผล หรืออาจเกิด Memory Fault จน ESP32 Crash และ Reboot ได้
 2. `esp_http_server` รัน Handler บน Thread ใด — เป็น Thread เดียวกับ FreeRTOS Task ของเราหรือไม่?
+ตอบ รันบน FreeRTOS Task แยกเฉพาะ (ชื่อ httpd) ไม่ใช่ Thread เดียวกัน กับ Task ของเรา จึงเป็นเหตุผลบังคับที่ต้องใช้ Mutex
 3. การที่ Dashboard ใช้ `<meta http-equiv="refresh" content="2">` แทนที่จะใช้ JavaScript `fetch()` มีข้อดีและข้อเสียอย่างไร?
-
+ตอบ <meta refresh>:
+ข้อดี: เขียนง่าย ไม่ต้องใช้ JS
+ข้อเสีย: หน้าจอกระพริบทุก 2 วินาที, เปลืองแรง ESP32 เพราะต้องส่ง HTML ใหม่หมดทุกรอบ
+JS fetch():
+ข้อดี: หน้าจอลื่นไหลไม่กระพริบ, ดึงเฉพาะข้อมูล JSON ประหยัด Bandwidth ESP32
+ข้อเสีย: โค้ดซับซ้อนกว่า ต้องเขียน JS จัดการหน้าเว็บเพิ่มเติม
 ---
 
 ## 9. ความรู้เพิ่มเติม: ESP-IDF `esp_http_server` API

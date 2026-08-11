@@ -164,15 +164,25 @@ void app_main(void) {
 
 ### 6.1 บันทึกข้อมูล Forensic Stack High Water Mark
 
-| ชื่อ FreeRTOS Task | ขนาด Stack ที่กำหนดใน `xTaskCreate` (Bytes) | ค่า High Water Mark ที่อ่านได้ (Words / Bytes) | สถานะความปลอดภัยสแตก |
-| :--- | :---: | :---: | :---: |
-| **`SensorCollectorTask`** | 3072 | | |
-| **`NetworkCommTask`** | 4096 | | |
+| ชื่อ FreeRTOS Task        | ขนาด Stack ที่กำหนดใน `xTaskCreate` (Bytes) | ค่า High Water Mark ที่อ่านได้ (Words / Bytes) | สถานะความปลอดภัยสแตก |
+| :------------------------ | :-----------------------------------------: | :--------------------------------------------: | :------------------: |
+| **`SensorCollectorTask`** |                     3072                    |           **2028 Words / 2028 Bytes**          |      **ปลอดภัย**     |
+| **`NetworkCommTask`**     |                     4096                    |           **3080 Words / 3080 Bytes**          |      **ปลอดภัย**     |
+
 
 ---
 
 ## 7. คำถามท้ายการทดลอง (Post-Lab Questions)
 
 1. เหตุใดการใช้ **FreeRTOS Queue** จึงมีความปลอดภัย (Thread-Safe) มากกว่าการใช้ตัวแปรแบบ Global ในการรับส่งข้อมูลระหว่างสอง Task?
+ตอบ มี Critical Section ในตัว: Queue ทำงานแบบ Atomic (ล็อคการแทรกของ Interrupt/Scheduler ให้อัตโนมัติ) ป้องกัน Race Condition โดยไม่ต้องเขียน Mutex คุมเอง
+จัดการ Task Synchronization: มีระบบ FIFO Buffer ช่วยคุมจังหวะรอ (Block/Unblock Task) เมื่อ Queue เต็มหรือว่างเปล่าให้อัตโนมัติ
 2. ค่า **Stack High Water Mark** มีประโยชน์อย่างไรในการตรวจวินิจฉัยปัญหาบั๊กในระบบเรียลไทม์ (RTOS)?
+ตอบ ป้องกัน Stack Overflow: บอกขนาด Stack ส่วนที่เหลือน้อยที่สุด นับตั้งแต่ Task เริ่มทำงาน หากค่าเข้าใกล้ 0 แสดงว่าเสี่ยงทำระบบ Crash/Reboot
+ช่วย Optimize RAM: ทำให้รู้ว่าจอง Stack ให้ Task มากเกินความจำเป็นหรือไม่ เพื่อลดขนาดลงและคืน RAM ไปให้ส่วนอื่น
 3. หาก `vSensorTask` ส่งข้อมูลเร็วมาก (เช่น ทุก 10ms) แต่ `vNetworkTask` ส่งข้อมูลออก Wi-Fi ได้ช้า (เช่น ใช้เวลา 500ms) จะเกิดอะไรขึ้นกับ Queue และระบบจะรับมืออย่างไร?
+ตอบ สิ่งที่เกิดขึ้น: Queue จะเต็มอย่างรวดเร็ว (Queue Overflow) ข้อมูลใหม่ส่งไม่เข้า หากตั้งเป็น Blocking ไว้ vSensorTask จะค้าง หรือถ้าตั้ง Non-blocking ข้อมูลจะหล่นหาย
+วิธีรับมือ:
+ยุบข้อมูล (Data Aggregation): ให้ vSensorTask เก็บรวมค่าแล้วคำนวณหาค่าเฉลี่ยก่อนส่งลง Queue เป็นช่วงๆ แทนการยิงทุก 10ms
+ทิ้งข้อมูลเก่า/เขียนทับ (Drop/Overwrite): กำหนด Timeout เป็น 0 เพื่อสลัดข้อมูลทิ้งเมื่อเต็ม หรือใช้ xQueueOverwrite เพื่อเก็บเฉพาะค่าล่าสุดเพียงค่าเดียว
+ปรับความถี่ / ขยาย Queue: เพิ่มระยะ Delay ใน vSensorTask ให้สมดุลขึ้น หรือขยายขนาด Queue เพื่อรองรับข้อมูลชั่วคราว
