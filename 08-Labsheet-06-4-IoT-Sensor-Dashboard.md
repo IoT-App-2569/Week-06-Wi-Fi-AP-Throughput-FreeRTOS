@@ -105,10 +105,9 @@ xSemaphoreGive(mutex)           xSemaphoreGive(mutex)
 ### 7.2 ทดสอบ JSON API (`/api/data`)
 
 บันทึก Raw JSON Response จาก Browser:
+<img width="828" height="1792" alt="Image (4)" src="https://github.com/user-attachments/assets/9ea00a83-3364-4419-b9e8-05a914c6a1ef" />
 
-```json
-
-```
+<img width="828" height="1792" alt="Image (5)" src="https://github.com/user-attachments/assets/7d50110c-b78c-4f12-8d46-0163a01a62bd" />
 
 ---
 
