@@ -1,6 +1,50 @@
-.obsidian/**
-**/build/**
-.cache/**
-build/**
-build-v6/**
-.esp/**
+# --- ESP-IDF ---
+build/
+build-*/
+**/build/
+.esp/
+sdkconfig.old
+dependencies.lock
+managed_components/
+
+# --- IDEs / Editors ---
+# Obsidian
+.obsidian/
+
+# Visual Studio Code
+.vscode/
+.history/
+
+# --- C/C++ Compiled Files ---
+*.slo
+*.lo
+*.o
+*.obj
+*.gch
+*.pch
+*.so
+*.dylib
+*.dll
+*.mod
+*.smod
+*.lai
+*.la
+*.a
+*.lib
+*.exe
+*.out
+*.app
+*.map
+*.bin
+*.elf
+
+# --- Caches & OS ---
+.cache/
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
