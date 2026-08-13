@@ -160,7 +160,8 @@ I (919268) wifi:new:<1,1>, old:<1,0>, ap:<1,1>, sta:<255,255>, prof:1, snd_ch_cf
 
 #### 6.1 แผนภาพ Scatter Plot และ Regression Line
 
-![alt text](image-2.png)
+<img width="1222" height="712" alt="Screenshot 2026-08-12 230201" src="https://github.com/user-attachments/assets/bc9c29f0-3c67-4c1f-8fe4-721b7d26af57" />
+
 
 #### 6.2 สรุปผลการวิเคราะห์ทางสถิติ
 
@@ -803,7 +804,7 @@ I (27529) FORENSIC_STACK:   -> NetworkTask Stack Remaining: 2248 words (2248 byt
 
 ---
 #### Webapp
-
+<img width="894" height="1829" alt="278130" src="https://github.com/user-attachments/assets/c7c7c45a-2b4b-4c66-9104-7fcbe7b8133c" />
 
 ---
 ## 8. คำถามท้ายการทดลอง (Post-Lab Questions)
@@ -1193,7 +1194,7 @@ I (26594) FORENSIC_STACK:   -> NetworkTask Stack Remaining: 2220 words (2220 byt
 
 ---
 #### Webapp
-
+<img width="894" height="1829" alt="278135" src="https://github.com/user-attachments/assets/aa92bb1d-a8aa-4439-aa1c-9fecbe471741" />
 
 ---
 ## 6. คำถามท้ายการทดลอง (Post-Lab Questions)
