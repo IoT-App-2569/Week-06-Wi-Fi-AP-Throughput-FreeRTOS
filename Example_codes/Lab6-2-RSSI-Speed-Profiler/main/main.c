@@ -6,21 +6,34 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/event_groups.h"
 #include "freertos/task.h"
+
 #include "esp_event.h"
 #include "esp_log.h"
 #include "esp_netif.h"
 #include "esp_timer.h"
 #include "esp_wifi.h"
 #include "nvs_flash.h"
+
 #include "lwip/inet.h"
 #include "lwip/sockets.h"
 
 static const char *TAG = "CLIENT_PROFILER";
 
-#define AP_SSID            "MY_ESP32_AP"
+/* ============================================================
+ * Wi-Fi Configuration
+ * ============================================================ */
+
+#define AP_SSID            "MY_ESP32_AP" // แก้ให้ตรงกับ Server ของคุณ
 #define AP_PASS            "12345678"
+
+/* Node A Server */
 #define SERVER_IP          "192.168.4.1"
 #define SERVER_PORT        8080
+
+/* ============================================================
+ * Benchmark Configuration
+ * ============================================================ */
+
 #define TEST_DATA_LEN      1024
 #define TEST_ROUNDS        50
 #define BENCHMARK_ROUNDS   10
@@ -29,41 +42,49 @@ static const char *TAG = "CLIENT_PROFILER";
 #define WIFI_CONNECTED_BIT BIT0
 #define WIFI_FAIL_BIT      BIT1
 
-static EventGroupHandle_t s_wifi_event_group;
-static int s_retry_count;
+/* ============================================================
+ * Global Variables
+ * ============================================================ */
 
-static void wifi_event_handler(void *arg, esp_event_base_t event_base,
-                               int32_t event_id, void *event_data)
+static EventGroupHandle_t s_wifi_event_group;
+static int s_retry_count = 0;
+
+/* ============================================================
+ * Wi-Fi Event Handler
+ * ============================================================ */
+
+static void wifi_event_handler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
     if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START) {
         ESP_LOGI(TAG, "[FORENSIC EVENT]: Station started; connecting to %s", AP_SSID);
         ESP_ERROR_CHECK(esp_wifi_connect());
-    } else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED) {
-        wifi_event_sta_disconnected_t *event = event_data;
-
+    }
+    else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED) {
+        wifi_event_sta_disconnected_t *event = (wifi_event_sta_disconnected_t *)event_data;
         xEventGroupClearBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
         ESP_LOGW(TAG, "[FORENSIC EVENT]: Disconnected, reason=%d", event->reason);
 
         if (s_retry_count < WIFI_MAXIMUM_RETRY) {
             s_retry_count++;
-            ESP_LOGI(TAG, "Retrying Wi-Fi connection (%d/%d)",
-                     s_retry_count, WIFI_MAXIMUM_RETRY);
+            ESP_LOGI(TAG, "Retrying Wi-Fi connection (%d/%d)", s_retry_count, WIFI_MAXIMUM_RETRY);
             ESP_ERROR_CHECK(esp_wifi_connect());
         } else {
             xEventGroupSetBits(s_wifi_event_group, WIFI_FAIL_BIT);
         }
-    } else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
-        ip_event_got_ip_t *event = event_data;
-
+    }
+    else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
+        ip_event_got_ip_t *event = (ip_event_got_ip_t *)event_data;
         s_retry_count = 0;
-        ESP_LOGI(TAG, "[FORENSIC EVENT]: Connected; IP=" IPSTR,
-                 IP2STR(&event->ip_info.ip));
+        ESP_LOGI(TAG, "[FORENSIC EVENT]: Connected; IP=" IPSTR, IP2STR(&event->ip_info.ip));
         xEventGroupSetBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
     }
 }
 
-static esp_err_t send_all(int socket_fd, const char *data, size_t data_len,
-                          int *total_bytes)
+/* ============================================================
+ * send_all()
+ * ============================================================ */
+
+static esp_err_t send_all(int socket_fd, const char *data, size_t data_len, int *total_bytes)
 {
     size_t bytes_remaining = data_len;
     const char *position = data;
@@ -74,14 +95,16 @@ static esp_err_t send_all(int socket_fd, const char *data, size_t data_len,
             ESP_LOGE(TAG, "send() failed, errno=%d", errno);
             return ESP_FAIL;
         }
-
         position += written;
         bytes_remaining -= written;
         *total_bytes += written;
     }
-
     return ESP_OK;
 }
+
+/* ============================================================
+ * Throughput Test
+ * ============================================================ */
 
 static void perform_throughput_test(int benchmark_round)
 {
@@ -104,8 +127,8 @@ static void perform_throughput_test(int benchmark_round)
         .sin_port = htons(SERVER_PORT),
     };
 
-    ESP_LOGI(TAG, "[ROUND %d/%d]: Connecting to %s:%d",
-             benchmark_round, BENCHMARK_ROUNDS, SERVER_IP, SERVER_PORT);
+    ESP_LOGI(TAG, "[ROUND %d/%d]: Connecting to %s:%d", benchmark_round, BENCHMARK_ROUNDS, SERVER_IP, SERVER_PORT);
+
     if (connect(socket_fd, (struct sockaddr *)&destination, sizeof(destination)) != 0) {
         ESP_LOGE(TAG, "Socket connect failed, errno=%d", errno);
         close(socket_fd);
@@ -130,9 +153,7 @@ static void perform_throughput_test(int benchmark_round)
     close(socket_fd);
 
     double elapsed_sec = (double)(end_time - start_time) / 1000000.0;
-    double throughput_kbps = elapsed_sec > 0.0
-                                 ? (total_bytes * 8.0) / (elapsed_sec * 1000.0)
-                                 : 0.0;
+    double throughput_kbps = elapsed_sec > 0.0 ? (total_bytes * 8.0) / (elapsed_sec * 1000.0) : 0.0;
 
     ESP_LOGI(TAG, "=======================================================");
     ESP_LOGI(TAG, " [BENCHMARK RESULT %d/%d]", benchmark_round, BENCHMARK_ROUNDS);
@@ -143,19 +164,22 @@ static void perform_throughput_test(int benchmark_round)
     ESP_LOGI(TAG, "=======================================================");
 }
 
+/* ============================================================
+ * Profiler Task
+ * ============================================================ */
+
 static void profiler_task(void *arg)
 {
     for (int round = 1; round <= BENCHMARK_ROUNDS; round++) {
-        EventBits_t bits = xEventGroupWaitBits(s_wifi_event_group,
-                                                WIFI_CONNECTED_BIT | WIFI_FAIL_BIT,
-                                                pdFALSE,
-                                                pdFALSE,
-                                                portMAX_DELAY);
+        EventBits_t bits = xEventGroupWaitBits(
+            s_wifi_event_group, WIFI_CONNECTED_BIT | WIFI_FAIL_BIT,
+            pdFALSE, pdFALSE, portMAX_DELAY
+        );
+
         if ((bits & WIFI_FAIL_BIT) != 0) {
             ESP_LOGE(TAG, "Cannot connect to %s; profiler stopped", AP_SSID);
             break;
         }
-
         perform_throughput_test(round);
         vTaskDelay(pdMS_TO_TICKS(2000));
     }
@@ -163,6 +187,10 @@ static void profiler_task(void *arg)
     ESP_LOGI(TAG, "All benchmark rounds completed");
     vTaskDelete(NULL);
 }
+
+/* ============================================================
+ * Wi-Fi Init
+ * ============================================================ */
 
 static void wifi_init_sta(void)
 {
@@ -183,14 +211,8 @@ static void wifi_init_sta(void)
     ESP_LOGI(TAG, "[FORENSIC]: Call esp_wifi_init(&config)");
     ESP_ERROR_CHECK(esp_wifi_init(&config));
 
-    ESP_ERROR_CHECK(esp_event_handler_register(WIFI_EVENT,
-                                               ESP_EVENT_ANY_ID,
-                                               &wifi_event_handler,
-                                               NULL));
-    ESP_ERROR_CHECK(esp_event_handler_register(IP_EVENT,
-                                               IP_EVENT_STA_GOT_IP,
-                                               &wifi_event_handler,
-                                               NULL));
+    ESP_ERROR_CHECK(esp_event_handler_register(WIFI_EVENT, ESP_EVENT_ANY_ID, &wifi_event_handler, NULL));
+    ESP_ERROR_CHECK(esp_event_handler_register(IP_EVENT, IP_EVENT_STA_GOT_IP, &wifi_event_handler, NULL));
 
     wifi_config_t wifi_config = {
         .sta = {
@@ -210,6 +232,10 @@ static void wifi_init_sta(void)
     ESP_ERROR_CHECK(esp_wifi_start());
 }
 
+/* ============================================================
+ * Main
+ * ============================================================ */
+
 void app_main(void)
 {
     ESP_LOGI(TAG, "[FORENSIC]: Call nvs_flash_init()");
@@ -222,5 +248,6 @@ void app_main(void)
 
     wifi_init_sta();
     ESP_LOGI(TAG, "Client profiler ready: 50 KB x %d rounds", BENCHMARK_ROUNDS);
+    
     xTaskCreate(profiler_task, "profiler_task", 4096, NULL, 5, NULL);
 }
