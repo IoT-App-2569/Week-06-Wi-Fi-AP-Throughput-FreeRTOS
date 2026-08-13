@@ -1183,7 +1183,7 @@ I (26594) FORENSIC_STACK:   -> NetworkTask Stack Remaining: 2220 words (2220 byt
 ---
 
 ## 09-Labsheet-06-5-Proximity-Attendance-System
-## ## 5. ตารางบันทึกผลการทดลอง (Experiment Results)
+## 5. ตารางบันทึกผลการทดลอง (Experiment Results)
 
 ### 5.1 ตารางบันทึกการเช็กชื่อผ่าน RF Proximity
 
