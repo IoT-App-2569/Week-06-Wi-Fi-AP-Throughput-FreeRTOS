@@ -55,6 +55,7 @@ sequenceDiagram
 
 ```c
 #include <stdio.h>
+#include <stdarg.h>
 #include <string.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -82,10 +83,29 @@ typedef struct {
 static student_record_t s_records[5];
 static int s_student_count = 0;
 
+// เพิ่ม len อย่างปลอดภัย: snprintf() คืนค่าความยาวที่ "ควรจะเขียน" แม้ถูกตัดทอน (truncate)
+// หากนำค่านั้นไปบวกตรงๆ แล้ว len เกิน sizeof(resp) จะทำให้ sizeof(resp) - len (unsigned)
+// เกิด underflow กลายเป็นเลขมหาศาล ส่งผลให้ snprintf() ครั้งถัดไปเขียนทะลุขอบเขต resp[] (Stack Buffer Overflow)
+static void append_safe(char *buf, size_t buf_size, int *len, const char *fmt, ...) {
+    if (*len < 0 || (size_t)*len >= buf_size) {
+        return;
+    }
+    va_list args;
+    va_start(args, fmt);
+    int written = vsnprintf(buf + *len, buf_size - (size_t)*len, fmt, args);
+    va_end(args);
+    if (written < 0) {
+        return;
+    }
+    size_t remaining = buf_size - (size_t)*len;
+    *len += (written < (int)remaining) ? written : (int)remaining - 1;
+}
+
 // HTTP GET Handler for Attendance Web Dashboard
 static esp_err_t http_attendance_html_handler(httpd_req_t *req) {
-    char resp[1024];
-    int len = snprintf(resp, sizeof(resp),
+    char resp[2048];
+    int len = 0;
+    append_safe(resp, sizeof(resp), &len,
         "<html><head><meta name='viewport' content='width=device-width, initial-scale=1'>"
         "<style>body{font-family:Arial;text-align:center;background:#f4f4f9;padding:20px;}"
         ".card{background:white;padding:20px;border-radius:10px;box-shadow:0 2px 5px rgba(0,0,0,0.2);}"
@@ -101,18 +121,18 @@ static esp_err_t http_attendance_html_handler(httpd_req_t *req) {
         "<table><tr><th>Device MAC</th><th>RSSI (dBm)</th><th>Proximity Status</th></tr>");
 
     for (int i = 0; i < s_student_count; i++) {
-        char status_str[32];
+        char status_str[64];
         if (s_records[i].rssi >= RSSI_THRESHOLD) {
             snprintf(status_str, sizeof(status_str), "<font color='green'><b>NEAR (Valid)</b></font>");
         } else {
             snprintf(status_str, sizeof(status_str), "<font color='red'>FAR (Invalid)</font>");
         }
-        len += snprintf(resp + len, sizeof(resp) - len,
+        append_safe(resp, sizeof(resp), &len,
             "<tr><td>%s</td><td>%d dBm</td><td>%s</td></tr>",
             s_records[i].mac_str, s_records[i].rssi, status_str);
     }
 
-    snprintf(resp + len, sizeof(resp) - len, "</table></div></body></html>");
+    append_safe(resp, sizeof(resp), &len, "</table></div></body></html>");
     httpd_resp_send(req, resp, HTTPD_RESP_USE_STRLEN);
     return ESP_OK;
 }
@@ -185,13 +205,23 @@ void app_main(void) {
 
 | ลำดับที่ | ชื่อสมาร์ตโฟน / MAC Address | ระดับ RSSI (dBm) | ระยะทางประเมิน (Near/Far) | ผลการลงชื่อ (Passed/Rejected) |
 | :---: | :--- | :---: | :---: | :---: |
-| **1** | | | | |
-| **2** | | | | |
+| **1** | iPhone13 (24:D7:EB:0E:D0:54) | -45 | Near | Passed |
+| **2** | Redmi Note (8A:3B:4C:5D:6E:7F) | -68 | Far | Rejected |
+
+> หมายเหตุ: ค่าในตารางเป็นข้อมูลจำลอง (mock data) แทนค่าจากการทดลองเช็กชื่อจริงในห้องเรียน — ให้แทนที่ด้วยค่า MAC Address และ RSSI ที่อ่านได้จริงจาก Serial Monitor เมื่อทำการทดลองจริง
 
 ---
 
 ## 6. คำถามท้ายการทดลอง (Post-Lab Questions)
 
 1. การใช้ **RF Signal Proximity (RSSI)** ร่วมกับ **HTTP Web Server** บน ESP32 แก้ปัญหาการฝากเช็กชื่อแทนกันในห้องเรียนได้อย่างไร?
+
+   **ตอบ:** ระบบบังคับให้สมาร์ตโฟนของนักศึกษาต้องเชื่อมต่อ Wi-Fi SoftAP ของ ESP32 โดยตรง (ไม่ใช่ผ่าน Router กลาง) ทำให้ ESP32 วัดค่า RSSI ของอุปกรณ์แต่ละเครื่องได้จริงตามระยะห่างทางกายภาพ การกดปุ่ม "Confirm Check-in" จะผูกกับ MAC Address และ RSSI ของอุปกรณ์ที่เชื่อมต่ออยู่ ณ ขณะนั้น หากนักศึกษาฝากเพื่อนกดแทน อุปกรณ์ที่ใช้กดจะต้องอยู่ในรัศมีสัญญาณจริง (RSSI ผ่านเกณฑ์) ซึ่งลดโอกาสการฝากเช็กชื่อจากระยะไกลหรือฝากผ่านสมาร์ตโฟนที่ไม่ได้อยู่ในห้องได้
+
 2. เหตุใดระดับเกณฑ์ RSSI ที่ `-55 dBm` จึงเหมาะสมสำหรับการระบุตำแหน่งอุปกรณ์ให้อยู่ภายในรัศมีโต๊ะปฏิบัติการ?
+
+   **ตอบ:** ค่า RSSI ประมาณ -55 dBm โดยทั่วไปสอดคล้องกับระยะห่างจาก Access Point ประมาณ 3-5 เมตรในสภาพแวดล้อมห้องเรียนปกติ (Indoor, มีสิ่งกีดขวางเล็กน้อย) ซึ่งใกล้เคียงกับรัศมีของโต๊ะปฏิบัติการ 1-2 โต๊ะ การตั้งเกณฑ์ไว้ที่ค่านี้จึงกรองอุปกรณ์ที่อยู่ไกลออกไป (เช่น อยู่นอกห้องหรือหน้าประตู) ออกจากการเช็กชื่อ ในขณะที่ไม่เข้มงวดเกินไปจนอุปกรณ์ที่อยู่ในโต๊ะเดียวกันแต่วางในกระเป๋าหรือกำบังสัญญาณเล็กน้อยถูกปฏิเสธ
+
 3. หากต้องการต่อยอดมินิโปรเจกต์นี้ในอนาคต ให้สามารถบันทึกข้อมูลการเข้าเรียนลงระบบ Cloud (เช่น Google Sheets หรือ Firebase) จะต้องเพิ่มส่วนเชื่อมต่อใดบ้าง?
+
+   **ตอบ:** ต้องเพิ่ม (1) ESP32 ทำงานในโหมด APSTA เพื่อให้เชื่อมต่อ SoftAP กับนักศึกษาได้พร้อมกับเชื่อมต่อ Internet ผ่าน Wi-Fi Router จริงไปด้วย (หรือใช้ Ethernet/4G Module แทน) (2) HTTPS Client (`esp_http_client` + mbedTLS) สำหรับยิง Request ไปยัง Google Apps Script Web App หรือ Firebase REST API/Firestore SDK (3) กลไก Authentication เช่น API Key หรือ Firebase ID Token เพื่อป้องกันการยิงข้อมูลปลอมเข้าระบบ (4) Local Buffer/Queue (เช่น เก็บลง NVS หรือ SPIFFS ชั่วคราว) สำหรับกรณี Internet ขาดหาย เพื่อส่งข้อมูลย้อนหลังเมื่อเชื่อมต่อกลับมาได้ (Store-and-Forward) และ (5) การแปลงข้อมูลเป็น JSON Payload ตามรูปแบบที่ Google Sheets Apps Script หรือ Firebase คาดหวัง

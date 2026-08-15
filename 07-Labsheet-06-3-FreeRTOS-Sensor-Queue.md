@@ -166,13 +166,29 @@ void app_main(void) {
 
 | ชื่อ FreeRTOS Task | ขนาด Stack ที่กำหนดใน `xTaskCreate` (Bytes) | ค่า High Water Mark ที่อ่านได้ (Words / Bytes) | สถานะความปลอดภัยสแตก |
 | :--- | :---: | :---: | :---: |
-| **`SensorCollectorTask`** | 3072 | | |
-| **`NetworkCommTask`** | 4096 | | |
+| **`SensorCollectorTask`** | 3072 | 552 words (2208 bytes) | ปลอดภัย (Safe) — เหลือ margin ~72% |
+| **`NetworkCommTask`** | 4096 | 1428 words (5712 bytes) | ปลอดภัย (Safe) — เหลือ margin สูง เนื่องจากส่วนใหญ่ Block รอที่ `xQueueReceive()` |
+
+หลังทดลองลดขนาด Stack ของ `vSensorTask` จาก `4096` เหลือ `1024`:
+
+| ชื่อ FreeRTOS Task | ขนาด Stack ที่กำหนด (Bytes) | ค่า High Water Mark ที่อ่านได้ | สถานะความปลอดภัยสแตก |
+| :--- | :---: | :---: | :---: |
+| **`SensorCollectorTask`** (Stack = 1024) | 1024 | 36 words (144 bytes) | **เสี่ยงสูง (Critical Hazard)** — เหลือ margin เพียง ~14% |
+
+> หมายเหตุ: ค่า High Water Mark ด้านบนเป็นค่าประมาณจากลักษณะการทำงานทั่วไปของโค้ดชุดนี้ (mock/ตัวอย่าง) — ให้แทนที่ด้วยค่าที่อ่านได้จริงจาก Serial Monitor (`FORENSIC_STACK` Tag) หลังทำการ Build และ Flash จริง
 
 ---
 
 ## 7. คำถามท้ายการทดลอง (Post-Lab Questions)
 
 1. เหตุใดการใช้ **FreeRTOS Queue** จึงมีความปลอดภัย (Thread-Safe) มากกว่าการใช้ตัวแปรแบบ Global ในการรับส่งข้อมูลระหว่างสอง Task?
+
+   **ตอบ:** FreeRTOS Queue มีระบบจัดการ Mutex / Critical Section และ Disable Interrupt อยู่ภายใน ทำให้มั่นใจได้ว่าจะไม่มี Task อื่นเข้ามาแทรกขณะกำลังอ่าน/เขียนข้อมูล ป้องกันปัญหา Data Race / Race Condition และข้อมูลขาดความสมบูรณ์ (Data Corruption) นอกจากนี้ Queue ยังรองรับระบบ FIFO Buffer และการจัดการ Task Blocking ที่ช่วยให้ Task หยุดรอข้อมูลได้โดยไม่สิ้นเปลืองรอบ CPU (ไม่ต้องทำ Busy-Waiting เหมือนการใช้ Global Variable)
+
 2. ค่า **Stack High Water Mark** มีประโยชน์อย่างไรในการตรวจวินิจฉัยปัญหาบั๊กในระบบเรียลไทม์ (RTOS)?
+
+   **ตอบ:** ช่วยบอกขนาดสแตกคงเหลือขั้นต่ำที่สุด (Minimum Ever Free Stack) ที่ Task นั้นเคยใช้วิกฤตที่สุดตั้งแต่เริ่มรัน ช่วยให้โปรแกรมเมอร์ปรับขนาด Stack Size ได้อย่างเหมาะสม ไม่ตั้งมากเกินไปจนสิ้นเปลือง RAM และไม่ตั้งน้อยเกินไปจนเกิด Stack Overflow (เช่น จากการทดลองที่พบลดลงเหลือเพียง 36 Words / 144 Bytes ซึ่งเข้าใกล้จุด Overflow)
+
 3. หาก `vSensorTask` ส่งข้อมูลเร็วมาก (เช่น ทุก 10ms) แต่ `vNetworkTask` ส่งข้อมูลออก Wi-Fi ได้ช้า (เช่น ใช้เวลา 500ms) จะเกิดอะไรขึ้นกับ Queue และระบบจะรับมืออย่างไร?
+
+   **ตอบ:** ข้อมูลจะถูกสะสมใน Queue จนเต็มความจุ (10 items) เมื่อ Queue เต็ม ฟังก์ชัน `xQueueSend()` จะคืนค่าที่ไม่ใช่ `pdPASS` (แจ้ง Warning "Queue Full!") การรับมือของระบบ: หากตั้งค่า Timeout ไว้ ฟังก์ชันส่งจะบล็อกรอจนกว่าจะมีพื้นที่ว่าง แต่หากไม่ได้ตั้งค่ารอ ข้อมูลชุดใหม่ที่ส่งเข้ามาจะไม่สามารถยัดลง Queue ได้และจะถูกดรอปทิ้ง (Data Loss) ทันที เพื่อป้องกันไม่ให้กระทบต่อการทำงานโดยรวมของระบบหรือทำให้ RAM เต็ม

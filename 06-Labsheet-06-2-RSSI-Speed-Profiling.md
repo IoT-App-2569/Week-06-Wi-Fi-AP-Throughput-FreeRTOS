@@ -59,11 +59,13 @@ sequenceDiagram
 
 | การทดลองที่ | ค่า Tx Power ที่ตั้ง (dBm) | ค่า RSSI ที่อ่านได้จริง (dBm) | เวลาที่ใช้ (Seconds) | ความเร็วที่วัดได้ Throughput (Kbps) |
 | :---: | :---: | :---: | :---: | :---: |
-| **1** | 20 dBm (Max) | | | |
-| **2** | 15 dBm | | | |
-| **3** | 10 dBm | | | |
-| **4** | 5 dBm | | | |
-| **5** | 2 dBm (Min) | | | |
+| **1** | 20 dBm (Max) — `esp_wifi_set_max_tx_power(80)` | -38 | 0.065 | 6280.00 |
+| **2** | 15 dBm — `esp_wifi_set_max_tx_power(60)` | -52 | 0.078 | 5220.00 |
+| **3** | 10 dBm — `esp_wifi_set_max_tx_power(40)` | -65 | 0.079 | 5160.00 |
+| **4** | 5 dBm — `esp_wifi_set_max_tx_power(20)` | -77 | 0.143 | 2870.00 |
+| **5** | 2 dBm (Min) — `esp_wifi_set_max_tx_power(8)` | -89 | 0.169 | 2430.00 |
+
+> หมายเหตุ: ค่าในตารางเป็นชุดข้อมูลจำลอง (mock data) ที่สร้างขึ้นให้มี $R^2 \approx 0.909$ แทนการวัดผลจริงบนฮาร์ดแวร์ — เมื่อทำการทดลองจริง (Node A + Node B ตามขั้นตอนข้อ 3) ให้แทนที่ด้วยค่าที่วัดได้จริงจาก Serial Monitor
 
 ---
 
@@ -72,17 +74,39 @@ sequenceDiagram
 ให้นักศึกษานำค่า **RSSI (x-axis)** และ **Throughput (y-axis)** จากตารางทดลองไปสร้างแผนภาพใน Excel หรือ Python (Jupyter Notebook):
 
 1. สร้างแผนภาพ **Scatter Plot** แสดงจุดข้อมูลระหว่าง RSSI กับ Speed
+
+   **ตอบ:** จุดข้อมูลกระจายจาก RSSI = -38 dBm (Throughput 6280 Kbps) ไปจนถึง RSSI = -89 dBm (Throughput 2430 Kbps) แสดงแนวโน้มลดลงอย่างชัดเจนเมื่อ RSSI อ่อนลง (ค่าติดลบมากขึ้น)
+
 2. สร้างเส้นแนวโน้ม **Trendline / Regression Curve** (เช่น Logarithmic Regression: $y = a \cdot \ln(x) + b$)
+
+   **ตอบ:** เนื่องจาก RSSI เป็นค่าลบ (ln ของค่าลบไม่มีนิยาม) จึงใช้ **Linear Regression** บนแกน RSSI (dBm) โดยตรงแทน: $\text{Throughput} \approx 78.70 \cdot \text{RSSI} + 9444.83$ (Kbps)
+
 3. คำนวณค่า **$R^2$ (Coefficient of Determination)** เพื่อประเมินความแม่นยำของสมการ
+
+   **ตอบ:** $R^2 = 0.9089$ (≈ 0.909) แสดงว่า RSSI สามารถอธิบายความผันแปรของ Throughput ได้ประมาณ 91% ถือว่าความสัมพันธ์มีความแน่นแฟ้นสูงมาก (Strong Correlation)
+
 4. ระบุจุด **Threshold RSSI (dBm)** ที่ความเร็วเริ่มลดลงมากกว่า 50% จากระดับสูงสุด
+
+   **ตอบ:** ระดับสูงสุด 6280 Kbps → เกณฑ์ 50% คือ 3140 Kbps ซึ่งตกอยู่ระหว่างการทดลองที่ 3 (RSSI -65 dBm, 5160 Kbps) และการทดลองที่ 4 (RSSI -77 dBm, 2870 Kbps) การประมาณค่าเชิงเส้นระหว่างสองจุดนี้ให้ Threshold RSSI ≈ **-75.6 dBm**
+
+
+<img width="710" height="401" alt="image" src="https://github.com/user-attachments/assets/aac77cd9-c4fb-4f34-b21a-9d1bb5987018" />
 
 ---
 
 ## 7. คำถามท้ายการทดลอง (Post-Lab Questions)
 
 1. เมื่อลดระดับ Tx Power ลงจาก 20 dBm เหลือ 2 dBm ค่า RSSI ลดลงกี่ dBm และส่งผลต่อความเร็ว Throughput อย่างไร?
+
+   **ตอบ:** RSSI ลดลงจาก -38 dBm เหลือ -89 dBm คิดเป็นลดลงประมาณ 51 dBm ส่งผลให้ Throughput ลดลงจาก 6280 Kbps เหลือ 2430 Kbps หรือลดลงประมาณ 61% แสดงว่าความสัมพันธ์ระหว่าง Tx Power/RSSI และ Throughput เป็นไปในทิศทางเดียวกัน (Positive Correlation) กล่าวคือสัญญาณยิ่งแรง อัตราการรับส่งข้อมูลยิ่งสูง
+
 2. เหตุใดในระดับ RSSI ที่อ่อนกว่า `-80 dBm` ความเร็ว Throughput ถึงตกลงอย่างกะทันหันในโปรโตคอล TCP?
+
+   **ตอบ:** เมื่อสัญญาณอ่อนลงมาก อัตราการเกิด Bit Error Rate (BER) ในระดับ Physical Layer จะสูงขึ้น ทำให้ Wi-Fi Driver ต้องลดอัตราการมอดูเลต (Modulation & Coding Scheme ลดลงเพื่อรักษาการเชื่อมต่อ) นอกจากนี้ TCP มีกลไก Retransmission และ Congestion Control (เช่น การลด Congestion Window เมื่อพบ Packet Loss) เมื่อ Frame สูญหายบ่อยครั้งจาก Physical Layer Error โปรโตคอล TCP จะลดขนาด Window ลงอย่างรวดเร็ว ส่งผลให้ Throughput ตกฮวบมากกว่าที่ควรจะเป็นตามสัดส่วนของ RSSI เพียงอย่างเดียว
+
 3. สมการ Regression ที่ได้จากการทดลองสามารถนำไปประยุกต์ใช้ทำนายคุณภาพการเชื่อมต่อในแอปพลิเคชัน IoT ได้อย่างไร?
+
+   **ตอบ:** สามารถนำสมการ (Throughput ≈ 78.70·RSSI + 9444.83) ไปฝังไว้ใน Firmware หรือ Gateway เพื่อประเมินความเร็วที่คาดว่าจะได้รับจากค่า RSSI ที่อ่านได้แบบ Real-Time โดยไม่ต้องทดสอบ Throughput จริงทุกครั้ง ใช้ตัดสินใจเชิงระบบ เช่น เลือกเปลี่ยนไปเชื่อมต่อ Access Point ตัวอื่นที่ RSSI ดีกว่า (Roaming), ปรับลดขนาด Payload หรือ Sampling Rate ของ Sensor เมื่อคาดการณ์ว่า Throughput จะต่ำ หรือแจ้งเตือนผู้ดูแลระบบล่วงหน้าเมื่ออุปกรณ์กำลังเคลื่อนที่ออกนอกพื้นที่ครอบคลุมสัญญาณคุณภาพดี
 
 
 ---

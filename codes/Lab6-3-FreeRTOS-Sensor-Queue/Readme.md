@@ -12,7 +12,7 @@ $old = Get-Location
 Set-Location ../..
 
 # 3. รัน build command
-docker run --rm --mount "type=bind,source=$((Get-Location).Path),target=/workspace" -w /workspace/ESP32_Project/Lab6-3-FreeRTOS-Sensor-Queue espressif/idf:release-v6.1  idf.py -B build-v6 build
+docker run --rm --mount "type=bind,source=$((Get-Location).Path),target=/workspace" -w /workspace/codes/Lab6-3-FreeRTOS-Sensor-Queue espressif/idf:release-v6.1  idf.py -B build-v6 build
 
 # 4. กลับมาโฟลเดอร์เดิม เพื่อที่จะ flash
 Set-Location $old
@@ -30,7 +30,7 @@ python -m esptool -p COM26 --chip esp32 -b 460800 --before default_reset --after
 ```
 docker run --rm \
   --mount "type=bind,source=$((Get-Location).Path),target=/workspace" \
-  -w /workspace/ESP32_Project/Lab6-3-FreeRTOS-Sensor-Queue \
+  -w /workspace/codes/Lab6-3-FreeRTOS-Sensor-Queue \
   espressif/idf:release-v6.1 \
   idf.py -B build-v6 build
 ```
@@ -60,7 +60,7 @@ docker run --rm \
 Docker จะเข้าไปใน:
 
 ```Code
-/workspace/ESP32_Project/Lab6-3-FreeRTOS-Sensor-Queue
+/workspace/codes/Lab6-3-FreeRTOS-Sensor-Queue
 ```
 แล้วรันคำสั่งต่อไป
 

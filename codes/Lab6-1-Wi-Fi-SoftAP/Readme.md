@@ -5,7 +5,7 @@
 **Build command (Docker)**
 
 ```powershell
-docker run --rm --mount "type=bind,source=$((Get-Location).Path),target=/workspace" -w /workspace/ESP32_Project/Lab6-1-Wi-Fi-SoftAP espressif/idf:release-v6.1  idf.py -B build-v6 build
+docker run --rm --mount "type=bind,source=$((Get-Location).Path),target=/workspace" -w /workspace/codes/Lab6-1-Wi-Fi-SoftAP espressif/idf:release-v6.1  idf.py -B build-v6 build
 ```
 
 **Flash command (Window)**
@@ -23,7 +23,7 @@ python -m esptool --chip esp32 -b 460800 --before default_reset --after hard_res
 ```
 docker run --rm \
   --mount "type=bind,source=$((Get-Location).Path),target=/workspace" \
-  -w /workspace/ESP32_Project/Lab6-1-Wi-Fi-SoftAP \
+  -w /workspace/codes/Lab6-1-Wi-Fi-SoftAP \
   espressif/idf:release-v6.1 \
   idf.py -B build-v6 build
 ```
@@ -53,7 +53,7 @@ docker run --rm \
 Docker จะเข้าไปใน:
 
 ```Code
-/workspace/ESP32_Project/Lab6-2-RSSI-Speed-Profiler
+/workspace/codes/Lab6-1-Wi-Fi-SoftAP
 ```
 แล้วรันคำสั่งต่อไป
 
@@ -90,7 +90,7 @@ Docker จะเข้าไปใน:
 
 **Flash command (Window)**
 ```powershell
-cd ESP32_Project/Lab6-1-Wi-Fi-SoftAP
+cd codes/Lab6-1-Wi-Fi-SoftAP
 
 python -m esptool -p COM24 --chip esp32 -b 460800 --before default_reset --after hard_reset write_flash --flash_mode dio --flash_size 2MB --flash_freq 40m 0x1000 build-v6\bootloader\bootloader.bin 0x8000 build-v6\partition_table\partition-table.bin 0x10000 build-v6\wifi_softap_tracking.bin && idf monitor -p COM24
 ```

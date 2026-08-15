@@ -73,7 +73,7 @@ xSemaphoreGive(mutex)           xSemaphoreGive(mutex)
 
 ## 5. ซอร์สโค้ดการทดลอง (`main/main.c`)
 
-ดูใน `ESP32_Project/Lab6-4-IoT-Sensor-Dashboard/main/main.c`
+ดูใน `codes/Lab6-4-IoT-Sensor-Dashboard/main/main.c`
 
 ---
 
@@ -98,16 +98,18 @@ xSemaphoreGive(mutex)           xSemaphoreGive(mutex)
 
 | ครั้งที่ | Temperature (°C) | Humidity (%) | Light Lux | Timestamp (ms) |
 | :------: | :--------------: | :----------: | :-------: | :------------: |
-|  **1**   |                  |              |           |                |
-|  **2**   |                  |              |           |                |
-|  **3**   |                  |              |           |                |
+|  **1**   | 27.3             | 58.6         | 412       | 15230          |
+|  **2**   | 28.1             | 61.2         | 455       | 16730          |
+|  **3**   | 26.8             | 56.4         | 389       | 18230          |
+
+> หมายเหตุ: ค่าในตารางเป็นข้อมูลจำลอง (mock data) ที่สุ่มในช่วงเดียวกับที่ `vSensorTask` สร้างขึ้นจริง (Temperature 25.0–34.9°C, Humidity 50.0–69.9%, Light 200–699 lux) ให้แทนที่ด้วยค่าที่อ่านได้จริงจากหน้า Dashboard บนมือถือ
 
 ### 7.2 ทดสอบ JSON API (`/api/data`)
 
 บันทึก Raw JSON Response จาก Browser:
 
 ```json
-
+{"temperature":26.80,"humidity":56.40,"light_lux":389,"timestamp_ms":18230}
 ```
 
 ---
@@ -115,8 +117,16 @@ xSemaphoreGive(mutex)           xSemaphoreGive(mutex)
 ## 8. คำถามท้ายการทดลอง (Post-Lab Questions)
 
 1. เหตุใดจึงต้องใช้ **Mutex** ในการป้องกันการเข้าถึงตัวแปร `g_latest_data` ร่วมกันระหว่าง `vNetworkTask` และ HTTP Handler? ถ้าไม่ใช้จะเกิดอะไรขึ้น?
+
+   **ตอบ:** `g_latest_data` เป็น struct หลาย field (temperature, humidity, light_lux, timestamp_ms) ที่ถูกเขียนโดย `vNetworkTask` และอ่านโดย HTTP Handler ซึ่งทำงานอยู่คนละ Task/Thread กัน หากไม่มี Mutex ป้องกัน อาจเกิด Race Condition ที่ HTTP Handler เข้ามาอ่านค่าขณะที่ `vNetworkTask` กำลังเขียนอยู่พอดี (Context Switch เกิดขึ้นกลางคัน) ทำให้ได้ค่าที่เป็น Torn Read คือบาง field เป็นค่าใหม่ บาง field ยังเป็นค่าเก่า ส่งผลให้ข้อมูลที่ส่งออกไปยัง Browser ไม่สอดคล้องกัน (Inconsistent State) เช่น Timestamp ใหม่แต่ Temperature เก่า
+
 2. `esp_http_server` รัน Handler บน Thread ใด — เป็น Thread เดียวกับ FreeRTOS Task ของเราหรือไม่?
+
+   **ตอบ:** `esp_http_server` จะสร้าง FreeRTOS Task ของตัวเองขึ้นมาแยกต่างหาก (ค่าเริ่มต้นชื่อ "httpd" กำหนดผ่าน `httpd_config_t.task_priority` / `stack_size`) เพื่อรอรับ Connection และเรียก URI Handler ที่ลงทะเบียนไว้ ดังนั้น `dashboard_handler` และ `api_data_handler` จึงรันอยู่ใน Task ของ HTTP Server เอง **ไม่ใช่** Task เดียวกับ `vSensorTask` หรือ `vNetworkTask` ที่เราสร้างขึ้น นี่คือเหตุผลสำคัญที่ต้องใช้ Mutex ในการแชร์ข้อมูลข้าม Task เหล่านี้
+
 3. การที่ Dashboard ใช้ `<meta http-equiv="refresh" content="2">` แทนที่จะใช้ JavaScript `fetch()` มีข้อดีและข้อเสียอย่างไร?
+
+   **ตอบ:** (หมายเหตุ: โค้ดจริงของ Lab 6-4 ใช้ JavaScript `fetch()` ไม่ใช่ `meta refresh` แต่เปรียบเทียบหลักการได้ดังนี้) `meta refresh` — ข้อดี: Implement ง่าย ทำงานได้แม้ปิด JavaScript; ข้อเสีย: โหลดทั้งหน้า HTML ใหม่ทุกครั้ง (Full Page Reload) ทำให้จอกระพริบ (Flicker) เสียแบนด์วิดท์ส่งข้อมูล HTML/CSS ซ้ำโดยไม่จำเป็น และ Reset สถานะ UI เช่น Scroll Position ส่วน JavaScript `fetch()` ที่ใช้จริงในโค้ด — ข้อดี: โหลดเฉพาะข้อมูล JSON ขนาดเล็ก (ไม่โหลด HTML/CSS ซ้ำ) หน้าจอไม่กระพริบ ประหยัด Bandwidth และ CPU ของ ESP32 มากกว่า; ข้อเสีย: Code ซับซ้อนกว่าเล็กน้อยและต้องพึ่งพา JavaScript บน Browser ฝั่ง Client
 
 ---
 

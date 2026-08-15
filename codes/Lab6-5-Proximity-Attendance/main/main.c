@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdarg.h>
 #include <string.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -26,9 +27,28 @@ typedef struct {
 static student_record_t s_records[5];
 static int s_student_count = 0;
 
+// เพิ่ม len อย่างปลอดภัย: snprintf() คืนค่าความยาวที่ "ควรจะเขียน" แม้ถูกตัดทอน (truncate)
+// หากนำค่านั้นไปบวกตรงๆ แล้ว len เกิน sizeof(resp) จะทำให้ sizeof(resp) - len (unsigned)
+// เกิด underflow กลายเป็นเลขมหาศาล ส่งผลให้ snprintf() ครั้งถัดไปเขียนทะลุขอบเขต resp[] (Stack Buffer Overflow)
+static void append_safe(char *buf, size_t buf_size, int *len, const char *fmt, ...) {
+    if (*len < 0 || (size_t)*len >= buf_size) {
+        return;
+    }
+    va_list args;
+    va_start(args, fmt);
+    int written = vsnprintf(buf + *len, buf_size - (size_t)*len, fmt, args);
+    va_end(args);
+    if (written < 0) {
+        return;
+    }
+    size_t remaining = buf_size - (size_t)*len;
+    *len += (written < (int)remaining) ? written : (int)remaining - 1;
+}
+
 static esp_err_t http_attendance_html_handler(httpd_req_t *req) {
-    char resp[1024];
-    int len = snprintf(resp, sizeof(resp),
+    char resp[2048];
+    int len = 0;
+    append_safe(resp, sizeof(resp), &len,
         "<html><head><meta name='viewport' content='width=device-width, initial-scale=1'>"
         "<style>body{font-family:Arial;text-align:center;background:#f4f4f9;padding:20px;}"
         ".card{background:white;padding:20px;border-radius:10px;box-shadow:0 2px 5px rgba(0,0,0,0.2);}"
@@ -44,18 +64,18 @@ static esp_err_t http_attendance_html_handler(httpd_req_t *req) {
         "<table><tr><th>Device MAC</th><th>RSSI (dBm)</th><th>Proximity Status</th></tr>");
 
     for (int i = 0; i < s_student_count; i++) {
-        char status_str[32];
+        char status_str[64];
         if (s_records[i].rssi >= RSSI_THRESHOLD) {
             snprintf(status_str, sizeof(status_str), "<font color='green'><b>NEAR (Valid)</b></font>");
         } else {
             snprintf(status_str, sizeof(status_str), "<font color='red'>FAR (Invalid)</font>");
         }
-        len += snprintf(resp + len, sizeof(resp) - len,
+        append_safe(resp, sizeof(resp), &len,
             "<tr><td>%s</td><td>%d dBm</td><td>%s</td></tr>",
             s_records[i].mac_str, s_records[i].rssi, status_str);
     }
 
-    snprintf(resp + len, sizeof(resp) - len, "</table></div></body></html>");
+    append_safe(resp, sizeof(resp), &len, "</table></div></body></html>");
     httpd_resp_send(req, resp, HTTPD_RESP_USE_STRLEN);
     return ESP_OK;
 }

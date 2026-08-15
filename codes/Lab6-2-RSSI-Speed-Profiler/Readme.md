@@ -5,12 +5,12 @@
 **Build command (Docker)**
 
 ```powershell
-docker run --rm --mount "type=bind,source=$((Get-Location).Path),target=/workspace" -w /workspace/ESP32_Project/Lab6-2-RSSI-Speed-Profiler espressif/idf:release-v6.1  idf.py -B build-v6 build
+docker run --rm --mount "type=bind,source=$((Get-Location).Path),target=/workspace" -w /workspace/codes/Lab6-2-RSSI-Speed-Profiler espressif/idf:release-v6.1  idf.py -B build-v6 build
 ```
 
-**Flash command (Window)**
+**Flash command (Window)** — รันจาก root directory ของ repo นี้
 ```powershell
-python -m esptool -p COM26 --chip esp32 -b 460800 --before default_reset --after hard_reset write_flash --flash_mode dio --flash_size 2MB --flash_freq 40m 0x1000 D:\GitHubRepos\__ENGEDU\__Iot_App_2569\ESP32_Project\Lab6-2-RSSI-Speed-Profiler\build-v6\bootloader\bootloader.bin 0x8000 D:\GitHubRepos\__ENGEDU\__Iot_App_2569\ESP32_Project\Lab6-2-RSSI-Speed-Profiler\build-v6\partition_table\partition-table.bin 0x10000 D:\GitHubRepos\__ENGEDU\__Iot_App_2569\ESP32_Project\Lab6-2-RSSI-Speed-Profiler\build-v6\rssi_speed_profiler.bin && idf monitor -p COM26
+python -m esptool -p COM26 --chip esp32 -b 460800 --before default_reset --after hard_reset write_flash --flash_mode dio --flash_size 2MB --flash_freq 40m 0x1000 codes\Lab6-2-RSSI-Speed-Profiler\build-v6\bootloader\bootloader.bin 0x8000 codes\Lab6-2-RSSI-Speed-Profiler\build-v6\partition_table\partition-table.bin 0x10000 codes\Lab6-2-RSSI-Speed-Profiler\build-v6\rssi_speed_profiler.bin && idf monitor -p COM26
 ```
 
 --- 
@@ -19,7 +19,7 @@ python -m esptool -p COM26 --chip esp32 -b 460800 --before default_reset --after
 ```
 docker run --rm \
   --mount "type=bind,source=$((Get-Location).Path),target=/workspace" \
-  -w /workspace/ESP32_Project/Lab6-2-RSSI-Speed-Profiler \
+  -w /workspace/codes/Lab6-2-RSSI-Speed-Profiler \
   espressif/idf:release-v6.1 \
   idf.py -B build-v6 build
 ```
@@ -49,7 +49,7 @@ docker run --rm \
 Docker จะเข้าไปใน:
 
 ```Code
-/workspace/ESP32_Project/Lab6-2-RSSI-Speed-Profiler
+/workspace/codes/Lab6-2-RSSI-Speed-Profiler
 ```
 แล้วรันคำสั่งต่อไป
 

@@ -81,16 +81,26 @@ classDiagram
 
 | อุปกรณ์ที่ใช้ทดสอบ (เช่น iPhone/Android) | MAC Address ที่ดักจับได้ | Association ID (AID) | หมายเลข IP Address ที่ได้ (ถ้าทราบ) |
 | :--- | :--- | :---: | :---: |
-| **อุปกรณ์ที่ 1** | | | |
-| **อุปกรณ์ที่ 2** | | | |
+| **อุปกรณ์ที่ 1** | 42:7A:36:B6:5C:E4 | 1 | 192.168.4.2 |
+| **อุปกรณ์ที่ 2** | 8A:3B:4C:5D:6E:7F | 2 | 192.168.4.3 |
+
+> หมายเหตุ: ค่าในตารางเป็นตัวอย่างข้อมูลจำลอง (mock data) — เมื่อทำการทดลองจริงบนบอร์ด ESP32 ให้แทนที่ด้วยค่า MAC Address, AID และ IP ที่อ่านได้จาก Serial Monitor จริง
 
 ---
 
 ## 7. คำถามท้ายการทดลอง (Post-Lab Questions)
 
 1. เหตุใด IP Address เริ่มต้นของ ESP32 SoftAP จึงเป็น `192.168.4.1` และ DHCP Server บน ESP32 เริ่มแจกจ่าย IP ที่หมายเลขใด?
+
+   **ตอบ:** `192.168.4.1` เป็นค่า Default Configuration ตามมาตรฐานสถาปัตยกรรม ESP-IDF Framework (กำหนดไว้ใน `esp_netif_create_default_wifi_ap()`) เพื่อป้องกัน IP ชนกับวงเครือข่าย Wi-Fi บ้านทั่วไปที่มักใช้ `192.168.1.x` หรือ `192.168.0.x` โดย DHCP Server บน ESP32 จะเริ่มแจกจ่าย IP ให้แก่ Client เครื่องแรกเริ่มต้นที่ `192.168.4.2` (เครื่องถัดไปได้ `192.168.4.3`, `192.168.4.4`, ... ตามลำดับการเชื่อมต่อ)
+
 2. สมาชิกตัวแปร `mac` ในโครงสร้าง `wifi_event_ap_staconnected_t` สามารถนำไปประยุกต์ใช้ทำระบบความปลอดภัยขั้นสูง (เช่น MAC Filtering) ได้อย่างไร?
+
+   **ตอบ:** อ่านค่า `event->mac` เมื่อมี Event `WIFI_EVENT_AP_STACONNECTED` เกิดขึ้น แล้วนำ MAC Address ที่ได้ไปเปรียบเทียบกับ Whitelist (รายชื่อที่อนุญาต) หรือ Blacklist (รายชื่อที่บล็อก) หากไม่ตรงตามเงื่อนไข สามารถสั่งตัดการเชื่อมต่อด้วยคำสั่ง `esp_wifi_deauth_sta()` ได้ทันที
+
 3. หากมี Client พยายามเชื่อมต่อเป็นเครื่องที่ 5 (เกินค่า `max_connection = 4`) จะเกิดเหตุการณ์ใดขึ้นในระดับสัญญาณวิทยุ?
+
+   **ตอบ:** ในระดับ Link Layer / 802.11 ESP32 จะปฏิเสธขั้นตอน Association / Authentication โดยส่งเฟรมตอบกลับชนิด Deauthentication / Disassociation Frame พร้อมระบุ Reason Code (เช่น Status Code 17: "Association rejected because AP is unable to handle additional associated stations") ทำให้ Client เครื่องที่ 5 ไม่สามารถสร้างการเชื่อมต่อขึ้นมาได้
 
 
 ---
