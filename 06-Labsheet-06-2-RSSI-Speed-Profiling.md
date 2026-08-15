@@ -57,13 +57,14 @@ sequenceDiagram
 
 ให้นักศึกษาบันทึกค่าที่ได้จากการทดสอบในระดับ Tx Power ต่างๆ:
 
-| การทดลองที่ | ค่า Tx Power ที่ตั้ง (dBm) | ค่า RSSI ที่อ่านได้จริง (dBm) | เวลาที่ใช้ (Seconds) | ความเร็วที่วัดได้ Throughput (Kbps) |
-| :---: | :---: | :---: | :---: | :---: |
-| **1** | 20 dBm (Max) | | | |
-| **2** | 15 dBm | | | |
-| **3** | 10 dBm | | | |
-| **4** | 5 dBm | | | |
-| **5** | 2 dBm (Min) | | | |
+| การทดลองที่ | Tx Power ที่ตั้ง (dBm) | RSSI ที่อ่านได้ (dBm) | เวลาที่ใช้ (s) | Throughput (Kbps) |
+| :---: | :--- | :---: | :---: | :---: |
+| 1 | 20 (Max) — `esp_wifi_set_max_tx_power(80)` | -38 | 0.065 | 6280.00 |
+| 2 | 15 — `esp_wifi_set_max_tx_power(60)` | -52 | 0.078 | 5220.00 |
+| 3 | 10 — `esp_wifi_set_max_tx_power(40)` | -65 | 0.079 | 5210.00 |
+| 4 | 5 — `esp_wifi_set_max_tx_power(20)` | -77 | 0.144 | 2840.00 |
+| 5 | 2 (Min) — `esp_wifi_set_max_tx_power(8)` | -89 | 0.169 | 2430.00 |
+
 
 ---
 
@@ -76,13 +77,21 @@ sequenceDiagram
 3. คำนวณค่า **$R^2$ (Coefficient of Determination)** เพื่อประเมินความแม่นยำของสมการ
 4. ระบุจุด **Threshold RSSI (dBm)** ที่ความเร็วเริ่มลดลงมากกว่า 50% จากระดับสูงสุด
 
+<img width="710" height="401" alt="image" src="https://github.com/user-attachments/assets/860a5b62-918a-450c-8e4b-5e507937b321" />
+
 ---
 
 ## 7. คำถามท้ายการทดลอง (Post-Lab Questions)
 
 1. เมื่อลดระดับ Tx Power ลงจาก 20 dBm เหลือ 2 dBm ค่า RSSI ลดลงกี่ dBm และส่งผลต่อความเร็ว Throughput อย่างไร?
+ตอบ RSSI ลดลงจาก -38 dBm เหลือ -89 dBm (ลดลงประมาณ 51 dBm) ส่งผลให้ Throughput ลดลงจาก 6280 Kbps เหลือ 2430 Kbps หรือลดลงประมาณ 61% แสดงว่า Tx Power/RSSI และ Throughput สัมพันธ์กันในทิศทางเดียวกัน (Positive Correlation) — สัญญาณยิ่งแรง อัตราการรับส่งข้อมูลยิ่งสูง
+
 2. เหตุใดในระดับ RSSI ที่อ่อนกว่า `-80 dBm` ความเร็ว Throughput ถึงตกลงอย่างกะทันหันในโปรโตคอล TCP?
+ตอบ เมื่อสัญญาณอ่อนลงมาก Bit Error Rate (BER) ในระดับ Physical Layer จะสูงขึ้น ทำให้ Wi-Fi Driver ต้องลดอัตราการมอดูเลต (Modulation & Coding Scheme ลดลงเพื่อรักษาการเชื่อมต่อ) และ TCP มีกลไก Retransmission กับ Congestion Control ที่ลด Congestion Window ทันทีเมื่อพบ Packet Loss เมื่อ Frame สูญหายบ่อยจาก Physical Layer Error โปรโตคอล TCP จึงลดขนาด Window ลงอย่างรวดเร็ว ทำให้ Throughput ตกฮวบมากกว่าสัดส่วนของ RSSI เพียงอย่างเดียว
+
 3. สมการ Regression ที่ได้จากการทดลองสามารถนำไปประยุกต์ใช้ทำนายคุณภาพการเชื่อมต่อในแอปพลิเคชัน IoT ได้อย่างไร?
+ตอบ นำสมการ (Throughput ≈ 78.92·RSSI + 9462.50) ไปฝังใน Firmware หรือ Gateway เพื่อประเมินความเร็วที่คาดว่าจะได้รับจากค่า RSSI แบบ Real-Time โดยไม่ต้องทดสอบ Throughput จริงทุกครั้ง ใช้ตัดสินใจเชิงระบบ เช่น เลือกเปลี่ยนไปเชื่อมต่อ AP ที่ RSSI ดีกว่า (Roaming), ปรับลด Payload/Sampling Rate เมื่อคาดว่า Throughput จะต่ำ หรือแจ้งเตือนล่วงหน้าเมื่ออุปกรณ์เคลื่อนที่ออกนอกพื้นที่สัญญาณดี
+
 
 
 ---
