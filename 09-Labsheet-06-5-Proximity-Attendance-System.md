@@ -207,8 +207,8 @@ void app_main(void) {
 3. หากต้องการต่อยอดมินิโปรเจกต์นี้ในอนาคต ให้สามารถบันทึกข้อมูลการเข้าเรียนลงระบบ Cloud (เช่น Google Sheets หรือ Firebase) จะต้องเพิ่มส่วนเชื่อมต่อใดบ้าง?
 ตอบ ต้องเพิ่ม 3 ส่วนหลัก
 
-1. Wi-Fi Dual Mode (AP + STA) เพื่อให้ ESP32 เชื่อมต่อ Wi-Fi ออกอินเทอร์เน็ตได้พร้อมกับเปิด SoftAP
+   1 . Wi-Fi Dual Mode (AP + STA) เพื่อให้ ESP32 เชื่อมต่อ Wi-Fi ออกอินเทอร์เน็ตได้พร้อมกับเปิด SoftAP
 
-2. HTTP Client (esp_http_client) ส่งข้อมูลเช็กชื่อผ่าน Webhook หรือ REST API ไปยัง Cloud Services
+   2 . HTTP Client (esp_http_client) ส่งข้อมูลเช็กชื่อผ่าน Webhook หรือ REST API ไปยัง Cloud Services
 
-3. NTP Clock Sync ดึงเวลามาตรฐานจากอินเทอร์เน็ต เพื่อประทับตราเวลา (Timestamp) ในการลงชื่อเข้าเรียนอย่างแม่นยำ
+   3 . NTP Clock Sync ดึงเวลามาตรฐานจากอินเทอร์เน็ต เพื่อประทับตราเวลา (Timestamp) ในการลงชื่อเข้าเรียนอย่างแม่นยำ
