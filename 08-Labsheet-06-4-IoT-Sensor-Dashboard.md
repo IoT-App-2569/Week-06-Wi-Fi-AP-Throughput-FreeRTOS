@@ -98,16 +98,16 @@ xSemaphoreGive(mutex)           xSemaphoreGive(mutex)
 
 | ครั้งที่ | Temperature (°C) | Humidity (%) | Light Lux | Timestamp (ms) |
 | :------: | :--------------: | :----------: | :-------: | :------------: |
-|  **1**   |                  |              |           |                |
-|  **2**   |                  |              |           |                |
-|  **3**   |                  |              |           |                |
+|  **1**   |      25.8        |  69.0        | 380          |   269170            |
+|  **2**   |       28.5           |    62.1          |    450       |   271170             |
+|  **3**   |         31.7         |    50.8          |    340       |   399010             |
 
 ### 7.2 ทดสอบ JSON API (`/api/data`)
 
 บันทึก Raw JSON Response จาก Browser:
 
 ```json
-
+{"temperature":31.70,"humidity":50.80,"light_lux":340,"timestamp_ms":399010}
 ```
 
 ---
@@ -115,9 +115,15 @@ xSemaphoreGive(mutex)           xSemaphoreGive(mutex)
 ## 8. คำถามท้ายการทดลอง (Post-Lab Questions)
 
 1. เหตุใดจึงต้องใช้ **Mutex** ในการป้องกันการเข้าถึงตัวแปร `g_latest_data` ร่วมกันระหว่าง `vNetworkTask` และ HTTP Handler? ถ้าไม่ใช้จะเกิดอะไรขึ้น?
-2. `esp_http_server` รัน Handler บน Thread ใด — เป็น Thread เดียวกับ FreeRTOS Task ของเราหรือไม่?
-3. การที่ Dashboard ใช้ `<meta http-equiv="refresh" content="2">` แทนที่จะใช้ JavaScript `fetch()` มีข้อดีและข้อเสียอย่างไร?
+ตอบ เนื่องจาก vNetworkTask (ทำหน้าที่เขียน) และ HTTP Handler (ทำหน้าที่อ่าน) ทำงานอยู่คนละ Task/Thread กันแบบ Asynchronous การอัปเดตข้อมูลโครงสร้าง sensor_data_t ไม่ใช่การทำงานเชิงอะตอม (Non-atomic operation) หากไม่ใช้ Mutex อาจเกิดปัญหา Race Condition หรือ Torn Read (HTTP Handler อ่านข้อมูลในจังหวะที่ vNetworkTask กำลังเขียนข้อมูลค้างอยู่กลางคัน) ส่งผลให้ข้อมูลที่ส่งไปยัง Browser มีค่าผิดพลาด เพี้ยน หรือโครงสร้าง JSON เสียหายได้ 
 
+2. `esp_http_server` รัน Handler บน Thread ใด — เป็น Thread เดียวกับ FreeRTOS Task ของเราหรือไม่?
+ตอบ ไม่ใช่ Thread เดียวกันครับ ตัว esp_http_server ของ ESP-IDF จะสร้าง FreeRTOS Task แยกเฉพาะของตัวเองชื่อ httpd เพื่อคอยจัดการ socket และประมวลผล Web Request ดังนั้น URI Handler (เช่น dashboard_handler หรือ api_data_handler) จะถูกรันบนบริบทของ Task httpd ไม่ได้รันอยู่บน vSensorTask หรือ vNetworkTask ที่เราสร้างขึ้น
+
+3. การที่ Dashboard ใช้ `<meta http-equiv="refresh" content="2">` แทนที่จะใช้ JavaScript `fetch()` มีข้อดีและข้อเสียอย่างไร?
+ตอบ ข้อดีของ <meta refresh> เขียนโค้ด HTML เรียบง่าย ไม่จำเป็นต้องเขียน JavaScript รองรับ Browser ยุคเก่าทุกรุ่น
+
+ข้อเสียของ <meta refresh> ทำให้เกิดการกระพริบของหน้าเว็บ (Flickering) ทุก 2 วินาที สิ้นเปลืองการส่งข้อมูล (Overhead สูง) เพราะต้องโหลดโครงสร้าง HTML ทั้งหมดใหม่ทุกรอบ ในขณะที่การใช้ JavaScript fetch() (เหมือนในแลปนี้) จะดึงเฉพาะข้อมูล Raw JSON สั้นๆ มาอัปเดตเฉพาะจุด ทำให้หน้าเว็บแสดงผลได้ลื่นไหล ไม่กระพริบ และประหยัด Bandwidth รวมถึงทรัพยากรของ ESP32 มากกว่า
 ---
 
 ## 9. ความรู้เพิ่มเติม: ESP-IDF `esp_http_server` API
