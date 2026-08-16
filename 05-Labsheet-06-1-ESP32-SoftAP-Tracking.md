@@ -81,16 +81,43 @@ classDiagram
 
 | อุปกรณ์ที่ใช้ทดสอบ (เช่น iPhone/Android) | MAC Address ที่ดักจับได้ | Association ID (AID) | หมายเลข IP Address ที่ได้ (ถ้าทราบ) |
 | :--- | :--- | :---: | :---: |
-| **อุปกรณ์ที่ 1** | | | |
-| **อุปกรณ์ที่ 2** | | | |
+| **อุปกรณ์ที่ 1** |22:49:6E:F2:DC:ED | 1 | 192.168.4.2 |
+| **อุปกรณ์ที่ 2** |2E:B0:B2:E4:F5:82 | 2 | 192.168.4.3 |
 
 ---
 
 ## 7. คำถามท้ายการทดลอง (Post-Lab Questions)
 
 1. เหตุใด IP Address เริ่มต้นของ ESP32 SoftAP จึงเป็น `192.168.4.1` และ DHCP Server บน ESP32 เริ่มแจกจ่าย IP ที่หมายเลขใด?
+```
+สาเหตุที่เป็น 192.168.4.1: เป็นค่ามาตรฐานตั้งต้น (Default IP) ที่ทาง Espressif กำหนดไว้ในเฟรมเวิร์ก ESP-IDF / LwIP stack เพื่อหลีกเลี่ยงการชนกับวง IP ยอดนิยมของ Home Router ทั่วไป (เช่น 192.168.0.x หรือ 192.168.1.x) ทำให้ผู้ใช้เชื่อมต่อเน็ตบ้านและ SoftAP ของ ESP32 พร้อมกันได้โดยไม่เกิด Route ขัดแย้ง
+
+IP แรกที่แจก: เริ่มต้นที่ 192.168.4.2 (แจกเรียงลำดับไปเรื่อยๆ .3, .4, .5)
+```
 2. สมาชิกตัวแปร `mac` ในโครงสร้าง `wifi_event_ap_staconnected_t` สามารถนำไปประยุกต์ใช้ทำระบบความปลอดภัยขั้นสูง (เช่น MAC Filtering) ได้อย่างไร?
+```
+เมื่อมีอุปกรณ์เชื่อมต่อเข้ามา Event Handler จะดึงค่า MAC Address ของ Client ผ่านโครงสร้างข้อมูลดังกล่าว จากนั้นนำไปทำความปลอดภัยได้ดังนี้
+
+White-list Verification นำ MAC ที่จับได้ไปเทียบกับรายชื่อในตารางที่อนุญาต (ใน Flash/NVS) หาก ไม่อยู่ในรายการ ให้สั่งตัดการเชื่อมต่อทันทีด้วยฟังก์ชัน esp_wifi_deauth_sta(aid)
+
+Dynamic Blacklisting ใช้ตรวจจับพฤติกรรมผิดปกติ เช่น หาก MAC เดิมพยายามส่ง Request ผิดพลาดซ้ำๆ หรือยิงสแปม ให้บันทึก MAC นั้นลง Blacklist เพื่อปฏิเสธการเชื่อมต่อชั่วคราว
+
+Security Caveat (ข้อควรระวัง) MAC Address สามารถถูกปลอมแปลง (Spoofing) ได้ง่ายด้วยซอฟต์แวร์ จึงควรร่วมกับการยืนยันตัวตนชั้นอื่น (เช่น Token หรือ Password) เสมอ
+```
 3. หากมี Client พยายามเชื่อมต่อเป็นเครื่องที่ 5 (เกินค่า `max_connection = 4`) จะเกิดเหตุการณ์ใดขึ้นในระดับสัญญาณวิทยุ?
+```
+ในระดับสัญญาณวิทยุ (802.11 Wi-Fi Layer) จะเกิดลำดับขั้นตอนดังนี้
+
+1. Probe Request / Response Client เครื่องที่ 5 ส่ง Probe Request และ ESP32 ยังคงตอบกลับ Probe Response ตามปกติ (บอกว่ามี AP นี้อยู่)
+
+2. Authentication: Client ส่ง Authentication Frame และ ESP32 จะตอบกลับ Successful
+
+3. Association Request / Response (จุดปฏิเสธ) Client ส่ง Association Request เพื่อขอเข้าใช้งาน
+
+4. การปฏิเสธสัญญาณ ESP32 จะตอบกลับด้วย Association Response (Status Code 17 - Association rejected because AP is unable to handle additional associated stations)
+
+5. ผลลัพธ์ ESP32 จะไม่ออก Deauthentication แต่จะปฏิเสธไม่รับเข้าเป็นสมาชิก (Association Fail) ส่งผลให้ฝั่ง Client ขึ้นสถานะ เช่น "Failed to connect" หรือ "Unable to join the network" โดยที่ DHCP จะไม่มีการแจกจ่าย IP ใดๆ ออกไป
+```
 
 
 ---
