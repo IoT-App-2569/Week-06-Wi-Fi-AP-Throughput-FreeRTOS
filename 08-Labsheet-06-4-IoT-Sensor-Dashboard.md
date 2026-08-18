@@ -98,25 +98,37 @@ xSemaphoreGive(mutex)           xSemaphoreGive(mutex)
 
 | ครั้งที่ | Temperature (°C) | Humidity (%) | Light Lux | Timestamp (ms) |
 | :------: | :--------------: | :----------: | :-------: | :------------: |
-|  **1**   |                  |              |           |                |
-|  **2**   |                  |              |           |                |
-|  **3**   |                  |              |           |                |
+|  **1**   |       32.1       |     58.7     |    378    |     86740      |
+|  **2**   |       28.5       |     63.1     |    646    |     91270      |
+|  **3**   |       29.4       |     53.1     |    212    |     94290      |
+
 
 ### 7.2 ทดสอบ JSON API (`/api/data`)
 
 บันทึก Raw JSON Response จาก Browser:
 
 ```json
-
+{"temperature":31.90,"humidity":50.80,"light_lux":329,"timestamp_ms":110900}
 ```
 
 ---
 
+![alt text](images/image-01.png)
+![alt text](images/image-02.png)
+![alt text](images/image-03.png)
+
 ## 8. คำถามท้ายการทดลอง (Post-Lab Questions)
 
 1. เหตุใดจึงต้องใช้ **Mutex** ในการป้องกันการเข้าถึงตัวแปร `g_latest_data` ร่วมกันระหว่าง `vNetworkTask` และ HTTP Handler? ถ้าไม่ใช้จะเกิดอะไรขึ้น?
+	- **สาเหตุ:** ป้องกัน Race Condition จากการเข้าถึงข้อมูลตัวแปรเดียวกันพร้อมกัน
+	- **ผลถ้าไม่ใช้:** เกิด **Torn Read** คือ HTTP Handler อ่านข้อมูลระหว่างที่ Task กำลังเขียน ทำให้ได้ข้อมูลเพี้ยน ไม่สมบูรณ์ หรือระบบ Crash
+
 2. `esp_http_server` รัน Handler บน Thread ใด — เป็น Thread เดียวกับ FreeRTOS Task ของเราหรือไม่?
+	- **ไม่ใช้:** `esp_http_server` จะสร้าง FreeRTOS Task แยกเฉพาะของตัวเอง (ชื่อ `httpd`) Handler จึงรันอยู่คนละ Task Context กับ Task ที่เราสร้างขึ้น
+
 3. การที่ Dashboard ใช้ `<meta http-equiv="refresh" content="2">` แทนที่จะใช้ JavaScript `fetch()` มีข้อดีและข้อเสียอย่างไร?
+	- **ข้อดี:** เขียนง่าย ไม่ต้องใช้ JavaScript และกิน RAM ฝั่ง ESP32 น้อย
+	- **ข้อเสีย:** หน้าจอกระพริบ (Flicker) สิ้นเปลือง Bandwidth เพราะต้องโหลด HTML ทั้งหน้าใหม่ทุก 2 วินาที และ UX ไม่ราบรื่น
 
 ---
 
