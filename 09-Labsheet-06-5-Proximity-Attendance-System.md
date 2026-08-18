@@ -189,7 +189,7 @@ void app_main(void) {
 |  **2**   | 36:BF:69:5B:09:C3           |     -45 dBm      |           Near            |            Passed             |
 
 ---
-![[Pasted image 20260811114655.png]]
+![alt text](images/image-04.png)
 ## 6. คำถามท้ายการทดลอง (Post-Lab Questions)
 
 1. การใช้ **RF Signal Proximity (RSSI)** ร่วมกับ **HTTP Web Server** บน ESP32 แก้ปัญหาการฝากเช็กชื่อแทนกันในห้องเรียนได้อย่างไร?
