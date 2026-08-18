@@ -112,11 +112,11 @@ xSemaphoreGive(mutex)           xSemaphoreGive(mutex)
 ```
 
 ---
-![Pasted image](./images/Pasted%20image%202026081115237.png)
 
-![Pasted image](./images/Pasted%20image%202026081115247.png)
+![alt text](../images/image-01.png)
+![alt text](../images/image-02.png)
+![alt text](../images/image-03.png)
 
-![Pasted image](./images/Pasted%20image%202026081115254.png)
 ## 8. คำถามท้ายการทดลอง (Post-Lab Questions)
 
 1. เหตุใดจึงต้องใช้ **Mutex** ในการป้องกันการเข้าถึงตัวแปร `g_latest_data` ร่วมกันระหว่าง `vNetworkTask` และ HTTP Handler? ถ้าไม่ใช้จะเกิดอะไรขึ้น?
