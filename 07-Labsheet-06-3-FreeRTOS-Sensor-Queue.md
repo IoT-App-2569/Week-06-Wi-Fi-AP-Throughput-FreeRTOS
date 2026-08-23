@@ -164,15 +164,18 @@ void app_main(void) {
 
 ### 6.1 บันทึกข้อมูล Forensic Stack High Water Mark
 
-| ชื่อ FreeRTOS Task | ขนาด Stack ที่กำหนดใน `xTaskCreate` (Bytes) | ค่า High Water Mark ที่อ่านได้ (Words / Bytes) | สถานะความปลอดภัยสแตก |
-| :--- | :---: | :---: | :---: |
-| **`SensorCollectorTask`** | 3072 | | |
-| **`NetworkCommTask`** | 4096 | | |
+| ชื่อ FreeRTOS Task        | ขนาด Stack ที่กำหนดใน `xTaskCreate` (Bytes) | ค่า High Water Mark ที่อ่านได้ (Words / Bytes) | สถานะความปลอดภัยสแตก |
+| :------------------------ | :-----------------------------------------: | :--------------------------------------------: | :------------------: |
+| **`SensorCollectorTask`** |                    3072                     |                      1196                      | ปลอดภัย (เหลือ ~39%) |
+| **`NetworkCommTask`**     |                    4096                     |                      2248                      | ปลอดภัย (เหลือ ~55%) |
 
 ---
 
 ## 7. คำถามท้ายการทดลอง (Post-Lab Questions)
 
 1. เหตุใดการใช้ **FreeRTOS Queue** จึงมีความปลอดภัย (Thread-Safe) มากกว่าการใช้ตัวแปรแบบ Global ในการรับส่งข้อมูลระหว่างสอง Task?
+ตอบ Queue มี mutex/critical section ในตัว การส่ง-รับข้อมูลเป็น atomic ป้องกัน race condition และ data corruption ส่วน Global Variable ไม่มีการล็อก ถ้าสอง task เข้าถึงพร้อมกันข้อมูลอาจเพี้ยนได้ (torn read/write)
 2. ค่า **Stack High Water Mark** มีประโยชน์อย่างไรในการตรวจวินิจฉัยปัญหาบั๊กในระบบเรียลไทม์ (RTOS)?
+ตอบ บอกค่าสแตกที่เหลือน้อยที่สุดที่เคยมี ใช้เช็คว่าเสี่ยง Stack Overflow ไหม (ค่าใกล้ 0 = อันตราย) และช่วยปรับขนาด stack ให้พอดี ไม่จองเปลืองหรือน้อยเกินไป ช่วย debug อาการ crash แปลกๆ ที่หา root cause ยาก
 3. หาก `vSensorTask` ส่งข้อมูลเร็วมาก (เช่น ทุก 10ms) แต่ `vNetworkTask` ส่งข้อมูลออก Wi-Fi ได้ช้า (เช่น ใช้เวลา 500ms) จะเกิดอะไรขึ้นกับ Queue และระบบจะรับมืออย่างไร?
+ตอบ Queue (10 ช่อง) จะเต็มไวมาก ทำให้ `xQueueSend()` timeout แล้วล้มเหลว เกิด log `Queue Full!` และข้อมูลบางส่วนหาย (data loss) แก้ได้โดย: เพิ่มขนาด Queue, ลด sampling rate ของ sensor, ทำ averaging ก่อนส่ง, หรือเพิ่มความเร็วฝั่ง network (ส่งแบบ batch)

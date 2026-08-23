@@ -98,16 +98,16 @@ xSemaphoreGive(mutex)           xSemaphoreGive(mutex)
 
 | ครั้งที่ | Temperature (°C) | Humidity (%) | Light Lux | Timestamp (ms) |
 | :------: | :--------------: | :----------: | :-------: | :------------: |
-|  **1**   |                  |              |           |                |
-|  **2**   |                  |              |           |                |
-|  **3**   |                  |              |           |                |
+|  **1**   |      29.00       |    68.90     |    286    |     196950     |
+|  **2**   |      33.70       |    65.20     |    320    |     202960     |
+|  **3**   |      27.80       |    58.60     |    404    |     205980     |
 
 ### 7.2 ทดสอบ JSON API (`/api/data`)
 
 บันทึก Raw JSON Response จาก Browser:
 
 ```json
-
+{"temperature":33.70,"humidity":65.20,"light_lux":320,"timestamp_ms":202960}
 ```
 
 ---
@@ -115,8 +115,13 @@ xSemaphoreGive(mutex)           xSemaphoreGive(mutex)
 ## 8. คำถามท้ายการทดลอง (Post-Lab Questions)
 
 1. เหตุใดจึงต้องใช้ **Mutex** ในการป้องกันการเข้าถึงตัวแปร `g_latest_data` ร่วมกันระหว่าง `vNetworkTask` และ HTTP Handler? ถ้าไม่ใช้จะเกิดอะไรขึ้น?
+ตอบ ป้องกัน Race Condition — `vNetworkTask` (เขียน) กับ HTTP Handler (อ่าน) เป็นคนละ context ที่อาจทำงานพร้อมกันได้ ถ้าไม่ล็อก HTTP Handler อาจอ่านข้อมูลขณะที่ Network Task เขียนค้างอยู่ครึ่งๆ (Torn Read) ได้ค่าผสมระหว่างข้อมูลเก่า-ใหม่ เช่น temperature เป็นค่าใหม่แต่ humidity ยังเป็นค่าเก่า ทำให้ JSON ที่ส่งออกไปผิดเพี้ยนไม่สอดคล้องกัน
 2. `esp_http_server` รัน Handler บน Thread ใด — เป็น Thread เดียวกับ FreeRTOS Task ของเราหรือไม่?
+ตอบ รันบน **FreeRTOS Task แยกต่างหาก** ที่ `httpd_start()` สร้างขึ้นเอง (ค่า default คือ task ชื่อ `httpd` มี stack/priority ของตัวเอง) **ไม่ใช่** thread เดียวกับ `vSensorTask` หรือ `vNetworkTask` ที่เราสร้าง — นี่คือเหตุผลว่าทำไมข้อ 1 ถึงต้องใช้ Mutex เพราะเป็นคนละ Task จริงๆ ที่ Scheduler สลับสับเปลี่ยนกันทำงาน ไม่ใช่ฟังก์ชันที่ถูกเรียกใน task เดียวกัน
 3. การที่ Dashboard ใช้ `<meta http-equiv="refresh" content="2">` แทนที่จะใช้ JavaScript `fetch()` มีข้อดีและข้อเสียอย่างไร?
+ตอบ 
+- **`meta refresh`**: ข้อดี — เขียนง่าย ไม่ต้องรู้ JS เลย. ข้อเสีย — โหลดทั้งหน้า HTML ใหม่ทุกครั้ง ทำให้หน้าจอกระพริบ/วูบ เปลือง bandwidth เพราะส่ง HTML ทั้งดุ้นซ้ำๆ ทั้งที่เปลี่ยนแค่ตัวเลข
+- **`fetch()`** (ที่ใช้จริง): ข้อดี — อัพเดตเฉพาะตัวเลขที่เปลี่ยน ไม่กระพริบ, เบากว่ามาก (ส่งแค่ JSON เล็กๆ ไม่ใช่ HTML ทั้งหน้า), UX ลื่นไหลกว่า. ข้อเสีย — ต้องเขียน JavaScript เพิ่ม, ถ้า browser ปิด JS ไว้จะใช้งานไม่ได้เลย
 
 ---
 
