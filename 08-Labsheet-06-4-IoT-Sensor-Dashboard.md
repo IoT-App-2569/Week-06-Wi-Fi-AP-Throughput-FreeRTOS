@@ -98,16 +98,16 @@ xSemaphoreGive(mutex)           xSemaphoreGive(mutex)
 
 | ครั้งที่ | Temperature (°C) | Humidity (%) | Light Lux | Timestamp (ms) |
 | :------: | :--------------: | :----------: | :-------: | :------------: |
-|  **1**   |                  |              |           |                |
-|  **2**   |                  |              |           |                |
-|  **3**   |                  |              |           |                |
+|  **1**   |      33.6            |    56.0          |     485      |       41160         |
+|  **2**   |       26.8           |      64.5        |    602       |       69850         |
+|  **3**   |     33.6             |    66.0          |   469       |    72870            |
 
 ### 7.2 ทดสอบ JSON API (`/api/data`)
 
 บันทึก Raw JSON Response จาก Browser:
 
 ```json
-
+{"temperature":29.30,"humidity":66.40,"light_lux":676,"timestamp_ms":106090}
 ```
 
 ---
