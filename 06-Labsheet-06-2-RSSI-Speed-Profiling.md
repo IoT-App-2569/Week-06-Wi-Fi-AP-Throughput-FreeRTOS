@@ -59,11 +59,11 @@ sequenceDiagram
 
 | การทดลองที่ | ค่า Tx Power ที่ตั้ง (dBm) | ค่า RSSI ที่อ่านได้จริง (dBm) | เวลาที่ใช้ (Seconds) | ความเร็วที่วัดได้ Throughput (Kbps) |
 | :---: | :---: | :---: | :---: | :---: |
-| **1** | 20 dBm (Max) | | | |
-| **2** | 15 dBm | | | |
-| **3** | 10 dBm | | | |
-| **4** | 5 dBm | | | |
-| **5** | 2 dBm (Min) | | | |
+| **1** | 20 dBm (Max) |-53.2  |0.1675 |1130.92 |
+| **2** | 15 dBm | -46.44 |0.1139 | 3,607.86|
+| **3** | 10 dBm | -50.1 |0.1323 | 3,644.65|
+| **4** | 5 dBm |-48.9 | 0.1051|3,974.27 |
+| **5** | 2 dBm (Min) |-47.9 |0.1307 |3,232.71 |
 
 ---
 
@@ -445,4 +445,144 @@ I (23335) CLIENT_PROFILER:   -> Measured Speed     : 5899.81 Kbps
 I (23335) CLIENT_PROFILER: =======================================================
 I (25345) CLIENT_PROFILER: All benchmark rounds completed
 
+```
+
+### Log จริง
+
+## AP
+```
+I (3600) LAB_SOFTAP: =======================================================
+I (3600) LAB_SOFTAP: [TCP SERVER SESSION 1]: Client connected from 192.168.4.2:60850
+I (3760) LAB_SOFTAP: [TCP SERVER SESSION 1]: Transfer complete
+I (3760) LAB_SOFTAP:   -> Total Received : 51200 Bytes
+I (3760) LAB_SOFTAP: =======================================================
+I (5770) LAB_SOFTAP: =======================================================
+I (5780) LAB_SOFTAP: [TCP SERVER SESSION 2]: Client connected from 192.168.4.2:60851
+I (5940) LAB_SOFTAP: [TCP SERVER SESSION 2]: Transfer complete
+I (5940) LAB_SOFTAP:   -> Total Received : 51200 Bytes
+I (5940) LAB_SOFTAP: =======================================================
+I (7970) LAB_SOFTAP: =======================================================
+I (7970) LAB_SOFTAP: [TCP SERVER SESSION 3]: Client connected from 192.168.4.2:60852
+I (8120) LAB_SOFTAP: [TCP SERVER SESSION 3]: Transfer complete
+I (8120) LAB_SOFTAP:   -> Total Received : 51200 Bytes
+I (8120) LAB_SOFTAP: =======================================================
+I (10150) LAB_SOFTAP: =======================================================
+I (10150) LAB_SOFTAP: [TCP SERVER SESSION 4]: Client connected from 192.168.4.2:60853
+I (10270) LAB_SOFTAP: [TCP SERVER SESSION 4]: Transfer complete
+I (10270) LAB_SOFTAP:   -> Total Received : 51200 Bytes
+I (10270) LAB_SOFTAP: =======================================================
+I (12310) LAB_SOFTAP: =======================================================
+I (12310) LAB_SOFTAP: [TCP SERVER SESSION 5]: Client connected from 192.168.4.2:60854
+I (12430) LAB_SOFTAP: [TCP SERVER SESSION 5]: Transfer complete
+I (12430) LAB_SOFTAP:   -> Total Received : 51200 Bytes
+I (12430) LAB_SOFTAP: =======================================================
+I (14470) LAB_SOFTAP: =======================================================
+I (14470) LAB_SOFTAP: [TCP SERVER SESSION 6]: Client connected from 192.168.4.2:60855
+I (14570) LAB_SOFTAP: [TCP SERVER SESSION 6]: Transfer complete
+I (14570) LAB_SOFTAP:   -> Total Received : 51200 Bytes
+I (14570) LAB_SOFTAP: =======================================================
+I (16600) LAB_SOFTAP: =======================================================
+I (16600) LAB_SOFTAP: [TCP SERVER SESSION 7]: Client connected from 192.168.4.2:60856
+I (16730) LAB_SOFTAP: [TCP SERVER SESSION 7]: Transfer complete
+I (16730) LAB_SOFTAP:   -> Total Received : 51200 Bytes
+I (16730) LAB_SOFTAP: =======================================================
+I (18750) LAB_SOFTAP: =======================================================
+I (18750) LAB_SOFTAP: [TCP SERVER SESSION 8]: Client connected from 192.168.4.2:60857
+I (18860) LAB_SOFTAP: [TCP SERVER SESSION 8]: Transfer complete
+I (18860) LAB_SOFTAP:   -> Total Received : 51200 Bytes
+I (18860) LAB_SOFTAP: =======================================================
+I (20900) LAB_SOFTAP: =======================================================
+I (20900) LAB_SOFTAP: [TCP SERVER SESSION 9]: Client connected from 192.168.4.2:60858
+I (21120) LAB_SOFTAP: [TCP SERVER SESSION 9]: Transfer complete
+I (21120) LAB_SOFTAP:   -> Total Received : 51200 Bytes
+I (21120) LAB_SOFTAP: =======================================================
+I (23130) LAB_SOFTAP: =======================================================
+I (23130) LAB_SOFTAP: [TCP SERVER SESSION 10]: Client connected from 192.168.4.2:60859
+I (23250) LAB_SOFTAP: [TCP SERVER SESSION 10]: Transfer complete
+I (23250) LAB_SOFTAP:   -> Total Received : 51200 Bytes
+I (23250) LAB_SOFTAP: =======================================================
+```
+
+## Client
+```
+I (11681) CLIENT_PROFILER: =======================================================
+I (11681) CLIENT_PROFILER:  [BENCHMARK RESULT 1/10]
+I (11681) CLIENT_PROFILER:   -> Current RSSI       : -52 dBm
+I (11681) CLIENT_PROFILER:   -> Total Transferred  : 51200 Bytes
+I (11691) CLIENT_PROFILER:   -> Time Elapsed       : 0.145 Seconds
+I (11691) CLIENT_PROFILER:   -> Measured Speed     : 2822.10 Kbps
+I (11701) CLIENT_PROFILER: =======================================================
+I (13711) CLIENT_PROFILER: [ROUND 2/10]: Connecting to 192.168.4.1:8080
+I (13871) CLIENT_PROFILER: =======================================================
+I (13871) CLIENT_PROFILER:  [BENCHMARK RESULT 2/10]
+I (13871) CLIENT_PROFILER:   -> Current RSSI       : -53 dBm
+I (13871) CLIENT_PROFILER:   -> Total Transferred  : 51200 Bytes
+I (13881) CLIENT_PROFILER:   -> Time Elapsed       : 0.154 Seconds
+I (13891) CLIENT_PROFILER:   -> Measured Speed     : 2653.67 Kbps
+I (13891) CLIENT_PROFILER: =======================================================
+I (15901) CLIENT_PROFILER: [ROUND 3/10]: Connecting to 192.168.4.1:8080
+I (16051) CLIENT_PROFILER: =======================================================
+I (16051) CLIENT_PROFILER:  [BENCHMARK RESULT 3/10]
+I (16051) CLIENT_PROFILER:   -> Current RSSI       : -50 dBm
+I (16061) CLIENT_PROFILER:   -> Total Transferred  : 51200 Bytes
+I (16061) CLIENT_PROFILER:   -> Time Elapsed       : 0.145 Seconds
+I (16071) CLIENT_PROFILER:   -> Measured Speed     : 2829.16 Kbps
+I (16071) CLIENT_PROFILER: =======================================================
+I (18081) CLIENT_PROFILER: [ROUND 4/10]: Connecting to 192.168.4.1:8080
+I (18211) CLIENT_PROFILER: =======================================================
+I (18211) CLIENT_PROFILER:  [BENCHMARK RESULT 4/10]
+I (18211) CLIENT_PROFILER:   -> Current RSSI       : -46 dBm
+I (18211) CLIENT_PROFILER:   -> Total Transferred  : 51200 Bytes
+I (18221) CLIENT_PROFILER:   -> Time Elapsed       : 0.121 Seconds
+I (18231) CLIENT_PROFILER:   -> Measured Speed     : 3376.97 Kbps
+I (18231) CLIENT_PROFILER: =======================================================
+I (20241) CLIENT_PROFILER: [ROUND 5/10]: Connecting to 192.168.4.1:8080
+I (20361) CLIENT_PROFILER: =======================================================
+I (20371) CLIENT_PROFILER:  [BENCHMARK RESULT 5/10]
+I (20371) CLIENT_PROFILER:   -> Current RSSI       : -44 dBm
+I (20371) CLIENT_PROFILER:   -> Total Transferred  : 51200 Bytes
+I (20381) CLIENT_PROFILER:   -> Time Elapsed       : 0.117 Seconds
+I (20381) CLIENT_PROFILER:   -> Measured Speed     : 3504.63 Kbps
+I (20391) CLIENT_PROFILER: =======================================================
+I (22401) CLIENT_PROFILER: [ROUND 6/10]: Connecting to 192.168.4.1:8080
+I (22501) CLIENT_PROFILER: =======================================================
+I (22501) CLIENT_PROFILER:  [BENCHMARK RESULT 6/10]
+I (22501) CLIENT_PROFILER:   -> Current RSSI       : -44 dBm
+I (22511) CLIENT_PROFILER:   -> Total Transferred  : 51200 Bytes
+I (22511) CLIENT_PROFILER:   -> Time Elapsed       : 0.098 Seconds
+I (22521) CLIENT_PROFILER:   -> Measured Speed     : 4171.93 Kbps
+I (22531) CLIENT_PROFILER: =======================================================
+I (24531) CLIENT_PROFILER: [ROUND 7/10]: Connecting to 192.168.4.1:8080
+I (24651) CLIENT_PROFILER: =======================================================
+I (24651) CLIENT_PROFILER:  [BENCHMARK RESULT 7/10]
+I (24651) CLIENT_PROFILER:   -> Current RSSI       : -47 dBm
+I (24661) CLIENT_PROFILER:   -> Total Transferred  : 51200 Bytes
+I (24661) CLIENT_PROFILER:   -> Time Elapsed       : 0.117 Seconds
+I (24671) CLIENT_PROFILER:   -> Measured Speed     : 3497.24 Kbps
+I (24671) CLIENT_PROFILER: =======================================================
+I (26681) CLIENT_PROFILER: [ROUND 8/10]: Connecting to 192.168.4.1:8080
+I (26801) CLIENT_PROFILER: =======================================================
+I (26801) CLIENT_PROFILER:  [BENCHMARK RESULT 8/10]
+I (26801) CLIENT_PROFILER:   -> Current RSSI       : -48 dBm
+I (26801) CLIENT_PROFILER:   -> Total Transferred  : 51200 Bytes
+I (26811) CLIENT_PROFILER:   -> Time Elapsed       : 0.112 Seconds
+I (26811) CLIENT_PROFILER:   -> Measured Speed     : 3653.00 Kbps
+I (26821) CLIENT_PROFILER: =======================================================
+I (28831) CLIENT_PROFILER: [ROUND 9/10]: Connecting to 192.168.4.1:8080
+I (29021) CLIENT_PROFILER: =======================================================
+I (29021) CLIENT_PROFILER:  [BENCHMARK RESULT 9/10]
+I (29031) CLIENT_PROFILER:   -> Current RSSI       : -47 dBm
+I (29031) CLIENT_PROFILER:   -> Total Transferred  : 51200 Bytes
+I (29041) CLIENT_PROFILER:   -> Time Elapsed       : 0.183 Seconds
+I (29041) CLIENT_PROFILER:   -> Measured Speed     : 2241.31 Kbps
+I (29051) CLIENT_PROFILER: =======================================================
+I (31061) CLIENT_PROFILER: [ROUND 10/10]: Connecting to 192.168.4.1:8080
+I (31181) CLIENT_PROFILER: =======================================================
+I (31181) CLIENT_PROFILER:  [BENCHMARK RESULT 10/10]
+I (31181) CLIENT_PROFILER:   -> Current RSSI       : -48 dBm
+I (31191) CLIENT_PROFILER:   -> Total Transferred  : 51200 Bytes
+I (31191) CLIENT_PROFILER:   -> Time Elapsed       : 0.115 Seconds
+I (31201) CLIENT_PROFILER:   -> Measured Speed     : 3577.04 Kbps
+I (31201) CLIENT_PROFILER: =======================================================
+I (33211) CLIENT_PROFILER: All benchmark rounds completed
 ```
