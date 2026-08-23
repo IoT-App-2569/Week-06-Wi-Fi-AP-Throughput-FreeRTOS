@@ -174,73 +174,23 @@ void app_main(void) {
 ## 7. คำถามท้ายการทดลอง (Post-Lab Questions)
 
 1. เหตุใดการใช้ **FreeRTOS Queue** จึงมีความปลอดภัย (Thread-Safe) มากกว่าการใช้ตัวแปรแบบ Global ในการรับส่งข้อมูลระหว่างสอง Task?
+```
+Queue มีกลไก mutual exclusion ในตัวอยู่แล้ว ทำให้การอ่าน เขียนข้อมูลระหว่าง 2 Task เกิดขึ้นแบบอะตอมิก ไม่มีทาง race condition หรือข้อมูลถูกเขียนทับกลางคัน ต่างจาก Global Variable ที่ถ้า Task หนึ่งกำลังเขียนอยู่แล้วอีก Task แย่ง context switch เข้ามาอ่านพร้อมกัน จะได้ข้อมูลครึ่งเก่าครึ่งใหม่ นอกจาก Queue ยังมี buffer รองรับให้ Task ที่ผลิตข้อมูลเร็วกว่าไม่ต้องรอ Task ที่บริโภคช้ากว่าทันที
+```
 2. ค่า **Stack High Water Mark** มีประโยชน์อย่างไรในการตรวจวินิจฉัยปัญหาบั๊กในระบบเรียลไทม์ (RTOS)?
+```
+ใช้เป็นตัวชี้วัดว่า Task นั้นเคยใช้ Stack ไปมากที่สุดกี่ byte ตลอดการทำงาน ถ้าค่าที่เหลือ ใกล้ 0 หรือติดลบ = สัญญาณเตือนล่วงหน้าของ Stack Overflow ซึ่งเป็นสาเหตุคลาสสิกของอาการค้างหรือ รีเซ็ตแบบสุ่มใน RTOS ที่ debug ยากมากถ้าไม่มีค่านี้ จึงใช้ปรับขนาด Stack ให้พอดี ไม่มากเกินจนเปลือง RAM ไม่น้อยเกินจนเต็ม
+```
 3. หาก `vSensorTask` ส่งข้อมูลเร็วมาก (เช่น ทุก 10ms) แต่ `vNetworkTask` ส่งข้อมูลออก Wi-Fi ได้ช้า (เช่น ใช้เวลา 500ms) จะเกิดอะไรขึ้นกับ Queue และระบบจะรับมืออย่างไร?
+```
+Queue จะเริ่มเต็ม เพราะ Sensor Task สร้างข้อมูลเร็วกว่า Network Task ใช้มากเมื่อ Queue เต็ม พฤติกรรมขึ้นกับการเรียกใช้ xQueueSend()
+ถ้าตั้ง timeout ไว้  Sensor Task จะ block รอจนกว่าจะมีที่ว่าง ทำให้ Sensor Task ทำงานช้าลงตาม Network Task ไปด้วย ถ้าไม่รอ ข้อมูลที่ส่งไม่ทันจะสูญหาย ไม่ถูกเก็บ
+
+วิธีเเก้คือเพิ่มขนาด Queue ให้รองรับ burst ได้ระดับหนึ่ง ใช้ overwrite ค่าล่าสุด ถ้าสนใจแค่ค่าปัจจุบัน ไม่สนใจค่าเก่าหรือปรับให้ Network Task ทำงานเร็วขึ้น ลดความถี่การส่งของ Sensor Task ลงให้สมดุลกัน
+```
 
 ### Log 
 ```
-ittikorntongsima@Sloth lab3 %  idf.py flash monitor
-
-Adding "flash"'s dependency "all" to list of commands with default set of options.
-Executing action: all (aliases: build)
-Running ninja in directory /Users/ittikorntongsima/Store/KMITl/IOT/term1/WEEK8/lab3/build
-Executing "ninja all"...
-[1/4] cd /Users/ittikorntongsima/Store/KMITl/IOT/term1/WEEK8/lab3/b...rs/ittikorntongsima/Store/KMITl/IOT/term1/WEEK8/lab3/build/lab3.bin
-lab3.bin binary size 0x22a90 bytes. Smallest app partition is 0x100000 bytes. 0xdd570 bytes (86%) free.
-[1/1] cd /Users/ittikorntongsima/Store/KMITl/IOT/term1/WEEK8/lab3/b...ma/Store/KMITl/IOT/term1/WEEK8/lab3/build/bootloader/bootloader.bin
-Bootloader binary size 0x6610 bytes. 0x9f0 bytes (9%) free.
-[4/4] Completed 'bootloader'Executing action: flash
-Serial port /dev/cu.usbserial-0001:
-Connecting....
-Detecting chip type... ESP32
-Running ninja in directory /Users/ittikorntongsima/Store/KMITl/IOT/term1/WEEK8/lab3/build
-Executing "ninja flash"...
-[1/5] cd /Users/ittikorntongsima/Store/KMITl/IOT/term1/WEEK8/lab3/build && /Users/ittikorntongsima/.espressif/python_env/idf6.1_py3.14_env/bin/python /Users/ittikorntongsima/My-Library/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 partition --type app /Users/ittikorntongsima/Store/KMITl/IOT/term1/WEEK8/lab3/build/partition_table/partition-table.bin /Users/ittikorntongsima/Store/KMITl/IOT/term1/WEEK8/lab3/build/lab3.bin
-lab3.bin binary size 0x22a90 bytes. Smallest app partition is 0x100000 bytes. 0xdd570 bytes (86%) free.
-[2/5] Performing build step for 'bootloader'
-[1/1] cd /Users/ittikorntongsima/Store/KMITl/IOT/term1/WEEK8/lab3/build/bootloader && /Users/ittikorntongsima/.espressif/python_env/idf6.1_py3.14_env/bin/python /Users/ittikorntongsima/My-Library/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 bootloader 0x1000 /Users/ittikorntongsima/Store/KMITl/IOT/term1/WEEK8/lab3/build/bootloader/bootloader.bin
-Bootloader binary size 0x6610 bytes. 0x9f0 bytes (9%) free.
-[3/5] No install step for 'bootloader'
-[4/5] Completed 'bootloader'
-[4/5] Running utility command for flash
-esptool --chip esp32 -p /dev/cu.usbserial-0001 -b 460800 --before=default-reset --after=hard-reset write-flash --flash-mode dio --flash-freq 40m --flash-size 2MB 0x1000 bootloader/bootloader.bin 0x8000 partition_table/partition-table.bin 0x10000 lab3.bin
-esptool v5.3.dev1
-Connected to ESP32 on /dev/cu.usbserial-0001:
-Chip type:          ESP32-D0WD-V3 (revision v3.1)
-Features:           Wi-Fi, BT, Dual Core + LP Core, 240MHz, Vref calibration in eFuse, Coding Scheme None
-Crystal frequency:  40MHz
-MAC:                8c:94:df:45:93:e4
-
-Stub flasher running.
-Changing baud rate to 460800...
-Changed.
-
-Configuring flash size...
-
-Writing 'bootloader/bootloader.bin' at 0x00001000...
-SHA digest in image updated.
-Flash will be erased from 0x00001000 to 0x00007fff...
-Wrote 26128 bytes (16592 compressed) at 0x00001000 in 0.9 seconds (230.4 kbit/s).
-Hash of data verified.
-
-Writing 'partition_table/partition-table.bin' at 0x00008000...
-Flash will be erased from 0x00008000 to 0x00008fff...
-Wrote 3072 bytes (103 compressed) at 0x00008000 in 0.1 seconds (314.2 kbit/s).
-Hash of data verified.
-
-Writing 'lab3.bin' at 0x00010000...
-Flash will be erased from 0x00010000 to 0x00032fff...
-Wrote 141968 bytes (80966 compressed) at 0x00010000 in 2.1 seconds (539.0 kbit/s).
-Hash of data verified.
-
-Hard resetting via RTS pin...
-Executing action: monitor
-Running idf_monitor in directory /Users/ittikorntongsima/Store/KMITl/IOT/term1/WEEK8/lab3
-Executing "/Users/ittikorntongsima/.espressif/python_env/idf6.1_py3.14_env/bin/python /Users/ittikorntongsima/My-Library/esp-idf/tools/idf_monitor.py -p /dev/cu.usbserial-0001 -b 115200 --toolchain-prefix xtensa-esp32-elf- --target esp32 --revision 0 /Users/ittikorntongsima/Store/KMITl/IOT/term1/WEEK8/lab3/build/lab3.elf /Users/ittikorntongsima/Store/KMITl/IOT/term1/WEEK8/lab3/build/bootloader/bootloader.elf -m '/Users/ittikorntongsima/.espressif/python_env/idf6.1_py3.14_env/bin/python' '/Users/ittikorntongsima/My-Library/esp-idf/tools/idf.py'"...
---- esp-idf-monitor 1.9.0 on /dev/cu.usbserial-0001 115200
---- Quit: Ctrl+] | Menu: Ctrl+T | Help: Ctrl+T followed by Ctrl+H
-J (148) boot: Disabling RN�ets Jul 29 2019 12:21:46
-
 rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
 configsip: 0, SPIWP:0xee
 clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
