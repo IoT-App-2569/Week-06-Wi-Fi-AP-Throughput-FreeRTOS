@@ -185,8 +185,8 @@ void app_main(void) {
 
 | ลำดับที่ | ชื่อสมาร์ตโฟน / MAC Address | ระดับ RSSI (dBm) | ระยะทางประเมิน (Near/Far) | ผลการลงชื่อ (Passed/Rejected) |
 | :---: | :--- | :---: | :---: | :---: |
-| **1** | | | | |
-| **2** | | | | |
+| **1** |B6:42:F6:1E:E6:07 | -45 dBm| NEAR (Valid)|Passed |
+| **2** |06:EF:A5:A9:F3:72| -45 dBm|NEAR (Valid) |Passed |
 
 ---
 
