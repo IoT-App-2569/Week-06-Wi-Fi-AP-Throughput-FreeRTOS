@@ -17,7 +17,7 @@
 
 static const char *TAG = "CLIENT_PROFILER";
 
-#define AP_SSID            "MY_ESP32_AP"
+#define AP_SSID            "ESP32_AP_0311"
 #define AP_PASS            "12345678"
 #define SERVER_IP          "192.168.4.1"
 #define SERVER_PORT        8080
