@@ -76,15 +76,27 @@ sequenceDiagram
 3. คำนวณค่า **$R^2$ (Coefficient of Determination)** เพื่อประเมินความแม่นยำของสมการ
 4. ระบุจุด **Threshold RSSI (dBm)** ที่ความเร็วเริ่มลดลงมากกว่า 50% จากระดับสูงสุด
 
+<img width="741" height="477" alt="image" src="https://github.com/user-attachments/assets/b1cbd364-8c48-47d3-9ed9-facb26549969" />
+
 ---
 
 ## 7. คำถามท้ายการทดลอง (Post-Lab Questions)
 
 1. เมื่อลดระดับ Tx Power ลงจาก 20 dBm เหลือ 2 dBm ค่า RSSI ลดลงกี่ dBm และส่งผลต่อความเร็ว Throughput อย่างไร?
+```
+ค่า RSSI เพิ่มขึ้นจาก -53.2 เป็น -47.9 ซึ่งเพิ่มขึ้นมา 5.3 ความเร็วที่วัดได้ Throughput เพิ่มขึ้นมา -2,101.79
+```
 2. เหตุใดในระดับ RSSI ที่อ่อนกว่า `-80 dBm` ความเร็ว Throughput ถึงตกลงอย่างกะทันหันในโปรโตคอล TCP?
+```
+PHY layer ปรับ Modulation ลงเมื่อสัญญาณอ่อนมาก Wi-Fi driver จะลด modulation scheme ลงอัตโนมัติ เพื่อรักษาความถูกต้องของข้อมูล แลกกับ raw bitrate ที่ลดลงมาก
+TCP Retransmission/Congestion Control  ที่ RSSI ต่ำมาก Bit Error Rate สูงขึ้นมาก ทำให้ packet loss สูง TCP จะตีความว่ามี congestion แล้วลด window size ลงอัตโนมัติ ยิ่งลด throughput ซ้ำเข้าไปอีกชั้น  เป็นเหตุผลที่กราฟ RSSI vs Throughput มักมี จุดหักเห ชัดเจนแถว -70 ถึง -80 dBm ไม่ใช่ค่อย ๆ ลาดลงเรื่อย ๆ
+```
 3. สมการ Regression ที่ได้จากการทดลองสามารถนำไปประยุกต์ใช้ทำนายคุณภาพการเชื่อมต่อในแอปพลิเคชัน IoT ได้อย่างไร?
-
-
+```
+    - Adaptive Data Rate อุปกรณ์ปลายทางอ่านค่า RSSI แล้วคำนวณ throughput ที่คาดว่าจะได้ล่วงหน้า เพื่อตัดสินใจว่าจะส่งข้อมูลขนาดใหญ่  หรือส่งแค่ข้อมูล sensor เล็ก ๆ ตอนนั้น
+    - Predictive Handover/Reconnect ถ้าทำนายว่า Throughput กำลังจะตกต่ำกว่าเกณฑ์ที่ยอมรับได้ ระบบสามารถเตือนผู้ใช้ให้ขยับตำแหน่งอุปกรณ์ หรือสลับไปใช้ AP ตัวอื่นก่อนที่การเชื่อมต่อจะหลุดจริง
+    - QoS-aware Buffering ปรับขนาด Queue/Buffer ของระบบ ให้ใหญ่ขึ้นล่วงหน้าเมื่อ RSSI มีแนวโน้มอ่อนลง เพื่อรองรับ throughput ที่จะลดลง โดยไม่ทำให้ sensor data สูญหาย
+```
 ---
 
 ตัวอย่าง output log ฝั่ง AP
