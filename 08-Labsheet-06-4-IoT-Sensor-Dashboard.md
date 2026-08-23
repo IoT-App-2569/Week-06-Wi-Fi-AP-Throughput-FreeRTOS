@@ -131,3 +131,5 @@ xSemaphoreGive(mutex)           xSemaphoreGive(mutex)
 | `xSemaphoreCreateMutex()`                  | สร้าง Mutex สำหรับป้องกัน Race Condition     |
 | `xSemaphoreTake(mutex, ticks)`             | Lock Mutex ก่อนอ่าน/เขียน Shared Data        |
 | `xSemaphoreGive(mutex)`                    | Unlock Mutex หลังเสร็จ                       |
+
+<img width="1080" height="810" alt="IMG_0038" src="https://github.com/user-attachments/assets/63f0e9c8-8bda-4d3e-ae8b-adf41fe8bf1a" />
