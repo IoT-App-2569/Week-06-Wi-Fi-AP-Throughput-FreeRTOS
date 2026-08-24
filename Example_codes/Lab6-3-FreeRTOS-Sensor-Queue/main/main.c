@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <inttypes.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/queue.h"
@@ -26,9 +27,9 @@ void vSensorTask(void *pvParameters) {
         data.temperature = 25.0f + (esp_random() % 100) / 10.0f;
         data.humidity = 50.0f + (esp_random() % 200) / 10.0f;
         data.light_lux = 200 + (esp_random() % 500);
-        data.timestamp_ms = xTaskGetTickCount() * portTICK_PERIOD_MS;
+        data.timestamp_ms = pdTICKS_TO_MS(xTaskGetTickCount());
 
-        ESP_LOGI(TAG, "[SENSOR TASK]: Pushing Data -> Temp: %.1f C, Hum: %.1f %%, Lux: %ld",
+        ESP_LOGI(TAG, "[SENSOR TASK]: Pushing Data -> Temp: %.1f C, Hum: %.1f %%, Lux: %" PRIu32,
                  data.temperature, data.humidity, data.light_lux);
 
         if (xQueueSend(xSensorQueue, &data, pdMS_TO_TICKS(100)) != pdPASS) {
@@ -37,7 +38,7 @@ void vSensorTask(void *pvParameters) {
 
         UBaseType_t hwm = uxTaskGetStackHighWaterMark(NULL);
         ESP_LOGI("FORENSIC_STACK", "  -> SensorTask Stack Remaining: %u words (%u bytes)",
-                 hwm, hwm * sizeof(StackType_t));
+                 (unsigned int)hwm, (unsigned int)(hwm * sizeof(StackType_t)));
 
         vTaskDelay(pdMS_TO_TICKS(1500));
     }
@@ -51,17 +52,17 @@ void vNetworkTask(void *pvParameters) {
         if (xQueueReceive(xSensorQueue, &rx_data, portMAX_DELAY) == pdTRUE) {
             ESP_LOGI(TAG, "=======================================================");
             ESP_LOGI(TAG, "[NETWORK TASK]: Data Received from Queue!");
-            ESP_LOGI(TAG, "  -> Timestamp   : %ld ms", rx_data.timestamp_ms);
+            ESP_LOGI(TAG, "  -> Timestamp   : %" PRIu32 " ms", rx_data.timestamp_ms);
             ESP_LOGI(TAG, "  -> Temperature : %.2f degC", rx_data.temperature);
             ESP_LOGI(TAG, "  -> Humidity    : %.2f %%", rx_data.humidity);
-            ESP_LOGI(TAG, "  -> Light Lux   : %ld lux", rx_data.light_lux);
+            ESP_LOGI(TAG, "  -> Light Lux   : %" PRIu32 " lux", rx_data.light_lux);
             ESP_LOGI(TAG, "[NETWORK TASK]: Preparing JSON Packet for Wi-Fi Transmission...");
             ESP_LOGI(TAG, "=======================================================");
         }
 
         UBaseType_t hwm = uxTaskGetStackHighWaterMark(NULL);
         ESP_LOGI("FORENSIC_STACK", "  -> NetworkTask Stack Remaining: %u words (%u bytes)",
-                 hwm, hwm * sizeof(StackType_t));
+                 (unsigned int)hwm, (unsigned int)(hwm * sizeof(StackType_t)));
     }
 }
 
