@@ -94,11 +94,12 @@ sequenceDiagram
 กลไก TCP Congestion Control: เมื่อแพ็กเกจสูญหายและเกิด Timeout ฝั่งส่งจะตีความว่าเป็นปัญหาเครือข่ายแออัด (Congestion) โปรโตคอล TCP จึงสั่งลดขนาด Congestion Window (CWND) ลงอย่างรวดเร็ว พร้อมทั้งเพิ่มเวลาหน่วงในการส่งซ้ำ (Exponential Backoff) ทำให้ค่า Throughput สุทธิร่วงลงรุนแรงกว่าการเชื่อมต่อแบบ UDP
 
 
-
-
-
 3. สมการ Regression ที่ได้จากการทดลองสามารถนำไปประยุกต์ใช้ทำนายคุณภาพการเชื่อมต่อในแอปพลิเคชัน IoT ได้อย่างไร?
+Dynamic Payload & Adaptive Rate: เฟิร์มแวร์ IoT สามารถอ่านค่า RSSI แล้วนำเข้าสมการ Regression เพื่อประเมิน Throughput ที่เหลืออยู่ หากพบว่าแบนด์วิดท์เริ่มไม่พอ ระบบสามารถสั่งบีบอัดข้อมูล (Data Compression) หรือขยายช่วงเวลาส่งข้อมูล (Reporting Interval) ล่วงหน้า
 
+Predictive Roaming / Handover: กำหนดจุด Threshold จากสมการ เช่น หาก RSSI ดิ่งลงถึงระดับที่ Throughput ตกเกิน 50% ให้สั่งให้อุปกรณ์เริ่มมองหา SoftAP ตัวใหม่ทันที ก่อนที่ TCP Session จะตัดขาด
+
+Smart Power Saving: ควบคุมการปรับกำลังส่ง (esp_wifi_set_max_tx_power) แบบอัตโนมัติ ให้ใช้พลังงานต่ำที่สุดที่ยังรักษาระดับ Throughput ตามที่แอปพลิเคชันต้องการได้ ช่วยยืดอายุแบตเตอรี่ในอุปกรณ์ IoT
 
 ---
 
