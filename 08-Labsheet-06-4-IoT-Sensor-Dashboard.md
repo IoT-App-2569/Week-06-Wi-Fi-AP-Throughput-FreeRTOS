@@ -111,6 +111,7 @@ xSemaphoreGive(mutex)           xSemaphoreGive(mutex)
 ```
 
 ---
+<img width="1215" height="746" alt="image" src="https://github.com/user-attachments/assets/8567db67-e7a7-4190-8748-3613cf3e872b" />
 
 ## 8. คำถามท้ายการทดลอง (Post-Lab Questions)
 
