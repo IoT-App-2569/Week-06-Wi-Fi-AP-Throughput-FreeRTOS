@@ -81,29 +81,38 @@ classDiagram
 
 | อุปกรณ์ที่ใช้ทดสอบ (เช่น iPhone/Android) | MAC Address ที่ดักจับได้ | Association ID (AID) | หมายเลข IP Address ที่ได้ (ถ้าทราบ) |
 | :--------------------------------------- | :----------------------- | :------------------: | :---------------------------------: |
-| **อุปกรณ์ที่ 1**                         |                          |                      |                                     |
-| **อุปกรณ์ที่ 2**                         |                          |                      |                                     |
+| **อุปกรณ์ที่ 1**                         |       3E:94:70:68:EA:01     |           1           |                192.168.4.2                     |
+| **อุปกรณ์ที่ 2**                         |      02:E9:5E:47:4D:31        |          2          |                  192.168.4.3                   |
 
 ---
 
 ## 7. คำถามท้ายการทดลอง (Post-Lab Questions)
 
 1. เหตุใด IP Address เริ่มต้นของ ESP32 SoftAP จึงเป็น `192.168.4.1` และ DHCP Server บน ESP32 เริ่มแจกจ่าย IP ที่หมายเลขใด?
+   
+   **ตอบ**  เพราะหมายเลข 192.168.4.1 เป็นค่า IP เริ่มต้น (Default IP) ที่กำหนดมาในไลบรารีของ ESP-IDF สำหรับโครงข่ายแบบ SoftAP
+   และ DHCP Server บน ESP32 เริ่มแจกจ่าย IP ที่หมายเลข 192.168.4.2
+   
 2. สมาชิกตัวแปร `mac` ในโครงสร้าง `wifi_event_ap_staconnected_t` สามารถนำไปประยุกต์ใช้ทำระบบความปลอดภัยขั้นสูง (เช่น MAC Filtering) ได้อย่างไร?
+   
+   **ตอบ** ตัวแปร mac จะเก็บข้อมูล MAC Address (BSSID) ของอุปกรณ์ที่พยายามเชื่อมต่อเข้ามาใน Event WIFI_EVENT_AP_STACONNECTED
+   ซึ่งสามารถนำค่า MAC Address นี้ไปตรวจสอบกับรายชื่อที่อนุญาต (Whitelist) ในโค้ดโปรแกรมได้ หากพบว่า MAC Address ของอุปกรณ์นั้นไม่ตรงกับรายชื่อที่บันทึกไว้ ระบบสามารถสั่งตัดการเชื่อมต่ออุปกรณ์นั้นออกไปได้ทันที เพื่อป้องกันผู้บุกรุก
+   
 3. หากมี Client พยายามเชื่อมต่อเป็นเครื่องที่ 5 (เกินค่า `max_connection = 4`) จะเกิดเหตุการณ์ใดขึ้นในระดับสัญญาณวิทยุ?
-
+   
+    **ตอบ** หากมีอุปกรณ์ลูกข่ายเครื่องที่ 5 พยายามเข้ามาเชื่อมต่อ บอร์ด ESP32 จะทำการปฏิเสธการเชื่อมต่อในระดับสัญญาณวิทยุของอุปกรณ์นั้นทันที ทำให้อุปกรณ์เครื่องที่ 5 ไม่สามารถเชื่อมต่อ Wi-Fi และไม่ได้รับ IP Address ได้
 
 ---
 
-ตัวอย่าง output log
-
+**ผล output log จากการทดลอง**
 ```
-entry 0x40080644
---- 0x40080644: call_start_cpu0 at C:/Users/koson/esp/v5.5.1/esp-idf/components/bootloader/subproject/main/bootloader_start.c:28
-I (27) boot: ESP-IDF v6.1-beta1-685-g6a9c44fe7e7 2nd stage bootloader
-I (27) boot: compile time Aug  9 2026 16:16:02
-I (28) boot: Multicore bootloader
-I (31) boot: chip revision: v3.0
+--- 0x40080400: _invalid_pc_placeholder at C:/Users/Rusneeda/esp/v5.5.1/esp-idf/components/xtensa/xtensa_vectors.S:2235
+entry 0x40080638
+--- 0x40080638: call_start_cpu0 at C:/Users/Rusneeda/esp/v5.5.1/esp-idf/components/bootloader/subproject/main/bootloader_start.c:25
+I (29) boot: ESP-IDF v5.5.1 2nd stage bootloader
+I (29) boot: compile time Aug 30 2026 17:09:36
+I (29) boot: Multicore bootloader
+I (31) boot: chip revision: v3.1
 I (33) boot.esp32: SPI Speed      : 40MHz
 I (37) boot.esp32: SPI Mode       : DIO
 I (41) boot.esp32: SPI Flash Size : 2MB
@@ -114,80 +123,100 @@ I (58) boot:  0 nvs              WiFi data        01 02 00009000 00006000
 I (64) boot:  1 phy_init         RF data          01 01 0000f000 00001000
 I (71) boot:  2 factory          factory app      00 00 00010000 00100000
 I (77) boot: End of partition table
-I (81) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=1b154h (110932) map
-I (128) esp_image: segment 1: paddr=0002b17c vaddr=3ffb0000 size=04a0ch ( 18956) load
-I (135) esp_image: segment 2: paddr=0002fb90 vaddr=40080000 size=00488h (  1160) load
-I (136) esp_image: segment 3: paddr=00030020 vaddr=400d0020 size=8fa68h (588392) map
-I (351) esp_image: segment 4: paddr=000bfa90 vaddr=40080488 size=17b5ch ( 97116) load
-I (391) esp_image: segment 5: paddr=000d75f4 vaddr=50000000 size=00028h (    40) load
-I (403) boot: Loaded app from partition at offset 0x10000
-I (403) boot: Disabling RNG early entropy source...
-I (414) cpu_start: Multicore app
-I (422) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
-I (422) cpu_start: Pro cpu start user code
-I (422) cpu_start: cpu freq: 160000000 Hz
-I (424) app_init: Application information:
-I (428) app_init: Project name:     wifi_softap_tracking
-I (433) app_init: App version:      1
-I (436) app_init: Compile time:     Aug  9 2026 16:16:41
-I (441) app_init: ELF file SHA256:  c617ced60...
---- Warning: Checksum mismatch between flashed and built applications. Checksum of built application is 968d1fc34c0226e0c39f04a5ed8b482138f54cdf061866029782361dfd7bb4db
-I (446) app_init: ESP-IDF:          v6.1-beta1-685-g6a9c44fe7e7
-I (451) efuse_init: Min chip rev:     v0.0
-I (455) efuse_init: Max chip rev:     v3.99
-I (459) efuse_init: Chip rev:         v3.0
-I (463) heap_init: Initializing. RAM available for dynamic allocation:
-I (469) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
-I (474) heap_init: At 3FFB9528 len 00026AD8 (154 KiB): DRAM
-I (480) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
-I (485) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
-I (490) heap_init: At 40097FE4 len 0000801C (32 KiB): IRAM
-I (497) spi_flash: detected chip: generic
-I (499) spi_flash: flash io: dio
-W (502) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
-I (516) main_task: Started on CPU0
-I (516) main_task: Calling app_main()
-I (516) LAB_SOFTAP: [FORENSIC]: Call nvs_flash_init()
-I (556) LAB_SOFTAP: [FORENSIC]: Call esp_netif_init()
-I (556) LAB_SOFTAP: [FORENSIC]: Call esp_event_loop_create_default()
-I (556) LAB_SOFTAP: [FORENSIC]: Call esp_netif_create_default_wifi_ap()
-I (566) LAB_SOFTAP: [FORENSIC]: SoftAP Interface created at 0x3ffbf360 (Default IP: 192.168.4.1)
-I (576) LAB_SOFTAP: [FORENSIC]: Call esp_wifi_init(&cfg)
-I (586) wifi:wifi driver task: 3ffc1ae4, prio:23, stack:6656, core=0
-I (606) wifi:wifi firmware version: e12a754
-I (606) wifi:wifi certification version: v7.0
-I (606) wifi:config NVS flash: enabled
-I (606) wifi:config nano formatting: disabled
-I (606) wifi:Init data frame dynamic rx buffer num: 32
-I (616) wifi:Init static rx mgmt buffer num: 5
-I (616) wifi:Init management short buffer num: 32
-I (616) wifi:Init dynamic tx buffer num: 32
-I (626) wifi:Init static rx buffer size: 1600
-I (626) wifi:Init static rx buffer num: 10
-I (636) wifi:Init dynamic rx buffer num: 32
-I (636) wifi_init: rx ba win: 6
-I (636) wifi_init: accept mbox: 6
-I (646) wifi_init: tcpip mbox: 32
-I (646) wifi_init: udp mbox: 6
-I (646) wifi_init: tcp mbox: 6
-I (646) wifi_init: tcp tx win: 5760
-I (656) wifi_init: tcp rx win: 5760
-I (656) wifi_init: tcp mss: 1440
-I (656) wifi_init: WiFi IRAM OP enabled
-I (666) wifi_init: WiFi RX IRAM OP enabled
-I (666) LAB_SOFTAP: [FORENSIC]: Call esp_event_handler_instance_register(WIFI_EVENT)
-I (676) LAB_SOFTAP: [FORENSIC]: Call esp_wifi_set_mode(WIFI_MODE_AP)
-I (686) LAB_SOFTAP: [FORENSIC]: Call esp_wifi_set_config(WIFI_IF_AP, &wifi_config)
-I (696) LAB_SOFTAP: [FORENSIC]: Call esp_wifi_start()
-I (696) phy_init: phy_version 4863,a3a4459,Oct 28 2025,14:30:06
-I (766) wifi:mode : softAP (94:b5:55:f2:60:0d)
-I (776) wifi:Total power save buffer number: 16
-I (776) wifi:Init max length of beacon: 752/752
-I (776) wifi:Init max length of beacon: 752/752
-I (776) LAB_SOFTAP: ==================================================================
-I (786) esp_netif_lwip: DHCP server started on interface WIFI_AP_DEF with IP: 192.168.4.1
-I (796) LAB_SOFTAP:   ESP32 SoftAP Running! SSID: "MY_ESP32_AP", Channel: 1
-I (806) LAB_SOFTAP: ==================================================================
-I (806) LAB_SOFTAP: [TCP SERVER]: Listening on 192.168.4.1:8080
-I (816) main_task: Returned from app_main()
+I (81) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=19a68h (105064) map
+I (124) esp_image: segment 1: paddr=00029a90 vaddr=3ffb0000 size=03eech ( 16108) load
+I (130) esp_image: segment 2: paddr=0002d984 vaddr=40080000 size=02694h (  9876) load
+I (134) esp_image: segment 3: paddr=00030020 vaddr=400d0020 size=87d80h (556416) map
+I (325) esp_image: segment 4: paddr=000b7da8 vaddr=40082694 size=15778h ( 87928) load
+I (360) esp_image: segment 5: paddr=000cd528 vaddr=50000000 size=00020h (    32) load
+I (372) boot: Loaded app from partition at offset 0x10000
+I (372) boot: Disabling RNG early entropy source...
+I (382) cpu_start: Multicore app
+I (391) cpu_start: Pro cpu start user code
+I (391) cpu_start: cpu freq: 160000000 Hz
+I (391) app_init: Application information:
+I (391) app_init: Project name:     lab1
+I (394) app_init: App version:      1
+I (398) app_init: Compile time:     Aug 30 2026 17:08:48
+I (403) app_init: ELF file SHA256:  d503754f9...
+I (407) app_init: ESP-IDF:          v5.5.1
+I (411) efuse_init: Min chip rev:     v0.0
+I (415) efuse_init: Max chip rev:     v3.99 
+I (419) efuse_init: Chip rev:         v3.1
+I (423) heap_init: Initializing. RAM available for dynamic allocation:
+I (429) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (434) heap_init: At 3FFB7FC8 len 00028038 (160 KiB): DRAM
+I (439) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (445) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (450) heap_init: At 40097E0C len 000081F4 (32 KiB): IRAM
+W (457) spi_flash: Detected boya flash chip but using generic driver. For optimal functionality, enable `SPI_FLASH_SUPPORT_BOYA_CHIP` in menuconfig
+I (469) spi_flash: detected chip: generic
+I (472) spi_flash: flash io: dio
+W (475) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (488) main_task: Started on CPU0
+I (498) main_task: Calling app_main()
+I (498) LAB_SOFTAP: [FORENSIC]: Call nvs_flash_init()
+I (518) LAB_SOFTAP: [FORENSIC]: Call esp_netif_init()
+I (518) LAB_SOFTAP: [FORENSIC]: Call esp_event_loop_create_default()
+I (518) LAB_SOFTAP: [FORENSIC]: Call esp_netif_create_default_wifi_ap()
+I (528) LAB_SOFTAP: [FORENSIC]: SoftAP Interface created at 0x3ffbd700 (Default IP: 192.168.4.1)
+I (528) LAB_SOFTAP: [FORENSIC]: Call esp_wifi_init(&cfg)
+I (548) wifi:wifi driver task: 3ffbfe40, prio:23, stack:6656, core=0
+I (548) wifi:wifi firmware version: 14da9b7
+I (548) wifi:wifi certification version: v7.0
+I (558) wifi:config NVS flash: enabled
+I (558) wifi:config nano formatting: disabled
+I (558) wifi:Init data frame dynamic rx buffer num: 32
+I (568) wifi:Init static rx mgmt buffer num: 5
+I (568) wifi:Init management short buffer num: 32
+I (568) wifi:Init dynamic tx buffer num: 32
+I (578) wifi:Init static rx buffer size: 1600
+I (578) wifi:Init static rx buffer num: 10
+I (588) wifi:Init dynamic rx buffer num: 32
+I (588) wifi_init: rx ba win: 6
+I (588) wifi_init: accept mbox: 6
+I (598) wifi_init: tcpip mbox: 32
+I (598) wifi_init: udp mbox: 6
+I (598) wifi_init: tcp mbox: 6
+I (598) wifi_init: tcp tx win: 5760
+I (608) wifi_init: tcp rx win: 5760
+I (608) wifi_init: tcp mss: 1440
+I (608) wifi_init: WiFi IRAM OP enabled
+I (618) wifi_init: WiFi RX IRAM OP enabled
+I (618) LAB_SOFTAP: [FORENSIC]: Call esp_event_handler_instance_register(WIFI_EVENT)
+I (628) LAB_SOFTAP: [FORENSIC]: Call esp_wifi_set_mode(WIFI_MODE_AP)
+I (638) LAB_SOFTAP: [FORENSIC]: Call esp_wifi_set_config(WIFI_IF_AP, &wifi_config)
+I (898) LAB_SOFTAP: [FORENSIC]: Call esp_wifi_start()
+I (898) phy_init: phy_version 4861,b71b5ad,Aug  5 2025,11:16:06
+I (978) phy_init: Saving new calibration data due to checksum failure or outdated calibration data, mode(0)
+I (1008) wifi:mode : softAP (14:08:08:a5:50:c5)
+I (1018) wifi:Total power save buffer number: 16
+I (1018) wifi:Init max length of beacon: 752/752
+I (1018) wifi:Init max length of beacon: 752/752
+I (1018) LAB_SOFTAP: ==================================================================
+I (1018) esp_netif_lwip: DHCP server started on interface WIFI_AP_DEF with IP: 192.168.4.1
+I (1038) LAB_SOFTAP:   ESP32 SoftAP Running! SSID: "ESP32_AP_0195", Channel: 1
+I (1038) LAB_SOFTAP: ==================================================================
+I (1048) LAB_SOFTAP: [TCP SERVER]: Listening on 192.168.4.1:8080
+I (1058) main_task: Returned from app_main()
+I (52948) wifi:new:<1,0>, old:<1,1>, ap:<1,1>, sta:<255,255>, prof:1, snd_ch_cfg:0x0
+I (52948) wifi:station: 3e:94:70:68:ea:01 join, AID=1, bgn, 20
+I (52968) LAB_SOFTAP: =======================================================
+I (52968) LAB_SOFTAP: [FORENSIC EVENT]: Client Connected to ESP32 SoftAP!
+I (52968) LAB_SOFTAP:   -> Client MAC Address : 3E:94:70:68:EA:01
+I (52978) LAB_SOFTAP:   -> Assigned AID       : 1
+I (52978) LAB_SOFTAP: =======================================================
+I (53118) esp_netif_lwip: DHCP server assigned IP to a client, IP is: 192.168.4.2
+I (53578) wifi:<ba-add>idx:2 (ifx:1, 3e:94:70:68:ea:01), tid:0, ssn:17, winSize:64
+I (93918) wifi:<ba-add>idx:3 (ifx:1, 3e:94:70:68:ea:01), tid:6, ssn:16, winSize:64
+I (138018) wifi:new:<1,0>, old:<1,0>, ap:<1,0>, sta:<255,255>, prof:1, snd_ch_cfg:0x0
+I (138018) wifi:station: 02:e9:5e:47:4d:31 join, AID=2, bgn, 20
+I (138038) LAB_SOFTAP: =======================================================
+I (138038) LAB_SOFTAP: [FORENSIC EVENT]: Client Connected to ESP32 SoftAP!
+I (138048) LAB_SOFTAP:   -> Client MAC Address : 02:E9:5E:47:4D:31
+I (138048) LAB_SOFTAP:   -> Assigned AID       : 2
+I (138058) LAB_SOFTAP: =======================================================
+I (138078) wifi:<ba-add>idx:4 (ifx:1, 02:e9:5e:47:4d:31), tid:6, ssn:2493, winSize:64
+I (139258) esp_netif_lwip: DHCP server assigned IP to a client, IP is: 192.168.4.3
+I (199718) wifi:[ADDBA]RX DELBA, reason:1, delete tid:0, initiator:0(recipient)
 ```
