@@ -98,9 +98,9 @@ xSemaphoreGive(mutex)           xSemaphoreGive(mutex)
 
 | ครั้งที่ | Temperature (°C) | Humidity (%) | Light Lux | Timestamp (ms) |
 | :------: | :--------------: | :----------: | :-------: | :------------: |
-|  **1**   |                  |              |           |                |
-|  **2**   |                  |              |           |                |
-|  **3**   |                  |              |           |                |
+|  **1**   |        25.1          |    63.7          |      306     |         116940       |
+|  **2**   |          28.1        |       65.9       |     319      |      147140          |
+|  **3**   |         28.9         |       58.6       |     323      |         169780       |
 
 ### 7.2 ทดสอบ JSON API (`/api/data`)
 
@@ -111,6 +111,7 @@ xSemaphoreGive(mutex)           xSemaphoreGive(mutex)
 ```
 
 ---
+<img width="1215" height="746" alt="image" src="https://github.com/user-attachments/assets/8567db67-e7a7-4190-8748-3613cf3e872b" />
 
 ## 8. คำถามท้ายการทดลอง (Post-Lab Questions)
 

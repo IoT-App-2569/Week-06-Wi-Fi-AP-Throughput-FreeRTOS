@@ -166,13 +166,23 @@ void app_main(void) {
 
 | ชื่อ FreeRTOS Task | ขนาด Stack ที่กำหนดใน `xTaskCreate` (Bytes) | ค่า High Water Mark ที่อ่านได้ (Words / Bytes) | สถานะความปลอดภัยสแตก |
 | :--- | :---: | :---: | :---: |
-| **`SensorCollectorTask`** | 3072 | | |
-| **`NetworkCommTask`** | 4096 | | |
+| **`SensorCollectorTask`** | 3072 | 320 Words / 1,280 Bytes | ปลอดภัย (มีสแตกเหลือเพียงพอ) |
+| **`NetworkCommTask`** | 4096 | 540 Words / 2,160 Bytes | ปลอดภัย (มีสแตกเหลือเพียงพอ) |
 
 ---
 
 ## 7. คำถามท้ายการทดลอง (Post-Lab Questions)
 
 1. เหตุใดการใช้ **FreeRTOS Queue** จึงมีความปลอดภัย (Thread-Safe) มากกว่าการใช้ตัวแปรแบบ Global ในการรับส่งข้อมูลระหว่างสอง Task?
+
+มีกลไก Critical Section / Mutex ในตัว: FreeRTOS Queue ปกป้องการเข้าถึงข้อมูลด้วยการปิด Interrupt ชั่วคราว หรือใช้ Semaphore ภายใน ป้องกันปัญหา Race Condition ที่อาจเกิดขึ้นจากการสลับ Task (Preemption) กลางคันมีกลไก Task Blocking: ต่างจาก Global Variable ที่ต้องเขียน Polling loop เช็กค่าตลอดเวลา (เผาผลาญ CPU) แต่ Queue อนุญาตให้ vNetworkTask เข้าสู่สถานะ Blocked/Suspended เพื่อคืนทรัพยากร CPU ให้ระบบ จนกว่าจะมีข้อมูลส่งเข้ามา  การคัดลอกข้อมูลแบบ Pass-by-Value: ข้อมูลถูกคัดลอกลงในพื้นที่ Queue ของตัวเอง ทำให้ Task ฝั่งอ่านและฝั่งเขียนไม่แย่งกันเข้าถึง Memory address เดียวกัน
+
 2. ค่า **Stack High Water Mark** มีประโยชน์อย่างไรในการตรวจวินิจฉัยปัญหาบั๊กในระบบเรียลไทม์ (RTOS)?
+
+ป้องกันและเฝ้าระวัง Stack Overflow: ช่วยให้โปรแกรมเมอร์รู้ว่าสแตกเข้าใกล้ขีดจำกัด (เข้าใกล้ 0) หรือไม่ ก่อนที่ระบบจะเกิด Crash หรือ Kernel Panic
+
+ทำ Stack Optimization: ช่วยให้ประเมินขนาด RAM ที่ใช้งานจริงของแต่ละ Task เพื่อปรับลดขนาดสแตกใน xTaskCreate() ให้ประหยัด DRAM ของ ESP32 ได้อย่างเหมาะสมที่สุด
+
 3. หาก `vSensorTask` ส่งข้อมูลเร็วมาก (เช่น ทุก 10ms) แต่ `vNetworkTask` ส่งข้อมูลออก Wi-Fi ได้ช้า (เช่น ใช้เวลา 500ms) จะเกิดอะไรขึ้นกับ Queue และระบบจะรับมืออย่างไร?
+
+เกิดภาวะ Queue เต็ม (Queue Overflow): ข้อมูลขนาด 10 รายการใน Queue จะถูกเติมจนเต็มภายใน 100ms แรก  การรับมือของระบบ:ฟังก์ชัน xQueueSend() จะรอนานสูงสุด 100ms (pdMS_TO_TICKS(100)) หากยังไม่มีช่องว่าง จะคืนค่าเป็น errQUEUE_FULL (ไม่เท่ากับ pdPASS)  โค้ดจะข้ามการส่งข้อมูลรอบนั้นและพิมพ์ ESP_LOGW แจ้งเตือน Queue Full! ข้อมูลชุดใหม่จะถูกทิ้ง (Data Dropped) เพื่อป้องกันไม่ให้ Task ฝั่งเซนเซอร์ถูกบล็อกค้างจนกระทบการทำงานของระบบ
