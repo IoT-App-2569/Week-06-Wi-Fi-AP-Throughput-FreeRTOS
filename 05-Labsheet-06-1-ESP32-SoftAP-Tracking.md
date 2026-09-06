@@ -81,16 +81,19 @@ classDiagram
 
 | อุปกรณ์ที่ใช้ทดสอบ (เช่น iPhone/Android) | MAC Address ที่ดักจับได้ | Association ID (AID) | หมายเลข IP Address ที่ได้ (ถ้าทราบ) |
 | :--- | :--- | :---: | :---: |
-| **อุปกรณ์ที่ 1** | | | |
-| **อุปกรณ์ที่ 2** | | | |
+| **อุปกรณ์ที่ 1** | 22:49:6E:F2:DC:ED | 1 |  192.168.4.2  |
+| **อุปกรณ์ที่ 2** | 2E:B0:B2:E4:F5:82 | 2 | 192.168.4.3 |
 
 ---
 
 ## 7. คำถามท้ายการทดลอง (Post-Lab Questions)
 
 1. เหตุใด IP Address เริ่มต้นของ ESP32 SoftAP จึงเป็น `192.168.4.1` และ DHCP Server บน ESP32 เริ่มแจกจ่าย IP ที่หมายเลขใด?
+   ตอบ 192.168.4.1 เป็นค่า Default จาก SDK (ESP-IDF) และ DHCP เริ่มแจกที่ 192.168.4.2
 2. สมาชิกตัวแปร `mac` ในโครงสร้าง `wifi_event_ap_staconnected_t` สามารถนำไปประยุกต์ใช้ทำระบบความปลอดภัยขั้นสูง (เช่น MAC Filtering) ได้อย่างไร?
+   ตอบ ใช้ดักจับเหตุการณ์ WIFI_EVENT_AP_STACONNECTED เพื่อเช็ก mac กับ Whitelist/Blacklist หากไม่ผ่าน ให้สั่งเตะด้วย esp_wifi_deauth_sta() ทันที
 3. หากมี Client พยายามเชื่อมต่อเป็นเครื่องที่ 5 (เกินค่า `max_connection = 4`) จะเกิดเหตุการณ์ใดขึ้นในระดับสัญญาณวิทยุ?
+   ตอบ ESP32 จะส่ง Association Response Fail (Status code: AP capacity reached) ปฏิเสธการเชื่อมต่อในชั้น RF
 
 
 ---
