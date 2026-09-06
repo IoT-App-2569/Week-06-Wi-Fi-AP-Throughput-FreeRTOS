@@ -98,9 +98,9 @@ xSemaphoreGive(mutex)           xSemaphoreGive(mutex)
 
 | ครั้งที่ | Temperature (°C) | Humidity (%) | Light Lux | Timestamp (ms) |
 | :------: | :--------------: | :----------: | :-------: | :------------: |
-|  **1**   |                  |              |           |                |
-|  **2**   |                  |              |           |                |
-|  **3**   |                  |              |           |                |
+|  **1**   |    26.8              |      50.2        |      409     |          216610      |
+|  **2**   |      33.6            |       58.1       |     274      |         252850       |
+|  **3**   |        34.0          |       65.3       |     621      |       257380         |
 
 ### 7.2 ทดสอบ JSON API (`/api/data`)
 
@@ -115,8 +115,11 @@ xSemaphoreGive(mutex)           xSemaphoreGive(mutex)
 ## 8. คำถามท้ายการทดลอง (Post-Lab Questions)
 
 1. เหตุใดจึงต้องใช้ **Mutex** ในการป้องกันการเข้าถึงตัวแปร `g_latest_data` ร่วมกันระหว่าง `vNetworkTask` และ HTTP Handler? ถ้าไม่ใช้จะเกิดอะไรขึ้น?
+   answer ป้องกัน Race Condition: หากไม่ใช้ ข้อมูลจะพิการ/อ่านข้อมูลไม่เสร็จ (Data Corruption) หรือระบบ Crash จากการอ่าน-เขียนพร้อมกัน
 2. `esp_http_server` รัน Handler บน Thread ใด — เป็น Thread เดียวกับ FreeRTOS Task ของเราหรือไม่?
+   answer คนละ Thread กัน: esp_http_server มี Task แยกของตัวเอง (เช่น Task ชื่อ httpd) ไม่ใช่ Task เดียวกับที่เราสร้าง
 3. การที่ Dashboard ใช้ `<meta http-equiv="refresh" content="2">` แทนที่จะใช้ JavaScript `fetch()` มีข้อดีและข้อเสียอย่างไร?
+   answer ข้อดี: เขียนง่าย ไม่ต้องใช้ JS ข้อเสีย: หน้าเว็บกระพริบReload ทั้งหน้า และสิ้นเปลืองแบนด์วิธ
 
 ---
 
