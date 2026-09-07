@@ -106,9 +106,10 @@ xSemaphoreGive(mutex)           xSemaphoreGive(mutex)
 
 บันทึก Raw JSON Response จาก Browser:
 
-```json
+<img width="456" height="906" alt="image" src="https://github.com/user-attachments/assets/95d8cba2-9f2d-426d-8c9a-b739c1fc9748" />
 
-```
+
+
 
 ---
 
