@@ -24,27 +24,8 @@
 
 ## 3. สถาปัตยกรรมระบบ (System Architecture & Sequence)
 
-```mermaid
-sequenceDiagram
-    autonumber
-    participant Sens as Sensor Collector Task
-    participant Queue as FreeRTOS Queue (sensor_queue)
-    participant Net as Network Task
-    participant Mon as Forensic Stack Monitor
-
-    loop ทุกๆ 1 วินาที
-        Sens->>Sens: อ่านค่าเซนเซอร์ (Temp, Hum, Motion)
-        Sens->>Queue: xQueueSend(&sensor_data, 100ms)
-    end
-
-    loop เมื่อมีข้อมูลใน Queue
-        Queue->>Net: xQueueReceive(&received_data, portMAX_DELAY)
-        Net->>Net: ประมวลผลแพ็กเกจ Wi-Fi / ส่งออก TCP JSON
-    end
-
-    Mon->>Sens: uxTaskGetStackHighWaterMark()
-    Mon->>Net: uxTaskGetStackHighWaterMark()
-```
+<p align="center"><img src="Fig_07-Labsheet-06-3-FreeRTOS-Sensor-Queue_2026-10-25T10-33-22_academic.svg" alt="07-Labsheet-06-3-FreeRTOS-Sensor-Queue" width="800" style="max-width: 800px; width: 100%; height: auto;" ></p>
+<p align="center"><b></b>สถาปัตยกรรมระบบ (System Architecture &amp; Sequence)</p>
 
 ---
 
