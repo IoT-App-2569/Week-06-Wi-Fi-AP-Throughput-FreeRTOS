@@ -27,7 +27,7 @@
 
 ### 3.1 สถาปัตยกรรม Event และ DHCP Server ในโหมด SoftAP
 
-<p align="center"><img src="Fig_05-Labsheet-06-1-ESP32-SoftAP-Tracking_2026-10-25T10-31-55_academic.svg" alt="05-Labsheet-06-1-ESP32-SoftAP-Tracking" width="800" style="max-width: 800px; width: 100%; height: auto;" ></p>
+<p align="center"><img src="images/Fig_05-Labsheet-06-1-ESP32-SoftAP-Tracking_2026-10-25T10-31-55_academic.svg" alt="05-Labsheet-06-1-ESP32-SoftAP-Tracking" width="800" style="max-width: 800px; width: 100%; height: auto;" ></p>
 <p align="center"><b></b>สถาปัตยกรรม Event และ DHCP Server ในโหมด SoftAP</p>
 
 ### 3.2 โครงสร้างข้อมูล `wifi_event_ap_staconnected_t` (Class Diagram)

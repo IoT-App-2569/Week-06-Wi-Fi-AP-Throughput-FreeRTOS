@@ -28,7 +28,7 @@
 
 ## 3. สถาปัตยกรรมระบบ (System Fusion Architecture)
 
-<p align="center"><img src="Fig_09-Labsheet-06-5-Proximity-Attendance-System_2026-10-25T10-34-11_academic.svg" alt="09-Labsheet-06-5-Proximity-Attendance-System" width="800" style="max-width: 800px; width: 100%; height: auto;" ></p>
+<p align="center"><img src="images/Fig_09-Labsheet-06-5-Proximity-Attendance-System_2026-10-25T10-34-11_academic.svg" alt="09-Labsheet-06-5-Proximity-Attendance-System" width="800" style="max-width: 800px; width: 100%; height: auto;" ></p>
 <p align="center"><b></b>สถาปัตยกรรมระบบ (System Fusion Architecture)</p>
 
 ---

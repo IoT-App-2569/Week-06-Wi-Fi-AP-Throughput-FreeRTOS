@@ -24,7 +24,7 @@
 
 ## 3. ขั้นตอนการทดลอง (Experimental Procedures)
 
-<p align="center"><img src="Fig_06-Labsheet-06-2-RSSI-Speed-Profiling_2026-10-25T10-33-04_academic.svg" alt="06-Labsheet-06-2-RSSI-Speed-Profiling" width="800" style="max-width: 800px; width: 100%; height: auto;" ></p>
+<p align="center"><img src="images/Fig_06-Labsheet-06-2-RSSI-Speed-Profiling_2026-10-25T10-33-04_academic.svg" alt="06-Labsheet-06-2-RSSI-Speed-Profiling" width="800" style="max-width: 800px; width: 100%; height: auto;" ></p>
 <p align="center"><b></b>ขั้นตอนการทดลอง (Experimental Procedures)</p>
 
 ### ขั้นตอนการทดสอบ 5 ระดับกำลังส่ง (Software Attenuation Test):

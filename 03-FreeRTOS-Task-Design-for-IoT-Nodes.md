@@ -8,7 +8,7 @@
 
 ## 1. ผังการออกแบบระบบแบบ Multi-Task (Task Architecture Diagram)
 
-<p align="center"><img src="Fig_03-FreeRTOS-Task-Design-for-IoT-Nodes_2026-10-25T10-29-54_academic.svg" alt="03-FreeRTOS-Task-Design-for-IoT-Nodes" width="750" style="max-width: 800px; width: 100%; height: auto;" ></p>
+<p align="center"><img src="images/Fig_03-FreeRTOS-Task-Design-for-IoT-Nodes_2026-10-25T10-29-54_academic.svg" alt="03-FreeRTOS-Task-Design-for-IoT-Nodes" width="750" style="max-width: 800px; width: 100%; height: auto;" ></p>
 <p align="center"><b></b> ผังการออกแบบระบบแบบ Multi-Task (Task Architecture Diagram)</p>
 
 ---

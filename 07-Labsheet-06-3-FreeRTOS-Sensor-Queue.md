@@ -24,7 +24,7 @@
 
 ## 3. สถาปัตยกรรมระบบ (System Architecture & Sequence)
 
-<p align="center"><img src="Fig_07-Labsheet-06-3-FreeRTOS-Sensor-Queue_2026-10-25T10-33-22_academic.svg" alt="07-Labsheet-06-3-FreeRTOS-Sensor-Queue" width="800" style="max-width: 800px; width: 100%; height: auto;" ></p>
+<p align="center"><img src="images/Fig_07-Labsheet-06-3-FreeRTOS-Sensor-Queue_2026-10-25T10-33-22_academic.svg" alt="07-Labsheet-06-3-FreeRTOS-Sensor-Queue" width="800" style="max-width: 800px; width: 100%; height: auto;" ></p>
 <p align="center"><b></b>สถาปัตยกรรมระบบ (System Architecture &amp; Sequence)</p>
 
 ---

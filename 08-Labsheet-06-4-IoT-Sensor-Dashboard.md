@@ -31,7 +31,7 @@
 
 ## 3. สถาปัตยกรรมระบบ (System Architecture)
 
-<p align="center"><img src="Fig_08-Labsheet-06-4-IoT-Sensor-Dashboard_2026-10-25T10-33-36_academic.svg" alt="08-Labsheet-06-4-IoT-Sensor-Dashboard"  style="width: 100%; height: auto;" ></p>
+<p align="center"><img src="images/Fig_08-Labsheet-06-4-IoT-Sensor-Dashboard_2026-10-25T10-33-36_academic.svg" alt="08-Labsheet-06-4-IoT-Sensor-Dashboard"  style="width: 100%; height: auto;" ></p>
 <p align="center"><b></b>สถาปัตยกรรมระบบ (System Architecture)</p>
 
 ---
