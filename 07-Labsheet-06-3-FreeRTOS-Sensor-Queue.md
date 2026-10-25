@@ -166,13 +166,18 @@ void app_main(void) {
 
 | ชื่อ FreeRTOS Task | ขนาด Stack ที่กำหนดใน `xTaskCreate` (Bytes) | ค่า High Water Mark ที่อ่านได้ (Words / Bytes) | สถานะความปลอดภัยสแตก |
 | :--- | :---: | :---: | :---: |
-| **`SensorCollectorTask`** | 3072 | | |
-| **`NetworkCommTask`** | 4096 | | |
+| **`SensorCollectorTask`** | 3072 | 1196 Words (4784 Bytes) | ปลอดภัย (Safe) |
+| **`NetworkCommTask`** | 4096 | 2248 Words (8992 Bytes) | ปลอดภัย (Safe) |
+
+<img width="957" height="610" alt="image" src="https://github.com/user-attachments/assets/0ca41bab-866e-4661-9dd4-85a746a4c28b" />
 
 ---
 
 ## 7. คำถามท้ายการทดลอง (Post-Lab Questions)
 
 1. เหตุใดการใช้ **FreeRTOS Queue** จึงมีความปลอดภัย (Thread-Safe) มากกว่าการใช้ตัวแปรแบบ Global ในการรับส่งข้อมูลระหว่างสอง Task?
+- Queue มีกลไกป้องกันการเขียนข้อมูลพร้อมกัน (Mutex/Critical Section) และใช้วิธีคัดลอกข้อมูลแบบ FIFO ป้องกันปัญหา Race Condition
 2. ค่า **Stack High Water Mark** มีประโยชน์อย่างไรในการตรวจวินิจฉัยปัญหาบั๊กในระบบเรียลไทม์ (RTOS)?
+- ใช้เช็กสแตกคงเหลือต่ำสุดของ Task เพื่อป้องกันปัญหา Stack Overflow (สแตกเต็มจนโปรแกรมล่ม) และช่วยปรับขนาด RAM ให้พอดี
 3. หาก `vSensorTask` ส่งข้อมูลเร็วมาก (เช่น ทุก 10ms) แต่ `vNetworkTask` ส่งข้อมูลออก Wi-Fi ได้ช้า (เช่น ใช้เวลา 500ms) จะเกิดอะไรขึ้นกับ Queue และระบบจะรับมืออย่างไร?
+- Queue จะเต็ม (Queue Full) ทำให้ส่งข้อมูลใหม่เข้าคิวไม่ได้และข้อมูลใหม่จะหลุดหาย แต่ระบบจะไม่ล่มเพราะมี Queue ช่วยคุมขอบเขตข้อมูลไว้
