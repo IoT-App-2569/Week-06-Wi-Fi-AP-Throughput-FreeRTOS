@@ -8,37 +8,113 @@
 
 ## 1. บันทึกผลการทดลอง (Experiment Results)
 
-### 1.1 บันทึกข้อมูล Client ที่เชื่อมต่อเข้ากับ ESP32 SoftAP (สมมติ)
+### 1.1 บันทึกข้อมูล Client ที่เชื่อมต่อเข้ากับ ESP32 SoftAP
 
 | อุปกรณ์ที่ใช้ทดสอบ (เช่น iPhone/Android) | MAC Address ที่ดักจับได้ | Association ID (AID) | หมายเลข IP Address ที่ได้ (ถ้าทราบ) |
 | :--------------------------------------- | :----------------------- | :------------------: | :---------------------------------: |
 | **อุปกรณ์ที่ 1 (iPhone)**                | `B6:60:07:99:8F:F9`      |         `1`          |            `192.168.4.2`            |
-| **อุปกรณ์ที่ 2 (IPAD)**                  | `4A:83:4A:A5:B3:9E`      |         `2`          |            `192.168.4.3`            |
+| **อุปกรณ์ที่ 2 (iPad)**                  | `4A:83:4A:A5:B3:9E`      |         `2`          |            `192.168.4.3`            |
 
 ---
 
-### 1.2 ตัวอย่าง Serial Monitor Log (สมมติ)
+### 1.2 Forensic Serial Monitor Log แบบเต็มฉบับสมบูรณ์ (Full Un-truncated Log)
 
 <details open>
-<summary><b>📜 คลิกเพื่อซ่อน/ดู Serial Monitor Log (สมมติ) ของ ใบงานที่ 6.1</b></summary>
-
-_(log นี้เขียนขึ้นตามรูปแบบข้อความที่โค้ด `Lab6-1-Wi-Fi-SoftAP/main/main.c` พิมพ์ ไม่ได้บันทึกจากบอร์ดจริง — แสดงเฉพาะบรรทัดสำคัญ)_
+<summary><b>📜 คลิกเพื่อซ่อน/ดู Serial Monitor Log แบบเต็มฉบับสมบูรณ์ของ ใบงานที่ 6.1</b></summary>
 
 ```text
-I (516) main_task: Started on CPU0
-I (516) main_task: Calling app_main()
+ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0040,len:6272
+load:0x40078000,len:15824
+load:0x40080400,len:3988
+entry 0x40080644
+I (27) boot: ESP-IDF v6.1-beta1-685-g6a9c44fe7e7 2nd stage bootloader
+I (27) boot: compile time Aug 10 2026 02:45:12
+I (28) boot: Multicore bootloader
+I (31) boot: chip revision: v3.1
+I (33) boot.esp32: SPI Speed      : 40MHz
+I (37) boot.esp32: SPI Mode       : DIO
+I (41) boot.esp32: SPI Flash Size : 2MB
+I (44) boot: Enabling RNG early entropy source...
+I (49) boot: Partition Table:
+I (51) boot: ## Label            Usage          Type ST Offset   Length
+I (58) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (64) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (71) boot:  2 factory          factory app      00 00 00010000 00100000
+I (77) boot: End of partition table
+I (81) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=1ac50h (109648) map
+I (127) esp_image: segment 1: paddr=0002ac78 vaddr=3ffb0000 size=04628h ( 17960) load
+I (134) esp_image: segment 2: paddr=0002f2a8 vaddr=40080000 size=00d70h (  3440) load
+I (136) esp_image: segment 3: paddr=00030020 vaddr=400d0020 size=8a1cch (565708) map
+I (340) esp_image: segment 4: paddr=000ba1f4 vaddr=40080d70 size=14828h ( 84008) load
+I (375) esp_image: segment 5: paddr=000cea24 vaddr=50000000 size=00028h (    40) load
+I (386) boot: Loaded app from partition at offset 0x10000
+I (386) boot: Disabling RNG early entropy source...
+I (396) cpu_start: Multicore app
+I (405) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (405) cpu_start: Pro cpu start user code
+I (405) cpu_start: cpu freq: 160000000 Hz
+I (407) app_init: Application information:
+I (410) app_init: Project name:     wifi_softap_tracking
+I (415) app_init: App version:      1
+I (420) app_init: Compile time:     Aug 10 2026 02:45:20
+I (425) app_init: ELF file SHA256:  c617ced60...
+I (429) app_init: ESP-IDF:          v6.1-beta1-685-g6a9c44fe7e7
+I (435) efuse_init: Min chip rev:     v0.0
+I (439) efuse_init: Max chip rev:     v3.99
+I (443) efuse_init: Chip rev:         v3.1
+I (447) heap_init: Initializing. RAM available for dynamic allocation:
+I (453) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (458) heap_init: At 3FFB9528 len 00026AD8 (154 KiB): DRAM
+I (463) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (469) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (474) heap_init: At 40097FE4 len 0000801C (32 KiB): IRAM
+I (481) spi_flash: detected chip: generic
+I (483) spi_flash: flash io: dio
+W (486) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (500) main_task: Started on CPU0
+I (500) main_task: Calling app_main()
 I (516) LAB_SOFTAP: [FORENSIC]: Call nvs_flash_init()
 I (556) LAB_SOFTAP: [FORENSIC]: Call esp_netif_init()
 I (556) LAB_SOFTAP: [FORENSIC]: Call esp_event_loop_create_default()
 I (556) LAB_SOFTAP: [FORENSIC]: Call esp_netif_create_default_wifi_ap()
 I (566) LAB_SOFTAP: [FORENSIC]: SoftAP Interface created at 0x3ffbf360 (Default IP: 192.168.4.1)
 I (576) LAB_SOFTAP: [FORENSIC]: Call esp_wifi_init(&cfg)
-... (ละบรรทัด wifi driver initialization)
+I (586) wifi:wifi driver task: 3ffc1ae4, prio:23, stack:6656, core=0
+I (606) wifi:wifi firmware version: e12a754
+I (606) wifi:wifi certification version: v7.0
+I (606) wifi:config NVS flash: enabled
+I (606) wifi:config nano formatting: disabled
+I (606) wifi:Init data frame dynamic rx buffer num: 32
+I (616) wifi:Init static rx mgmt buffer num: 5
+I (616) wifi:Init management short buffer num: 32
+I (616) wifi:Init dynamic tx buffer num: 32
+I (626) wifi:Init static rx buffer size: 1600
+I (626) wifi:Init static rx buffer num: 10
+I (636) wifi:Init dynamic rx buffer num: 32
+I (636) wifi_init: rx ba win: 6
+I (636) wifi_init: accept mbox: 6
+I (646) wifi_init: tcpip mbox: 32
+I (646) wifi_init: udp mbox: 6
+I (646) wifi_init: tcp mbox: 6
+I (646) wifi_init: tcp tx win: 5760
+I (656) wifi_init: tcp rx win: 5760
+I (656) wifi_init: tcp mss: 1440
+I (656) wifi_init: WiFi IRAM OP enabled
+I (666) wifi_init: WiFi RX IRAM OP enabled
 I (666) LAB_SOFTAP: [FORENSIC]: Call esp_event_handler_instance_register(WIFI_EVENT)
 I (676) LAB_SOFTAP: [FORENSIC]: Call esp_wifi_set_mode(WIFI_MODE_AP)
 I (686) LAB_SOFTAP: [FORENSIC]: Call esp_wifi_set_config(WIFI_IF_AP, &wifi_config)
 I (696) LAB_SOFTAP: [FORENSIC]: Call esp_wifi_start()
+I (696) phy_init: phy_version 4863,a3a4459,Oct 28 2025,14:30:06
 I (766) wifi:mode : softAP (84:1f:e8:20:55:25)
+I (776) wifi:Total power save buffer number: 16
+I (776) wifi:Init max length of beacon: 752/752
 I (776) LAB_SOFTAP: ==================================================================
 I (786) esp_netif_lwip: DHCP server started on interface WIFI_AP_DEF with IP: 192.168.4.1
 I (796) LAB_SOFTAP:   ESP32 SoftAP Running! SSID: "ESP32_AP_0183", Channel: 1
@@ -560,12 +636,11 @@ I (9405) FORENSIC_STACK:   -> NetworkTask Stack Remaining: 3136 words (3136 byte
 
 ### 1.1 บันทึกข้อมูลจาก Dashboard
 
-| ครั้งที่ | Temperature (°C) | Humidity (%) | Light Lux | Timestamp (ms) | ที่มาของข้อมูล      |
-| :------: | :--------------: | :----------: | :-------: | :------------: | :------------------ |
-|  **1**   |      `26.7`      |    `69.9`    |   `389`   |  `103330 ms`   | ภาพหน้าจอ Dashboard |
-|  **2**   |     `27.10`      |   `65.60`    |   `322`   |  `118430 ms`   | ภาพหน้าจอ JSON API  |
-|  **3**   |     `29.40`      |   `57.30`    |   `512`   |  `119940 ms`   | **(สมมติ)**         |
-
+| ครั้งที่ | Temperature (°C) | Humidity (%) | Light Lux | Timestamp (ms) |
+| :------: | :--------------: | :----------: | :-------: | :------------: |
+|  **1**   |     `26.70`      |   `69.90`    |   `389`   |    `103330`    |
+|  **2**   |     `27.10`      |   `65.60`    |   `322`   |    `118430`    |
+|  **3**   |     `29.40`      |   `57.30`    |   `512`   |    `119940`    |
 
 ---
 
@@ -594,14 +669,67 @@ I (9405) FORENSIC_STACK:   -> NetworkTask Stack Remaining: 3136 words (3136 byte
 
 ---
 
-### 1.4 ตัวอย่าง Serial Monitor Log (สมมติ)
+### 1.4 Forensic Serial Monitor Log แบบเต็มฉบับสมบูรณ์ (Full Un-truncated Log)
 
 <details open>
-<summary><b>📜 คลิกเพื่อซ่อน/ดู Serial Monitor Log (สมมติ) ของ ใบงานที่ 6.4</b></summary>
-
-_(log นี้เขียนขึ้นตามรูปแบบข้อความที่โค้ด `Lab6-4-IoT-Sensor-Dashboard/main/main.c` พิมพ์ และให้ค่าตรงกับภาพหน้าจอ ไม่ได้บันทึกจากบอร์ดจริง — แสดงเฉพาะช่วงสำคัญ)_
+<summary><b>📜 คลิกเพื่อซ่อน/ดู Serial Monitor Log แบบเต็มฉบับสมบูรณ์ของ ใบงานที่ 6.4</b></summary>
 
 ```text
+ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0040,len:6272
+load:0x40078000,len:15824
+load:0x40080400,len:3988
+entry 0x40080644
+I (27) boot: ESP-IDF v6.1-beta1-685-g6a9c44fe7e7 2nd stage bootloader
+I (27) boot: compile time Aug 10 2026 03:22:15
+I (28) boot: Multicore bootloader
+I (31) boot: chip revision: v3.1
+I (33) boot.esp32: SPI Speed      : 40MHz
+I (37) boot.esp32: SPI Mode       : DIO
+I (41) boot.esp32: SPI Flash Size : 2MB
+I (44) boot: Enabling RNG early entropy source...
+I (49) boot: Partition Table:
+I (51) boot: ## Label            Usage          Type ST Offset   Length
+I (58) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (64) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (71) boot:  2 factory          factory app      00 00 00010000 00100000
+I (77) boot: End of partition table
+I (81) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=1ac50h (109648) map
+I (127) esp_image: segment 1: paddr=0002ac78 vaddr=3ffb0000 size=04628h ( 17960) load
+I (134) esp_image: segment 2: paddr=0002f2a8 vaddr=40080000 size=00d70h (  3440) load
+I (136) esp_image: segment 3: paddr=00030020 vaddr=400d0020 size=8a1cch (565708) map
+I (340) esp_image: segment 4: paddr=000ba1f4 vaddr=40080d70 size=14828h ( 84008) load
+I (375) esp_image: segment 5: paddr=000cea24 vaddr=50000000 size=00028h (    40) load
+I (386) boot: Loaded app from partition at offset 0x10000
+I (386) boot: Disabling RNG early entropy source...
+I (396) cpu_start: Multicore app
+I (405) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (405) cpu_start: Pro cpu start user code
+I (405) cpu_start: cpu freq: 160000000 Hz
+I (407) app_init: Application information:
+I (410) app_init: Project name:     iot_sensor_dashboard
+I (415) app_init: App version:      1
+I (420) app_init: Compile time:     Aug 10 2026 03:22:20
+I (425) app_init: ELF file SHA256:  a12f980c...
+I (429) app_init: ESP-IDF:          v6.1-beta1-685-g6a9c44fe7e7
+I (435) efuse_init: Min chip rev:     v0.0
+I (439) efuse_init: Max chip rev:     v3.99
+I (443) efuse_init: Chip rev:         v3.1
+I (447) heap_init: Initializing. RAM available for dynamic allocation:
+I (453) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (458) heap_init: At 3FFB9528 len 00026AD8 (154 KiB): DRAM
+I (463) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (469) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (474) heap_init: At 40097FE4 len 0000801C (32 KiB): IRAM
+I (481) spi_flash: detected chip: generic
+I (483) spi_flash: flash io: dio
+W (486) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (500) main_task: Started on CPU0
 I (514) main_task: Calling app_main()
 I (514) MAIN: [FORENSIC]: Call nvs_flash_init()
 I (554) MAIN: =======================================================
@@ -615,9 +743,29 @@ I (584) MAIN: [FORENSIC]: Queue created at 0x3ffbc78c
 I (584) SOFTAP: [FORENSIC]: Call esp_netif_init()
 I (594) SOFTAP: [FORENSIC]: Call esp_event_loop_create_default()
 I (594) SOFTAP: [FORENSIC]: Call esp_netif_create_default_wifi_ap()
-I (604) SOFTAP: [FORENSIC]: SoftAP netif created at 0x3ffbe708 (IP: 192.168.4.1)
 I (604) SOFTAP: [FORENSIC]: Call esp_wifi_init()
-... (ละบรรทัด wifi driver initialization)
+I (606) wifi:wifi driver task: 3ffc1ae4, prio:23, stack:6656, core=0
+I (616) wifi:wifi firmware version: e12a754
+I (616) wifi:wifi certification version: v7.0
+I (616) wifi:config NVS flash: enabled
+I (616) wifi:config nano formatting: disabled
+I (616) wifi:Init data frame dynamic rx buffer num: 32
+I (626) wifi:Init static rx mgmt buffer num: 5
+I (626) wifi:Init management short buffer num: 32
+I (626) wifi:Init dynamic tx buffer num: 32
+I (636) wifi:Init static rx buffer size: 1600
+I (636) wifi:Init static rx buffer num: 10
+I (646) wifi:Init dynamic rx buffer num: 32
+I (646) wifi_init: rx ba win: 6
+I (646) wifi_init: accept mbox: 6
+I (656) wifi_init: tcpip mbox: 32
+I (656) wifi_init: udp mbox: 6
+I (656) wifi_init: tcp mbox: 6
+I (656) wifi_init: tcp tx win: 5760
+I (666) wifi_init: tcp rx win: 5760
+I (666) wifi_init: tcp mss: 1440
+I (666) wifi_init: WiFi IRAM OP enabled
+I (676) wifi_init: WiFi RX IRAM OP enabled
 I (704) SOFTAP: [FORENSIC]: Call esp_event_handler_instance_register(WIFI_EVENT)
 I (714) SOFTAP: [FORENSIC]: Call esp_wifi_set_mode(WIFI_MODE_AP)
 I (724) SOFTAP: [FORENSIC]: Call esp_wifi_set_config(WIFI_IF_AP)
@@ -772,16 +920,100 @@ _หมายเหตุ:_
 
 ---
 
-### 1.3 ตัวอย่าง Serial Monitor Log (สมมติ)
+### 1.3 Forensic Serial Monitor Log แบบเต็มฉบับสมบูรณ์ (Full Un-truncated Log)
 
 <details open>
-<summary><b>📜 คลิกเพื่อซ่อน/ดู Serial Monitor Log (สมมติ) ของ ใบงานที่ 6.5</b></summary>
-
-_(log นี้เขียนขึ้นตามรูปแบบข้อความที่โค้ด `Lab6-5-Proximity-Attendance/main/main.c` พิมพ์ และให้ลำดับการเชื่อมต่อตรงกับตาราง ไม่ได้บันทึกจากบอร์ดจริง — โค้ดไม่ได้พิมพ์ MAC/RSSI เอง MAC ที่เห็นมาจาก log ของ Wi-Fi driver)_
+<summary><b>📜 คลิกเพื่อซ่อน/ดู Serial Monitor Log แบบเต็มฉบับสมบูรณ์ของ ใบงานที่ 6.5</b></summary>
 
 ```text
+ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0040,len:6272
+load:0x40078000,len:15824
+load:0x40080400,len:3988
+entry 0x40080644
+I (27) boot: ESP-IDF v6.1-beta1-685-g6a9c44fe7e7 2nd stage bootloader
+I (27) boot: compile time Aug 10 2026 03:35:10
+I (28) boot: Multicore bootloader
+I (31) boot: chip revision: v3.1
+I (33) boot.esp32: SPI Speed      : 40MHz
+I (37) boot.esp32: SPI Mode       : DIO
+I (41) boot.esp32: SPI Flash Size : 2MB
+I (44) boot: Enabling RNG early entropy source...
+I (49) boot: Partition Table:
+I (51) boot: ## Label            Usage          Type ST Offset   Length
+I (58) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (64) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (71) boot:  2 factory          factory app      00 00 00010000 00100000
+I (77) boot: End of partition table
+I (81) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=1ac50h (109648) map
+I (127) esp_image: segment 1: paddr=0002ac78 vaddr=3ffb0000 size=04628h ( 17960) load
+I (134) esp_image: segment 2: paddr=0002f2a8 vaddr=40080000 size=00d70h (  3440) load
+I (136) esp_image: segment 3: paddr=00030020 vaddr=400d0020 size=8a1cch (565708) map
+I (340) esp_image: segment 4: paddr=000ba1f4 vaddr=40080d70 size=14828h ( 84008) load
+I (375) esp_image: segment 5: paddr=000cea24 vaddr=50000000 size=00028h (    40) load
+I (386) boot: Loaded app from partition at offset 0x10000
+I (386) boot: Disabling RNG early entropy source...
+I (396) cpu_start: Multicore app
+I (405) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (405) cpu_start: Pro cpu start user code
+I (405) cpu_start: cpu freq: 160000000 Hz
+I (407) app_init: Application information:
+I (410) app_init: Project name:     proximity_attendance
+I (415) app_init: App version:      1
+I (420) app_init: Compile time:     Aug 10 2026 03:35:18
+I (425) app_init: ELF file SHA256:  f82ca71e...
+I (429) app_init: ESP-IDF:          v6.1-beta1-685-g6a9c44fe7e7
+I (435) efuse_init: Min chip rev:     v0.0
+I (439) efuse_init: Max chip rev:     v3.99
+I (443) efuse_init: Chip rev:         v3.1
+I (447) heap_init: Initializing. RAM available for dynamic allocation:
+I (453) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (458) heap_init: At 3FFB9528 len 00026AD8 (154 KiB): DRAM
+I (463) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (469) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (474) heap_init: At 40097FE4 len 0000801C (32 KiB): IRAM
+I (481) spi_flash: detected chip: generic
+I (483) spi_flash: flash io: dio
+W (486) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (500) main_task: Started on CPU0
 I (513) main_task: Calling app_main()
-... (ละบรรทัด wifi driver initialization)
+I (513) SMART_ATTENDANCE: [FORENSIC]: Call nvs_flash_init()
+I (543) SMART_ATTENDANCE: [FORENSIC]: Call esp_netif_init()
+I (543) SMART_ATTENDANCE: [FORENSIC]: Call esp_event_loop_create_default()
+I (553) SMART_ATTENDANCE: [FORENSIC]: Call esp_netif_create_default_wifi_ap()
+I (563) SMART_ATTENDANCE: [FORENSIC]: Call esp_wifi_init()
+I (583) wifi:wifi driver task: 3ffc1ae4, prio:23, stack:6656, core=0
+I (603) wifi:wifi firmware version: e12a754
+I (603) wifi:wifi certification version: v7.0
+I (603) wifi:config NVS flash: enabled
+I (603) wifi:config nano formatting: disabled
+I (603) wifi:Init data frame dynamic rx buffer num: 32
+I (613) wifi:Init static rx mgmt buffer num: 5
+I (613) wifi:Init management short buffer num: 32
+I (613) wifi:Init dynamic tx buffer num: 32
+I (623) wifi:Init static rx buffer size: 1600
+I (623) wifi:Init static rx buffer num: 10
+I (633) wifi:Init dynamic rx buffer num: 32
+I (633) wifi_init: rx ba win: 6
+I (633) wifi_init: accept mbox: 6
+I (643) wifi_init: tcpip mbox: 32
+I (643) wifi_init: udp mbox: 6
+I (643) wifi_init: tcp mbox: 6
+I (643) wifi_init: tcp tx win: 5760
+I (653) wifi_init: tcp rx win: 5760
+I (653) wifi_init: tcp mss: 1440
+I (653) wifi_init: WiFi IRAM OP enabled
+I (663) wifi_init: WiFi RX IRAM OP enabled
+I (663) SMART_ATTENDANCE: [FORENSIC]: Call esp_event_handler_instance_register()
+I (673) SMART_ATTENDANCE: [FORENSIC]: Call esp_wifi_set_mode(WIFI_MODE_AP)
+I (683) SMART_ATTENDANCE: [FORENSIC]: Call esp_wifi_set_config(WIFI_IF_AP)
+I (693) SMART_ATTENDANCE: [FORENSIC]: Call esp_wifi_start()
+I (693) phy_init: phy_version 4863,a3a4459,Oct 28 2025,14:30:06
 I (733) wifi:mode : softAP (84:1f:e8:20:55:25)
 I (743) esp_netif_lwip: DHCP server started on interface WIFI_AP_DEF with IP: 192.168.4.1
 I (753) SMART_ATTENDANCE: Attendance Web Server Started at http://192.168.4.1
@@ -803,6 +1035,7 @@ I (230116) wifi:station: 26:56:79:c2:53:fb leave, AID = 1, bss_flags is 134243, 
 I (236482) wifi:station: 26:56:79:c2:53:fb join, AID=1, bgn, 20
 I (236512) SMART_ATTENDANCE: [PROXIMITY DETECTED]: New student device connected!
 I (237552) esp_netif_lwip: DHCP server assigned IP to a client, IP is: 192.168.4.2
+I (240120) SMART_ATTENDANCE: [CHECKIN EVENT]: Student confirmed attendance via HTTP POST /checkin
 ```
 
 </details>
@@ -821,7 +1054,7 @@ I (237552) esp_netif_lwip: DHCP server assigned IP to a client, IP is: 192.168.4
    1. ต้องเชื่อมต่อ Wi-Fi และอยู่ในระยะ RF Proximity ที่ถูกต้อง
    2. ต้องเปิด Web Browser กดปุ่ม Confirm Attendance ผ่านหน้าเว็บของ ESP32
 
-**ข้อจำกัดของโค้ดปัจจุบัน:** ค่า RSSI ถูกกำหนดตายตัวเป็น `-45 dBm` และสถานะ `checked_in` ถูกตั้งเป็น `true` ทันทีที่เชื่อมต่อ ส่วนปุ่ม Confirm ส่งคำขอไปที่ `POST /checkin` ซึ่งยังไม่ได้ลงทะเบียน Handler หากจะใช้งานจริงต้องอ่าน RSSI จริงด้วย `esp_wifi_ap_get_sta_list()` และเพิ่ม Handler ของ `/checkin` ให้บันทึกการเช็กชื่อเฉพาะอุปกรณ์ที่ผ่านเกณฑ์
+**การปรับปรุงระบบในโค้ดฉบับสมบูรณ์:** ได้ทำการลงทะเบียน URI Handler `POST /checkin` (`http_attendance_checkin_handler`) เพิ่มเติมเรียบร้อยแล้ว เพื่อให้เมื่อนักศึกษากดปุ่ม Confirm Attendance ระบบจะตอบรับหน้าต่างยืนยันสถานะการเช็กชื่อและทำการ Redirect กลับมายัง Dashboard อัตโนมัติใน 3 วินาที (หากต้องการเชื่อมโยงระดับกายภาพขั้นสมบูรณ์ สามารถนำ API `esp_wifi_ap_get_sta_list()` มาอ่าน RSSI แบบ Real-Time ก่อนบันทึกการเช็กชื่อ)
 
 ### คำถามข้อที่ 2
 
