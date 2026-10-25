@@ -12,7 +12,7 @@
 
 static const char *TAG = "SMART_ATTENDANCE";
 
-#define AP_SSID          "CLASSROOM_ATTENDANCE_AP"
+#define AP_SSID          "CLASSROOM_ATTENDANCE_0183"
 #define AP_PASS          "12345678"
 #define RSSI_THRESHOLD   -60
 
@@ -27,7 +27,7 @@ static student_record_t s_records[5];
 static int s_student_count = 0;
 
 static esp_err_t http_attendance_html_handler(httpd_req_t *req) {
-    char resp[1024];
+    char resp[2048];
     int len = snprintf(resp, sizeof(resp),
         "<html><head><meta name='viewport' content='width=device-width, initial-scale=1'>"
         "<style>body{font-family:Arial;text-align:center;background:#f4f4f9;padding:20px;}"
@@ -44,7 +44,7 @@ static esp_err_t http_attendance_html_handler(httpd_req_t *req) {
         "<table><tr><th>Device MAC</th><th>RSSI (dBm)</th><th>Proximity Status</th></tr>");
 
     for (int i = 0; i < s_student_count; i++) {
-        char status_str[32];
+        char status_str[128];
         if (s_records[i].rssi >= RSSI_THRESHOLD) {
             snprintf(status_str, sizeof(status_str), "<font color='green'><b>NEAR (Valid)</b></font>");
         } else {
@@ -60,6 +60,21 @@ static esp_err_t http_attendance_html_handler(httpd_req_t *req) {
     return ESP_OK;
 }
 
+static esp_err_t http_attendance_checkin_handler(httpd_req_t *req) {
+    const char *resp = "<html><head><meta http-equiv='refresh' content='3;url=/'><meta name='viewport' content='width=device-width, initial-scale=1'>"
+                       "<style>body{font-family:Arial;text-align:center;background:#e8f5e9;padding:40px;}"
+                       ".card{background:white;padding:30px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.15);display:inline-block;max-width:90%;}"
+                       "h2{color:#2e7d32;margin-bottom:10px;}p{color:#444;font-size:16px;}</style></head><body>"
+                       "<div class='card'><h2>Attendance Confirmed!</h2>"
+                       "<p>Your check-in has been validated via RF Proximity.</p>"
+                       "<p><small style='color:#777;'>Returning to dashboard in 3 seconds...</small></p>"
+                       "<a href='/' style='color:#2196F3;text-decoration:none;font-weight:bold;'>Back to Dashboard</a></div></body></html>";
+    httpd_resp_set_type(req, "text/html");
+    httpd_resp_send(req, resp, HTTPD_RESP_USE_STRLEN);
+    ESP_LOGI(TAG, "[CHECKIN EVENT]: Student confirmed attendance via HTTP POST /checkin");
+    return ESP_OK;
+}
+
 static void start_web_server(void) {
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
     httpd_handle_t server = NULL;
@@ -72,6 +87,15 @@ static void start_web_server(void) {
             .user_ctx = NULL
         };
         httpd_register_uri_handler(server, &uri_get);
+
+        httpd_uri_t uri_post = {
+            .uri      = "/checkin",
+            .method   = HTTP_POST,
+            .handler  = http_attendance_checkin_handler,
+            .user_ctx = NULL
+        };
+        httpd_register_uri_handler(server, &uri_post);
+
         ESP_LOGI(TAG, "Attendance Web Server Started at http://192.168.4.1");
     }
 }

@@ -1,6 +1,8 @@
 .obsidian/**
 **/build/**
+**/.cache/**
 .cache/**
 build/**
 build-v6/**
 .esp/**
+.markdown-collab/

@@ -17,13 +17,13 @@
 
 static const char *TAG = "CLIENT_PROFILER";
 
-#define AP_SSID            "MY_ESP32_AP"
+#define AP_SSID            "ESP32_AP_0183"
 #define AP_PASS            "12345678"
 #define SERVER_IP          "192.168.4.1"
 #define SERVER_PORT        8080
 #define TEST_DATA_LEN      1024
 #define TEST_ROUNDS        50
-#define BENCHMARK_ROUNDS   10
+#define BENCHMARK_ROUNDS   5
 #define WIFI_MAXIMUM_RETRY 10
 
 #define WIFI_CONNECTED_BIT BIT0
@@ -145,22 +145,40 @@ static void perform_throughput_test(int benchmark_round)
 
 static void profiler_task(void *arg)
 {
-    for (int round = 1; round <= BENCHMARK_ROUNDS; round++) {
-        EventBits_t bits = xEventGroupWaitBits(s_wifi_event_group,
-                                                WIFI_CONNECTED_BIT | WIFI_FAIL_BIT,
-                                                pdFALSE,
-                                                pdFALSE,
-                                                portMAX_DELAY);
-        if ((bits & WIFI_FAIL_BIT) != 0) {
-            ESP_LOGE(TAG, "Cannot connect to %s; profiler stopped", AP_SSID);
-            break;
-        }
+    const int8_t tx_power_values[] = {80, 60, 40, 20, 8};
+    const int tx_dbm[] = {20, 15, 10, 5, 2};
+    int num_levels = sizeof(tx_power_values) / sizeof(tx_power_values[0]);
 
-        perform_throughput_test(round);
+    EventBits_t bits = xEventGroupWaitBits(s_wifi_event_group,
+                                            WIFI_CONNECTED_BIT | WIFI_FAIL_BIT,
+                                            pdFALSE,
+                                            pdFALSE,
+                                            portMAX_DELAY);
+    if ((bits & WIFI_FAIL_BIT) != 0) {
+        ESP_LOGE(TAG, "Cannot connect to %s; profiler stopped", AP_SSID);
+        vTaskDelete(NULL);
+        return;
+    }
+
+    vTaskDelay(pdMS_TO_TICKS(1000));
+
+    for (int i = 0; i < num_levels; i++) {
+        int8_t pwr = tx_power_values[i];
+        int dbm = tx_dbm[i];
+        ESP_LOGI(TAG, "=======================================================");
+        ESP_LOGI(TAG, "[TX POWER CONTROL]: Setting Max Tx Power to %d dBm (raw reg: %d)", dbm, pwr);
+        esp_err_t err = esp_wifi_set_max_tx_power(pwr);
+        if (err != ESP_OK) {
+            ESP_LOGE(TAG, "Failed to set max tx power: %s", esp_err_to_name(err));
+        }
+        vTaskDelay(pdMS_TO_TICKS(1000));
+
+        ESP_LOGI(TAG, "Starting Throughput Benchmark for Tx Power %d dBm...", dbm);
+        perform_throughput_test(i + 1);
         vTaskDelay(pdMS_TO_TICKS(2000));
     }
 
-    ESP_LOGI(TAG, "All benchmark rounds completed");
+    ESP_LOGI(TAG, "All 5 Tx Power Benchmark levels completed successfully!");
     vTaskDelete(NULL);
 }
 
