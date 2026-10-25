@@ -96,15 +96,18 @@ xSemaphoreGive(mutex)           xSemaphoreGive(mutex)
 
 ### 7.1 บันทึกข้อมูลจาก Dashboard
 
+<img width="951" height="891" alt="Screenshot 2026-10-25 135837" src="https://github.com/user-attachments/assets/3480bb88-26cf-48b4-9958-76a70132f03c" />
+
 | ครั้งที่ | Temperature (°C) | Humidity (%) | Light Lux | Timestamp (ms) |
 | :------: | :--------------: | :----------: | :-------: | :------------: |
-|  **1**   |                  |              |           |                |
-|  **2**   |                  |              |           |                |
-|  **3**   |                  |              |           |                |
+|  **1**   |    34.4              |     51.3         |    554       |       92470         |
+|  **2**   |    31.8          |     54.2         |     480      |         94470       |
+|  **3**   |    29.5      |     60.1         |       610    |         96470       |
 
 ### 7.2 ทดสอบ JSON API (`/api/data`)
 
 บันทึก Raw JSON Response จาก Browser:
+<img width="721" height="151" alt="image" src="https://github.com/user-attachments/assets/ade4576a-a3cb-41fa-acb0-67cd45892a00" />
 
 ```json
 
