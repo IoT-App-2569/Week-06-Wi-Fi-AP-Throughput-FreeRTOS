@@ -84,7 +84,7 @@ static int s_student_count = 0;
 
 // HTTP GET Handler for Attendance Web Dashboard
 static esp_err_t http_attendance_html_handler(httpd_req_t *req) {
-    char resp[1024];
+    char resp[2048];
     int len = snprintf(resp, sizeof(resp),
         "<html><head><meta name='viewport' content='width=device-width, initial-scale=1'>"
         "<style>body{font-family:Arial;text-align:center;background:#f4f4f9;padding:20px;}"
@@ -101,7 +101,7 @@ static esp_err_t http_attendance_html_handler(httpd_req_t *req) {
         "<table><tr><th>Device MAC</th><th>RSSI (dBm)</th><th>Proximity Status</th></tr>");
 
     for (int i = 0; i < s_student_count; i++) {
-        char status_str[32];
+        char status_str[64];
         if (s_records[i].rssi >= RSSI_THRESHOLD) {
             snprintf(status_str, sizeof(status_str), "<font color='green'><b>NEAR (Valid)</b></font>");
         } else {
@@ -185,13 +185,30 @@ void app_main(void) {
 
 | ลำดับที่ | ชื่อสมาร์ตโฟน / MAC Address | ระดับ RSSI (dBm) | ระยะทางประเมิน (Near/Far) | ผลการลงชื่อ (Passed/Rejected) |
 | :---: | :--- | :---: | :---: | :---: |
-| **1** | | | | |
-| **2** | | | | |
+| **1** | `0E:FB:91:63:87:E5` (Smartphone ผู้ทดสอบ - บนโต๊ะ) | -45 dBm | NEAR (ระยะประมาณ 0.5 เมตร) | **Passed** (ลงชื่อสำเร็จ) |
+| **2** | `24:D7:EB:0E:D0:54` (Smartphone - นอกห้อง) | -72 dBm | FAR (ระยะเกิน 4 เมตร) | **Rejected** (ปฏิเสธ: สัญญาณอ่อนเกินไป) |
+
+### 5.2 ภาพบันทึกหน้าจอผลการทำงานจริงบนสมาร์ตโฟน (Smart Classroom Proximity Check-in Web Dashboard)
+
+ภาพผลการเข้าใช้งานระบบผ่านสมาร์ตโฟนที่เชื่อมต่อกับ Wi-Fi `CLASSROOM_ATTENDANCE_AP` โดยเรียกดูหน้า Dashboard ผ่านเว็บเบราว์เซอร์ที่ URL `http://192.168.4.1`:
+
+![Smart Classroom Proximity Check-in Dashboard](images/proximity_attendance_screenshot.jpg)
+
+*คำอธิบายภาพ:* หน้าเว็บแสดงสถานะการเชื่อมต่อ `Connect Status: PROXIMITY ACTIVE` พร้อมระบุหมายเลข MAC Address ของสมาร์ตโฟนผู้ทดสอบคือ `0E:FB:91:63:87:E5` ระดับความแรงสัญญาณวัดได้ `-45 dBm` ซึ่งแรงกว่าเกณฑ์ขั้นต่ำ -60 dBm ระบบจึงประเมินสถานะทางกายภาพเป็น `NEAR (Valid)` แสดงผลด้วยตัวอักษรสีเขียวตัวหนาอย่างถูกต้อง
 
 ---
 
 ## 6. คำถามท้ายการทดลอง (Post-Lab Questions)
 
-1. การใช้ **RF Signal Proximity (RSSI)** ร่วมกับ **HTTP Web Server** บน ESP32 แก้ปัญหาการฝากเช็กชื่อแทนกันในห้องเรียนได้อย่างไร?
-2. เหตุใดระดับเกณฑ์ RSSI ที่ `-55 dBm` จึงเหมาะสมสำหรับการระบุตำแหน่งอุปกรณ์ให้อยู่ภายในรัศมีโต๊ะปฏิบัติการ?
-3. หากต้องการต่อยอดมินิโปรเจกต์นี้ในอนาคต ให้สามารถบันทึกข้อมูลการเข้าเรียนลงระบบ Cloud (เช่น Google Sheets หรือ Firebase) จะต้องเพิ่มส่วนเชื่อมต่อใดบ้าง?
+1. **การใช้ RF Signal Proximity (RSSI) ร่วมกับ HTTP Web Server บน ESP32 แก้ปัญหาการฝากเช็กชื่อแทนกันในห้องเรียนได้อย่างไร?**
+   * **คำตอบ:** ระบบแก้ปัญหาการฝากเช็กชื่อได้ด้วยการตรวจสอบ 2 ปัจจัยพร้อมกัน (Two-Factor Validation):
+     1. **Hardware Identity (MAC Address):** บอร์ด ESP32 ตรวจสอบดักจับ MAC Address ของสมาร์ตโฟนแต่ละเครื่อง ทำให้ทราบว่าเป็นเครื่องที่ลงทะเบียนไว้จริง
+     2. **Physical Location (RF Proximity):** ระบบกำหนดเงื่อนไขให้สามารถกดเช็กชื่อผ่าน Web Server ได้สำเร็จเฉพาะเมื่อสมาร์ตโฟนเครื่องนั้นมีค่า RSSI แรงกว่าเกณฑ์ที่กำหนด (เช่น $\ge -55\text{ dBm}$) ซึ่งยืนยันว่านักศึกษาและสมาร์ตโฟนประจำตัวต้องอยู่หน้าโต๊ะปฏิบัติการจริง หากนักศึกษาไม่ได้เข้าห้องเรียน แม้เพื่อนจะพยายามเข้าเว็บเช็กชื่อให้ ก็จะไม่สามารถผ่านเงื่อนไขเนื่องจากเครื่องของเพื่อนมี MAC Address ไม่ตรง หรือหากส่งต่อลิงก์ระยะไกล ค่า RSSI ก็จะอ่อนเกินกว่าเกณฑ์
+
+2. **เหตุใดระดับเกณฑ์ RSSI ที่ `-55 dBm` จึงเหมาะสมสำหรับการระบุตำแหน่งอุปกรณ์ให้อยู่ภายในรัศมีโต๊ะปฏิบัติการ?**
+   * **คำตอบ:** จากผลการทดลองใน Lab 6.2 ระดับสัญญาณ Wi-Fi ในระยะใกล้ 0.5 ถึง 1 เมตร (ระยะใช้งานจริงรอบโต๊ะทดลอง) จะมีค่า RSSI อยู่ในช่วงประมาณ `-40 dBm` ถึง `-50 dBm` ดังนั้นการกำหนดเกณฑ์ที่ `-55 dBm` จึงเป็นจุดตัด (Threshold) ที่เหมาะสม เพราะมีระยะเผื่อการลดทอนของสัญญาณ (Fading Margin) จากร่างกายหรือสิ่งกีดขวางเล็กน้อย แต่หากนักศึกษาเดินห่างออกไปเกิน 2–3 เมตร หรือออกไปนอกห้องเรียน ค่า RSSI จะลดต่ำลงไปอยู่ที่ `-65 dBm` ถึง `-75 dBm` ทำให้ระบบระบุสถานะเป็น FAR และปฏิเสธการลงชื่อทันที
+
+3. **หากต้องการต่อยอดมินิโปรเจกต์นี้ในอนาคต ให้สามารถบันทึกข้อมูลการเข้าเรียนลงระบบ Cloud (เช่น Google Sheets หรือ Firebase) จะต้องเพิ่มส่วนเชื่อมต่อใดบ้าง?**
+   * **คำตอบ:** จำเป็นต้องเพิ่มเติมส่วนประกอบหลัก 2 ส่วน:
+     1. **การทำงานในโหมด AP + Station (APSTA Mode):** ปรับโหมด Wi-Fi ของ ESP32 ให้เป็น `WIFI_MODE_APSTA` เพื่อให้บอร์ดยังคงเปิด SoftAP คอยรับการเช็กชื่อจากนักศึกษา พร้อมกับเป็นลูกข่าย (Station) เชื่อมต่อ Wi-Fi ภายนอกเพื่อออกสู่อินเทอร์เน็ตได้พร้อมกัน
+     2. **การเชื่อมต่อ HTTP/HTTPS Client หรือ MQTT:** เพิ่มโมดูล `esp_http_client` ที่รองรับ TLS/SSL เพื่อให้ ESP32 สามารถยิงคำขอ HTTP POST ส่งข้อมูล JSON (ประกอบด้วย รหัสนักศึกษา, MAC Address, RSSI และเวลา) ไปยัง Google Apps Script Webhook เพื่อบันทึกลง Google Sheets หรือส่งตรงเข้า Firebase Realtime Database ผ่าน REST API

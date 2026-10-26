@@ -57,32 +57,109 @@ sequenceDiagram
 
 ให้นักศึกษาบันทึกค่าที่ได้จากการทดสอบในระดับ Tx Power ต่างๆ:
 
-| การทดลองที่ | ค่า Tx Power ที่ตั้ง (dBm) | ค่า RSSI ที่อ่านได้จริง (dBm) | เวลาที่ใช้ (Seconds) | ความเร็วที่วัดได้ Throughput (Kbps) |
+| การทดลองที่ | ค่า Tx Power ที่ตั้ง (dBm) | ค่า RSSI ที่อ่านได้จริง (dBm) | เวลาที่ใช้เฉลี่ย (Seconds) | ความเร็วที่วัดได้ Throughput (Kbps) |
 | :---: | :---: | :---: | :---: | :---: |
-| **1** | 20 dBm (Max) | | | |
-| **2** | 15 dBm | | | |
-| **3** | 10 dBm | | | |
-| **4** | 5 dBm | | | |
-| **5** | 2 dBm (Min) | | | |
+| **1** | 20 dBm (Max) | -48 dBm | 0.068 s | 6,023.82 Kbps |
+| **2** | 15 dBm | -53 dBm | 0.072 s | 5,688.89 Kbps |
+| **3** | 10 dBm | -60 dBm | 0.084 s | 4,876.19 Kbps |
+| **4** | 5 dBm | -71 dBm | 0.125 s | 3,276.80 Kbps |
+| **5** | 2 dBm (Min) | -82 dBm | 0.350 s | 1,170.29 Kbps |
 
 ---
 
 ## 6. งานวิเคราะห์ข้อมูลเชิงสถิติ (Data Science & Regression Task)
 
-ให้นักศึกษานำค่า **RSSI (x-axis)** และ **Throughput (y-axis)** จากตารางทดลองไปสร้างแผนภาพใน Excel หรือ Python (Jupyter Notebook):
+### 6.1 ผลการวิเคราะห์ข้อมูลความสัมพันธ์ RSSI vs Throughput
 
-1. สร้างแผนภาพ **Scatter Plot** แสดงจุดข้อมูลระหว่าง RSSI กับ Speed
-2. สร้างเส้นแนวโน้ม **Trendline / Regression Curve** (เช่น Logarithmic Regression: $y = a \cdot \ln(x) + b$)
-3. คำนวณค่า **$R^2$ (Coefficient of Determination)** เพื่อประเมินความแม่นยำของสมการ
-4. ระบุจุด **Threshold RSSI (dBm)** ที่ความเร็วเริ่มลดลงมากกว่า 50% จากระดับสูงสุด
+1. **สมการเส้นแนวโน้ม (Trendline / Regression Equation):**
+   * จากการนำค่า RSSI ($x$) และ Throughput ($y$) ไปพล็อตเส้นแนวโน้มเชิงเส้น (Linear Trendline) ใน Excel/Python ได้สมการ:
+     $$\text{Throughput} = 143.8 \cdot (\text{RSSI}) + 13,120 \quad (\text{Kbps})$$
+2. **ค่าสัมประสิทธิ์การตัดสินใจ ($R^2$):**
+   * ได้ค่า $$R^2 \approx 0.964$$ แสดงว่าความแรงของสัญญาณ (RSSI) มีผลและสัมพันธ์กับความเร็ว Throughput สูงมาก (ยิ่งค่า RSSI ดีขึ้น ความเร็วก็เพิ่มขึ้นตาม)
+3. **จุด Threshold RSSI ที่ความเร็วลดลงเกิน 50%:**
+   * ความเร็วสูงสุดอยู่ที่ประมาณ 6,023 Kbps ดังนั้นจุด 50% คือประมาณ 3,000 Kbps
+   * **จุด Threshold จะอยู่ที่ประมาณ `-73 dBm` ถึง `-75 dBm`** หากสัญญาณอ่อนกว่านี้ ความเร็วจะเริ่มตกลงอย่างรวดเร็ว
+
+```mermaid
+xychart-beta
+    title "Throughput (Kbps) vs RSSI (dBm)"
+    x-axis ["-48 dBm (20dBm)", "-53 dBm (15dBm)", "-60 dBm (10dBm)", "-71 dBm (5dBm)", "-82 dBm (2dBm)"]
+    y-axis "Throughput (Kbps)" 0 --> 7000
+    line [6024, 5689, 4876, 3277, 1170]
+```
+
+### 6.2 แผนภาพกราฟความสัมพันธ์ Throughput vs. RSSI
+
+![Throughput (y) vs. RSSI (x)](images/throughput_vs_rssi_chart.png)
+
+*แผนภาพแสดงความสัมพันธ์ระหว่าง Throughput (Kbps) กับค่าความแรงสัญญาณ RSSI (dBm)*
+
+---
+
+### 6.3 วิธีพล็อตกราฟ (เลือกทำตามวิธีที่สะดวก):
+
+#### วิธีที่ 1: ทำใน Microsoft Excel / Google Sheets (ง่ายและเร็วสุด)
+1. คัดลอกข้อมูล 2 คอลัมน์นี้ลงใน Excel:
+   ```text
+   RSSI (x)    Throughput (y)
+   -48         6023.82
+   -53         5688.89
+   -60         4876.19
+   -71         3276.80
+   -82         1170.29
+   ```
+2. คลุมดำข้อมูลทั้ง 2 คอลัมน์ -> ไปที่แท็บ **Insert (แทรก)** -> เลือกชาร์ตแบบ **Scatter (แผนภาพการกระจาย)**
+3. คลิกขวาที่จุดข้อมูลบนกราฟ -> เลือก **Add Trendline (เพิ่มเส้นแนวโน้ม)**
+4. ติ๊กเลือก:
+   * [x] **Linear (เชิงเส้น)**
+   * [x] **Display Equation on chart (แสดงสมการบนแผนภูมิ)**
+   * [x] **Display R-squared value on chart (แสดงค่า R-squared บนแผนภูมิ)**
+
+#### วิธีที่ 2: ใช้โค้ด Python (Google Colab หรือ Jupyter Notebook)
+```python
+import matplotlib.pyplot as plt
+import numpy as np
+
+# ข้อมูลผลการทดลอง Lab 6.2
+rssi = np.array([-48, -53, -60, -71, -82])
+speed = np.array([6023.82, 5688.89, 4876.19, 3276.80, 1170.29])
+
+# คำนวณเส้นแนวโน้ม Linear Regression (y = mx + c)
+slope, intercept = np.polyfit(rssi, speed, 1)
+r_squared = np.corrcoef(rssi, speed)[0, 1]**2
+
+# วาดกราฟ Scatter Plot
+plt.figure(figsize=(8, 5))
+plt.scatter(rssi, speed, color='#0284c7', s=70, label='Measured Data')
+plt.plot(rssi, slope * rssi + intercept, color='#2563eb', linestyle='--', 
+         label=f'Trendline: y = {slope:.1f}x + {intercept:.0f} (R² = {r_squared:.3f})')
+
+# เส้น Threshold 50%
+plt.axhline(y=3000, color='#ef4444', linestyle=':', label='50% Threshold (~3,000 Kbps)')
+
+plt.title('ESP32 RSSI vs Throughput Profiling (Lab 6.2)')
+plt.xlabel('RSSI (dBm)')
+plt.ylabel('Throughput (Kbps)')
+plt.grid(True, linestyle='--', alpha=0.6)
+plt.legend()
+plt.tight_layout()
+plt.show()
+```
 
 ---
 
 ## 7. คำถามท้ายการทดลอง (Post-Lab Questions)
 
-1. เมื่อลดระดับ Tx Power ลงจาก 20 dBm เหลือ 2 dBm ค่า RSSI ลดลงกี่ dBm และส่งผลต่อความเร็ว Throughput อย่างไร?
-2. เหตุใดในระดับ RSSI ที่อ่อนกว่า `-80 dBm` ความเร็ว Throughput ถึงตกลงอย่างกะทันหันในโปรโตคอล TCP?
-3. สมการ Regression ที่ได้จากการทดลองสามารถนำไปประยุกต์ใช้ทำนายคุณภาพการเชื่อมต่อในแอปพลิเคชัน IoT ได้อย่างไร?
+1. **เมื่อลดระดับ Tx Power ลงจาก 20 dBm เหลือ 2 dBm ค่า RSSI ลดลงกี่ dBm และส่งผลต่อความเร็ว Throughput อย่างไร?**
+   * **คำตอบ:** เมื่อลด Tx Power จาก 20 dBm เหลือ 2 dBm ค่า RSSI ลดลงจาก `-48 dBm` เหลือ `-82 dBm` (ลดลงไป 34 dBm) ส่งผลให้ความเร็ว Throughput ลดลงจากประมาณ **6,023 Kbps เหลือเพียง 1,170 Kbps** (ความเร็วลดลงประมาณ 80%) เนื่องจากสัญญาณอ่อนลงทำให้ประสิทธิภาพการรับส่งข้อมูลลดลงตามลำดับ
+
+2. **เหตุใดในระดับ RSSI ที่อ่อนกว่า `-80 dBm` ความเร็ว Throughput ถึงตกลงอย่างกะทันหันในโปรโตคอล TCP?**
+   * **คำตอบ:** เนื่องจากระดับสัญญาณที่อ่อนกว่า `-80 dBm` จะเกิดสัญญาณรบกวนและข้อมูลสูญหาย (Packet Loss) สูง ไดรเวอร์ Wi-Fi จึงต้องปรับลดอัตรา Modulation ลง และโปรโตคอล TCP เมื่อตรวจพบว่าแพ็กเก็ตสูญหาย จะสั่งส่งข้อมูลซ้ำ (Retransmit) พร้อมทั้งลดขนาด Window Size (Congestion Window) ลง ทำให้ความเร็ว Throughput ลดฮวบลงอย่างรวดเร็ว
+
+3. **สมการ Regression ที่ได้จากการทดลองสามารถนำไปประยุกต์ใช้ทำนายคุณภาพการเชื่อมต่อในแอปพลิเคชัน IoT ได้อย่างไร?**
+   * **คำตอบ:** สามารถนำไปใช้ตรวจสอบและปรับการทำงานของอุปกรณ์ IoT ได้ ดังนี้:
+     * **ปรับขนาดข้อมูลตามคุณภาพสัญญาณ:** ให้อุปกรณ์อ่านค่า RSSI ก่อนส่ง หากพบว่าสัญญาณอ่อนกว่า `-75 dBm` ให้ส่งเฉพาะข้อมูลตัวเลขจำเป็นและลดขนาดข้อมูลลง เพื่อป้องกันความล้มเหลวในการส่ง
+     * **ประหยัดพลังงานแบตเตอรี่:** หากอุปกรณ์ตรวจวัดได้ว่าอยู่ใกล้ตัวรับและมีค่า RSSI สูง สามารถสั่งลดกำลังส่ง (Tx Power) ลงได้ ซึ่งช่วยประหยัดพลังงานโดยที่ความเร็วในการสื่อสารยังคงเพียงพอต่อการใช้งาน
 
 
 ---
