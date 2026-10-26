@@ -166,13 +166,35 @@ void app_main(void) {
 
 | ชื่อ FreeRTOS Task | ขนาด Stack ที่กำหนดใน `xTaskCreate` (Bytes) | ค่า High Water Mark ที่อ่านได้ (Words / Bytes) | สถานะความปลอดภัยสแตก |
 | :--- | :---: | :---: | :---: |
-| **`SensorCollectorTask`** | 3072 | | |
-| **`NetworkCommTask`** | 4096 | | |
+| **`SensorCollectorTask`** | 3072 | 1532 / 1532 | ✅ ปลอดภัย (เหลือ ~50%) |
+| **`NetworkCommTask`** | 4096 | 2408 / 2408 | ✅ ปลอดภัย (เหลือ ~59%) |
+| **`SensorCollectorTask`** (ลดเหลือ 1024) | 1024 | - | ❌ Stack Overflow |
+
+```text
+I (2563) FORENSIC_STACK:   -> SensorTask Stack Remaining: 1532 words (1532 bytes)
+I (2573) FORENSIC_STACK:   -> NetworkTask Stack Remaining: 2408 words (2408 bytes)
+```
+
+เมื่อลดเหลือ 1024:
+```text
+***ERROR*** A stack overflow in task SensorCollectorTask has been detected.
+```
+
+หมายเหตุ: บน ESP32 `StackType_t` มีขนาด 1 ไบต์ ค่า words และ bytes จึงเท่ากัน
 
 ---
 
 ## 7. คำถามท้ายการทดลอง (Post-Lab Questions)
 
 1. เหตุใดการใช้ **FreeRTOS Queue** จึงมีความปลอดภัย (Thread-Safe) มากกว่าการใช้ตัวแปรแบบ Global ในการรับส่งข้อมูลระหว่างสอง Task?
+
+- **คำตอบ** Queue คัดลอกข้อมูลทั้งก้อนภายใน Critical Section ของ Kernel จึงไม่มี Task ไหนอ่านข้อมูลครึ่ง ๆ กลาง ๆ และยังบล็อก Task ผู้รับไว้จนกว่าข้อมูลจะมา
+
 2. ค่า **Stack High Water Mark** มีประโยชน์อย่างไรในการตรวจวินิจฉัยปัญหาบั๊กในระบบเรียลไทม์ (RTOS)?
+
+- **คำตอบ** บอกปริมาณสแตกที่เหลือน้อยที่สุดที่เคยเกิดขึ้น ใช้ตรวจว่า Task ใกล้ Stack Overflow หรือไม่ และใช้ปรับขนาดสแตกให้พอดี
+
 3. หาก `vSensorTask` ส่งข้อมูลเร็วมาก (เช่น ทุก 10ms) แต่ `vNetworkTask` ส่งข้อมูลออก Wi-Fi ได้ช้า (เช่น ใช้เวลา 500ms) จะเกิดอะไรขึ้นกับ Queue และระบบจะรับมืออย่างไร?
+
+- **คำตอบ** Queue 10 ช่องจะเต็มในประมาณ 100 ms แล้ว `xQueueSend()` จะ Timeout ขึ้น `Queue Full!` และข้อมูลใหม่ถูกทิ้ง รับมือได้โดยเฉลี่ยค่าก่อนส่ง, ส่งเป็น Batch, เพิ่มขนาด Queue หรือใช้ `xQueueOverwrite()` เก็บเฉพาะค่าล่าสุด
+

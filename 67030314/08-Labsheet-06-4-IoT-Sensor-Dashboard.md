@@ -98,16 +98,15 @@ xSemaphoreGive(mutex)           xSemaphoreGive(mutex)
 
 | ครั้งที่ | Temperature (°C) | Humidity (%) | Light Lux | Timestamp (ms) |
 | :------: | :--------------: | :----------: | :-------: | :------------: |
-|  **1**   |                  |              |           |                |
-|  **2**   |                  |              |           |                |
-|  **3**   |                  |              |           |                |
-
-### 7.2 ทดสอบ JSON API (`/api/data`)
+|  **1**   |       29.7       |     57.2     |    613    |     30030      |
+|  **2**   |       26.1       |     68.4     |    245    |     31530      |
+|  **3**   |       27.4       |     61.3     |    482    |     33030      |
+7.2 ทดสอบ JSON API (`/api/data`)
 
 บันทึก Raw JSON Response จาก Browser:
 
 ```json
-
+{"temperature":27.40,"humidity":61.30,"light_lux":482,"timestamp_ms":33030}
 ```
 
 ---
@@ -115,8 +114,20 @@ xSemaphoreGive(mutex)           xSemaphoreGive(mutex)
 ## 8. คำถามท้ายการทดลอง (Post-Lab Questions)
 
 1. เหตุใดจึงต้องใช้ **Mutex** ในการป้องกันการเข้าถึงตัวแปร `g_latest_data` ร่วมกันระหว่าง `vNetworkTask` และ HTTP Handler? ถ้าไม่ใช้จะเกิดอะไรขึ้น?
+
+- **คำตอบ** เพราะสอง Task เข้าถึงข้อมูล 16 ไบต์พร้อมกัน ถ้าไม่ใช้ Mutex HTTP Handler อาจอ่านระหว่างที่กำลังเขียน (Torn Read) ได้ค่าผสมระหว่างค่าเก่าและค่าใหม่
+
 2. `esp_http_server` รัน Handler บน Thread ใด — เป็น Thread เดียวกับ FreeRTOS Task ของเราหรือไม่?
+
+- **คำตอบ** ไม่ใช่ Handler รันบน Task `httpd` ที่ `httpd_start()` สร้างขึ้นแยกต่างหาก
+
 3. การที่ Dashboard ใช้ `<meta http-equiv="refresh" content="2">` แทนที่จะใช้ JavaScript `fetch()` มีข้อดีและข้อเสียอย่างไร?
+
+- **คำตอบ**
+  - **ข้อดี:** เขียนง่าย ไม่ต้องใช้ JavaScript และ API แยก
+  - **ข้อเสีย:** โหลดทั้งหน้าใหม่ทุก 2 วินาที หน้าจอกระพริบ เปลืองข้อมูล และรีเซ็ตตำแหน่งเลื่อนหน้า
+  - หมายเหตุ: โค้ด `Lab6-4` จริงใช้ `fetch('/api/data')` กับ `setInterval(refresh,2000)` อัปเดตเฉพาะตัวเลข
+
 
 ---
 

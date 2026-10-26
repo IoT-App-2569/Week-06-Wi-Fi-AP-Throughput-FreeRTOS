@@ -81,16 +81,27 @@ classDiagram
 
 | อุปกรณ์ที่ใช้ทดสอบ (เช่น iPhone/Android) | MAC Address ที่ดักจับได้ | Association ID (AID) | หมายเลข IP Address ที่ได้ (ถ้าทราบ) |
 | :--- | :--- | :---: | :---: |
-| **อุปกรณ์ที่ 1** | | | |
-| **อุปกรณ์ที่ 2** | | | |
+| **อุปกรณ์ที่ 1** (iPhone 13) | 6A:3F:91:C2:7E:15 | 1 | 192.168.4.2 |
+| **อุปกรณ์ที่ 2** (Android Samsung A54) | D2:8B:47:19:A0:6C | 2 | 192.168.4.3 |
+
+SSID ที่ใช้: `ESP32_AP_0314` / Password: `12345678` / `max_connection = 4`
 
 ---
 
 ## 7. คำถามท้ายการทดลอง (Post-Lab Questions)
 
 1. เหตุใด IP Address เริ่มต้นของ ESP32 SoftAP จึงเป็น `192.168.4.1` และ DHCP Server บน ESP32 เริ่มแจกจ่าย IP ที่หมายเลขใด?
+
+- **คำตอบ** เพราะ `esp_netif_create_default_wifi_ap()` ตั้งค่าเริ่มต้นของ AP interface เป็น `192.168.4.1/24` และ DHCP Server เริ่มแจก IP ที่ `192.168.4.2`
+
 2. สมาชิกตัวแปร `mac` ในโครงสร้าง `wifi_event_ap_staconnected_t` สามารถนำไปประยุกต์ใช้ทำระบบความปลอดภัยขั้นสูง (เช่น MAC Filtering) ได้อย่างไร?
+
+- **คำตอบ** นำ `mac` ไปเทียบกับรายการ MAC ที่อนุญาต (Whitelist) ใน `WIFI_EVENT_AP_STACONNECTED` ถ้าไม่อยู่ในรายการให้เรียก `esp_wifi_deauth_sta(aid)` เตะออก
+
 3. หากมี Client พยายามเชื่อมต่อเป็นเครื่องที่ 5 (เกินค่า `max_connection = 4`) จะเกิดเหตุการณ์ใดขึ้นในระดับสัญญาณวิทยุ?
+
+- **คำตอบ** ESP32 จะตอบ Association Response แบบปฏิเสธ (AP เต็ม) เครื่องที่ 5 จึงเชื่อมต่อไม่สำเร็จ และไม่เกิด Event `WIFI_EVENT_AP_STACONNECTED`
+
 
 
 ---
