@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="420" viewBox="0 0 720 420" font-family="Arial, sans-serif">
+<rect width="720" height="420" fill="#ffffff"/>
+<text x="360.0" y="24" text-anchor="middle" font-size="16" font-weight="bold">Lab 6.2: RSSI vs Throughput (50 KB TCP)</text>
+<text x="360.0" y="42" text-anchor="middle" font-size="12" fill="#555">y = -9876.1 ln(|RSSI|) + 44617.7   R² = 0.897</text>
+<line x1="80" y1="360.0" x2="690" y2="360.0" stroke="#e5e5e5"/>
+<text x="72" y="364.0" text-anchor="end" font-size="11">0</text>
+<line x1="80" y1="315.7" x2="690" y2="315.7" stroke="#e5e5e5"/>
+<text x="72" y="319.7" text-anchor="end" font-size="11">1000</text>
+<line x1="80" y1="271.4" x2="690" y2="271.4" stroke="#e5e5e5"/>
+<text x="72" y="275.4" text-anchor="end" font-size="11">2000</text>
+<line x1="80" y1="227.1" x2="690" y2="227.1" stroke="#e5e5e5"/>
+<text x="72" y="231.1" text-anchor="end" font-size="11">3000</text>
+<line x1="80" y1="182.9" x2="690" y2="182.9" stroke="#e5e5e5"/>
+<text x="72" y="186.9" text-anchor="end" font-size="11">4000</text>
+<line x1="80" y1="138.6" x2="690" y2="138.6" stroke="#e5e5e5"/>
+<text x="72" y="142.6" text-anchor="end" font-size="11">5000</text>
+<line x1="80" y1="94.3" x2="690" y2="94.3" stroke="#e5e5e5"/>
+<text x="72" y="98.3" text-anchor="end" font-size="11">6000</text>
+<line x1="80" y1="50.0" x2="690" y2="50.0" stroke="#e5e5e5"/>
+<text x="72" y="54.0" text-anchor="end" font-size="11">7000</text>
+<line x1="80.0" y1="50" x2="80.0" y2="360" stroke="#f0f0f0"/>
+<text x="80.0" y="378" text-anchor="middle" font-size="11">-70</text>
+<line x1="202.0" y1="50" x2="202.0" y2="360" stroke="#f0f0f0"/>
+<text x="202.0" y="378" text-anchor="middle" font-size="11">-65</text>
+<line x1="324.0" y1="50" x2="324.0" y2="360" stroke="#f0f0f0"/>
+<text x="324.0" y="378" text-anchor="middle" font-size="11">-60</text>
+<line x1="446.0" y1="50" x2="446.0" y2="360" stroke="#f0f0f0"/>
+<text x="446.0" y="378" text-anchor="middle" font-size="11">-55</text>
+<line x1="568.0" y1="50" x2="568.0" y2="360" stroke="#f0f0f0"/>
+<text x="568.0" y="378" text-anchor="middle" font-size="11">-50</text>
+<line x1="690.0" y1="50" x2="690.0" y2="360" stroke="#f0f0f0"/>
+<text x="690.0" y="378" text-anchor="middle" font-size="11">-45</text>
+<line x1="80" y1="360" x2="690" y2="360" stroke="#333"/><line x1="80" y1="50" x2="80" y2="360" stroke="#333"/>
+<text x="385.0" y="405" text-anchor="middle" font-size="13">RSSI (dBm)</text>
+<text x="20" y="205.0" text-anchor="middle" font-size="13" transform="rotate(-90 20 205.0)">Throughput (Kbps)</text>
+<polyline points="690.0,49.0 683.9,51.4 677.8,53.8 671.7,56.2 665.6,58.6 659.5,61.0 653.4,63.3 647.3,65.7 641.2,68.0 635.1,70.3 629.0,72.6 622.9,74.9 616.8,77.2 610.7,79.5 604.6,81.8 598.5,84.0 592.4,86.2 586.3,88.5 580.2,90.7 574.1,92.9 568.0,95.1 561.9,97.3 555.8,99.4 549.7,101.6 543.6,103.7 537.5,105.9 531.4,108.0 525.3,110.1 519.2,112.2 513.1,114.3 507.0,116.4 500.9,118.5 494.8,120.6 488.7,122.6 482.6,124.7 476.5,126.7 470.4,128.7 464.3,130.8 458.2,132.8 452.1,134.8 446.0,136.8 439.9,138.7 433.8,140.7 427.7,142.7 421.6,144.6 415.5,146.6 409.4,148.5 403.3,150.5 397.2,152.4 391.1,154.3 385.0,156.2 378.9,158.1 372.8,160.0 366.7,161.9 360.6,163.7 354.5,165.6 348.4,167.5 342.3,169.3 336.2,171.2 330.1,173.0 324.0,174.8 317.9,176.6 311.8,178.4 305.7,180.2 299.6,182.0 293.5,183.8 287.4,185.6 281.3,187.4 275.2,189.2 269.1,190.9 263.0,192.7 256.9,194.4 250.8,196.2 244.7,197.9 238.6,199.6 232.5,201.3 226.4,203.0 220.3,204.7 214.2,206.4 208.1,208.1 202.0,209.8 195.9,211.5 189.8,213.2 183.7,214.8 177.6,216.5 171.5,218.2 165.4,219.8 159.3,221.4 153.2,223.1 147.1,224.7 141.0,226.3 134.9,227.9 128.8,229.6 122.7,231.2 116.6,232.8 110.5,234.4 104.4,235.9 98.3,237.5 92.2,239.1 86.1,240.7 80.0,242.2" fill="none" stroke="#ff7f0e" stroke-width="2" stroke-dasharray="6 4"/>
+<line x1="80" y1="228.6" x2="690" y2="228.6" stroke="#d62728" stroke-dasharray="2 3"/>
+<text x="86" y="222.6" font-size="11" fill="#d62728">50% of max (2968 Kbps)</text>
+<circle cx="616.8" cy="97.1" r="5" fill="#1f77b4"/>
+<text x="624.8" y="89.1" font-size="11">5936</text>
+<circle cx="494.8" cy="108.1" r="5" fill="#1f77b4"/>
+<text x="502.8" y="100.1" font-size="11">5689</text>
+<circle cx="372.8" cy="136.1" r="5" fill="#1f77b4"/>
+<text x="380.8" y="128.1" font-size="11">5057</text>
+<circle cx="250.8" cy="192.0" r="5" fill="#1f77b4"/>
+<text x="258.8" y="184.0" font-size="11">3793</text>
+<circle cx="153.2" cy="243.7" r="5" fill="#1f77b4"/>
+<text x="161.2" y="235.7" font-size="11">2626</text>
+</svg>
