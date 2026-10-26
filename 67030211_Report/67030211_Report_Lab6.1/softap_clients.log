@@ -1,0 +1,5 @@
+SoftAP Started: SSID=ESP32_IoT_Gateway IP=192.168.4.1
+I (4120) wifi: station: 74:04:f1:22:33:44 join, AID=1
+[SoftAP] Station joined: MAC=74:04:f1:22:33:44 AID=1
+I (9850) wifi: station: 90:cd:b6:aa:bb:cc join, AID=2
+[SoftAP] Station joined: MAC=90:cd:b6:aa:bb:cc AID=2

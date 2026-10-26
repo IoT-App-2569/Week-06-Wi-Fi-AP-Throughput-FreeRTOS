@@ -1,0 +1,3 @@
+I (5120) httpd: Started HTTP server on port 80
+I (7890) httpd: GET / - 200 OK (Served index.html 450 bytes)
+I (8390) httpd: GET /api/data - 200 OK (JSON telemetry {"voltage": 1.65})
