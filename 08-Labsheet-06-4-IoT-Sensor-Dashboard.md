@@ -98,26 +98,35 @@ xSemaphoreGive(mutex)           xSemaphoreGive(mutex)
 
 | ครั้งที่ | Temperature (°C) | Humidity (%) | Light Lux | Timestamp (ms) |
 | :------: | :--------------: | :----------: | :-------: | :------------: |
-|  **1**   |                  |              |           |                |
-|  **2**   |                  |              |           |                |
-|  **3**   |                  |              |           |                |
+|  **1**   |      31.00            |      59.30        |     324      |         503260       |
+|  **2**   |      31.30            |       63.30       |     658      |        504770        |
+|  **3**   |        29.90          |       60.40       |     470      |       506280         |
 
 ### 7.2 ทดสอบ JSON API (`/api/data`)
 
 บันทึก Raw JSON Response จาก Browser:
 
-```json
-
-```
+<img width="1710" height="1107" alt="ภาพถ่ายหน้าจอ 2569-10-26 เวลา 19 49 58" src="https://github.com/user-attachments/assets/6e50efad-c4f6-4a47-8c22-1d1175558654" />
+<img width="577" height="630" alt="ภาพถ่ายหน้าจอ 2569-10-26 เวลา 19 50 09" src="https://github.com/user-attachments/assets/7b08827e-cf0d-43c1-8f6a-0620c7669bd3" />
 
 ---
 
 ## 8. คำถามท้ายการทดลอง (Post-Lab Questions)
 
 1. เหตุใดจึงต้องใช้ **Mutex** ในการป้องกันการเข้าถึงตัวแปร `g_latest_data` ร่วมกันระหว่าง `vNetworkTask` และ HTTP Handler? ถ้าไม่ใช้จะเกิดอะไรขึ้น?
+   ```
+   พราะเป็น ข้อมูลกลาง ที่ถูกเข้าถึงพร้อมกัน (Task หนึ่งเขียน อีก Task หนึ่งอ่าน) Mutex ช่วยล็อกไม่ให้แย่งกันอ่าน-เขียน
+   ถ้าไม่ใช้: เกิด Data Race ข้อมูลจะตีกันเอง ทำให้หน้าเว็บได้ค่ามั่ว/ค่าครึ่งๆ กลางๆ หรือบอร์ด Crash ได้
+   ```
 2. `esp_http_server` รัน Handler บน Thread ใด — เป็น Thread เดียวกับ FreeRTOS Task ของเราหรือไม่?
+   ```
+   คนละ Thread กัน HTTP Server มี Task (httpd) ของตัวเองแยกต่างหาก จึงถือเป็นการทำงานข้าม Task และต้องใช้ Mutex ควบคุมเสมอ
+   ```
 3. การที่ Dashboard ใช้ `<meta http-equiv="refresh" content="2">` แทนที่จะใช้ JavaScript `fetch()` มีข้อดีและข้อเสียอย่างไร?
-
+ ```
+ข้อดี: เขียนง่าย แค่ใช้ HTML บรรทัดเดียว ไม่ต้องเขียน JavaScript รองรับทุกเบราว์เซอร์
+ข้อเสีย: หน้าเว็บกระพริบเพราะต้อง โหลดใหม่ทั้งหน้า ทุก 2 วินาที เปลืองทรัพยากรบอร์ดมากกว่าการส่งแค่ JSON สั้นๆ
+ ```
 ---
 
 ## 9. ความรู้เพิ่มเติม: ESP-IDF `esp_http_server` API
