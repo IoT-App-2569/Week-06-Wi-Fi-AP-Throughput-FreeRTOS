@@ -1,4 +1,0 @@
-iperf benchmark run:
-Client connecting to 192.168.4.1, TCP port 5001
-[  3]  0.0-10.0 sec  14.9 MBytes  12.5 Mbits/sec at -38 dBm
-[  3]  0.0-10.0 sec   4.1 MBytes   3.4 Mbits/sec at -76 dBm
