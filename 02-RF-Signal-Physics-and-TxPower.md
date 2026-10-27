@@ -55,16 +55,6 @@ $$\text{Throughput (KB/s)} = \frac{\text{Total Bytes}}{1024 \times \Delta t \tex
 
 เมื่อบันทึกข้อมูลค่า RSSI คู่กับ Throughput ในระดับความแรงสัญญาณต่างๆ นักศึกษาสามารถพล็อต **Scatter Plot** และสร้างสมการถดถอยเพื่อทำนายความเร็ว:
 
-```mermaid
-gantt
-    title RSSI vs Throughput Relationship Curve
-    dateFormat X
-    axisFormat %s
-    section Max Speed Zone (-30 to -65 dBm) : 30, 65
-    section Speed Degradation Zone (-65 to -80 dBm) : 65, 80
-    section Disconnect Risk Zone (< -85 dBm) : 80, 95
-```
-
 ### รูปแบบสมการ Logarithmic Regression ที่คาดหวัง:
 
 $$\text{Speed (Kbps)} = a \cdot \ln(|\text{RSSI}|) + b$$
