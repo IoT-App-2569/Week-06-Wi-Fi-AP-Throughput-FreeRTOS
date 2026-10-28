@@ -167,8 +167,8 @@ void app_main(void) {
 
 | ลำดับที่ | ชื่อสมาร์ตโฟน / MAC Address | ระดับ RSSI (dBm) | ระยะทางประเมิน (Near/Far) | ผลการลงชื่อ (Passed/Rejected) |
 | :---: | :--- | :---: | :---: | :---: |
-| **1** | | | | |
-| **2** | | | | |
+| **1** |Gambit |-45 | Near|Passed |
+| **2** |Iphoneของอุไรพร |-70 |Far |Rejected |
 
 ---
 
