@@ -14,8 +14,8 @@
 
 static const char *TAG = "LAB_SOFTAP";
 
-#define EXAMPLE_ESP_WIFI_SSID      "MY_ESP32_AP"
-#define EXAMPLE_ESP_WIFI_PASS      "12345678"
+#define EXAMPLE_ESP_WIFI_SSID      "MY_ESP32_AP_0052"
+#define EXAMPLE_ESP_WIFI_PASS      "67030052"
 #define EXAMPLE_MAX_STA_CONN       4
 #define SERVER_PORT                8080
 #define RECV_BUF_SIZE              1024
