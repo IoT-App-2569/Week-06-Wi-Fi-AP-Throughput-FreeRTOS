@@ -27,13 +27,35 @@
 
 ### 3.1 สถาปัตยกรรม Event และ DHCP Server ในโหมด SoftAP
 
-<p align="center"><img src="images/Fig_05-Labsheet-06-1-ESP32-SoftAP-Tracking_2026-10-25T10-31-55_academic.svg" alt="05-Labsheet-06-1-ESP32-SoftAP-Tracking" width="800" style="max-width: 800px; width: 100%; height: auto;" ></p>
-<p align="center"><b></b>สถาปัตยกรรม Event และ DHCP Server ในโหมด SoftAP</p>
+```mermaid
+sequenceDiagram
+    autonumber
+    participant App as Application Code
+    participant Evt as ESP Event Loop
+    participant AP as ESP32 SoftAP Driver
+    participant STA as Mobile Client
+
+    App->>AP: esp_netif_create_default_wifi_ap()
+    App->>AP: esp_wifi_set_config(WIFI_IF_AP, &ap_config)
+    App->>AP: esp_wifi_start()
+    note over AP: กระจาย Beacon Frame (SSID)<br/>เปิดบริการ DHCP Server (192.168.4.1)
+
+    STA->>AP: Connect Wi-Fi
+    AP->>Evt: Post WIFI_EVENT_AP_STACONNECTED
+    Evt->>App: Callback: wifi_event_handler()
+    note over App: อ่าน MAC Address และ AID ของ Client
+```
 
 ### 3.2 โครงสร้างข้อมูล `wifi_event_ap_staconnected_t` (Class Diagram)
 
-<p align="center"><img src="Fig_05-Labsheet-06-1-ESP32-SoftAP-Tracking_2026-10-25T10-32-08_academic.svg" alt="05-Labsheet-06-1-ESP32-SoftAP-Tracking" width="400" style="max-width: 800px; height: auto;" ></p>
-<p align="center"><b></b>โครงสร้างข้อมูล `wifi_event_ap_staconnected_t` (Class Diagram)</p>
+```mermaid
+classDiagram
+    class wifi_event_ap_staconnected_t {
+        +uint8_t[6] mac
+        +uint8_t aid
+        +bool is_mesh_child
+    }
+```
 
 ---
 
