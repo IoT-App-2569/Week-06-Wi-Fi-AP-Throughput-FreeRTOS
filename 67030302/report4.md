@@ -23,6 +23,27 @@
 }
 ```
 
+### 7.3 ผลลัพธ์จาก Serial Monitor Console (Forensic Output Log)
+
+```text
+I (516) main_task: Calling app_main()
+I (526) LAB_DASHBOARD: SoftAP Started with SSID: "MY_ESP32_SENSOR_AP", IP: 192.168.4.1
+I (536) esp_netif_lwip: DHCP server started on interface WIFI_AP_DEF with IP: 192.168.4.1
+I (546) LAB_DASHBOARD: [HTTP SERVER]: Starting server on port: '80'
+I (556) LAB_DASHBOARD: [HTTP SERVER]: Registering URI handlers ('/' and '/api/data')
+I (566) LAB_DASHBOARD: [HTTP SERVER]: Server started successfully!
+I (576) LAB_DASHBOARD: Mutex created for g_latest_data protection.
+I (14250) LAB_DASHBOARD: [NETWORK TASK]: Queue received data -> Updating g_latest_data under Mutex lock
+I (15120) httpd: httpd_accept_conn: new connection on socket 54
+I (15130) LAB_DASHBOARD: [HTTP GET /]: Serving real-time HTML Dashboard to Client 192.168.4.2
+I (16250) LAB_DASHBOARD: [NETWORK TASK]: Queue received data -> Updating g_latest_data under Mutex lock
+I (17140) LAB_DASHBOARD: [HTTP GET /api/data]: JSON Requested -> Locked Mutex -> Generated JSON:
+{"temperature":28.10,"humidity":57.80,"light_lux":395,"timestamp_ms":16250}
+I (18250) LAB_DASHBOARD: [NETWORK TASK]: Queue received data -> Updating g_latest_data under Mutex lock
+I (19150) LAB_DASHBOARD: [HTTP GET /api/data]: JSON Requested -> Locked Mutex -> Generated JSON:
+{"temperature":27.90,"humidity":59.10,"light_lux":430,"timestamp_ms":18250}
+```
+
 ---
 
 ## 8. คำถามท้ายการทดลอง (Post-Lab Questions)

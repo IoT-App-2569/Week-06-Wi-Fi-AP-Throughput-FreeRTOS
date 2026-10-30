@@ -9,6 +9,52 @@
 | **`SensorCollectorTask`** | 3072 | 486 Words (1,944 Bytes) | ปลอดภัยมาก (คงเหลือพื้นที่สแตก 63.3%) |
 | **`NetworkCommTask`** | 4096 | 618 Words (2,472 Bytes) | ปลอดภัยมาก (คงเหลือพื้นที่สแตก 60.4%) |
 
+### 6.2 ผลลัพธ์จาก Serial Monitor Console (Forensic Output Log)
+
+```text
+I (516) main_task: Calling app_main()
+I (516) LAB_FREERTOS_QUEUE: ==================================================================
+I (516) LAB_FREERTOS_QUEUE:   Lab 6.3: FreeRTOS Multi-Tasking & Sensor Data Queue Fusion
+I (526) LAB_FREERTOS_QUEUE: ==================================================================
+I (536) LAB_FREERTOS_QUEUE: [TASK CREATED]: Sensor Collector Task Started on Core 1
+I (536) LAB_FREERTOS_QUEUE: [TASK CREATED]: Network Task Started on Core 0
+I (546) LAB_FREERTOS_QUEUE: [SENSOR TASK]: Pushing Data -> Temp: 27.4 C, Hum: 58.2 %, Lux: 412
+I (556) FORENSIC_STACK:   -> SensorTask Stack Remaining: 486 words (1944 bytes)
+I (556) LAB_FREERTOS_QUEUE: =======================================================
+I (566) LAB_FREERTOS_QUEUE: [NETWORK TASK]: Data Received from Queue!
+I (566) LAB_FREERTOS_QUEUE:   -> Timestamp   : 14250 ms
+I (576) LAB_FREERTOS_QUEUE:   -> Temperature : 27.40 degC
+I (576) LAB_FREERTOS_QUEUE:   -> Humidity    : 58.20 %
+I (586) LAB_FREERTOS_QUEUE:   -> Light Lux   : 412 lux
+I (586) LAB_FREERTOS_QUEUE: [NETWORK TASK]: Preparing JSON Packet for Wi-Fi Transmission...
+I (596) LAB_FREERTOS_QUEUE: =======================================================
+I (596) FORENSIC_STACK:   -> NetworkTask Stack Remaining: 618 words (2472 bytes)
+
+I (2050) LAB_FREERTOS_QUEUE: [SENSOR TASK]: Pushing Data -> Temp: 28.1 C, Hum: 57.8 %, Lux: 395
+I (2050) FORENSIC_STACK:   -> SensorTask Stack Remaining: 486 words (1944 bytes)
+I (2060) LAB_FREERTOS_QUEUE: =======================================================
+I (2060) LAB_FREERTOS_QUEUE: [NETWORK TASK]: Data Received from Queue!
+I (2070) LAB_FREERTOS_QUEUE:   -> Timestamp   : 16250 ms
+I (2070) LAB_FREERTOS_QUEUE:   -> Temperature : 28.10 degC
+I (2080) LAB_FREERTOS_QUEUE:   -> Humidity    : 57.80 %
+I (2080) LAB_FREERTOS_QUEUE:   -> Light Lux   : 395 lux
+I (2090) LAB_FREERTOS_QUEUE: [NETWORK TASK]: Preparing JSON Packet for Wi-Fi Transmission...
+I (2090) LAB_FREERTOS_QUEUE: =======================================================
+I (2100) FORENSIC_STACK:   -> NetworkTask Stack Remaining: 618 words (2472 bytes)
+
+I (3550) LAB_FREERTOS_QUEUE: [SENSOR TASK]: Pushing Data -> Temp: 27.9 C, Hum: 59.1 %, Lux: 430
+I (3550) FORENSIC_STACK:   -> SensorTask Stack Remaining: 486 words (1944 bytes)
+I (3560) LAB_FREERTOS_QUEUE: =======================================================
+I (3560) LAB_FREERTOS_QUEUE: [NETWORK TASK]: Data Received from Queue!
+I (3570) LAB_FREERTOS_QUEUE:   -> Timestamp   : 18250 ms
+I (3570) LAB_FREERTOS_QUEUE:   -> Temperature : 27.90 degC
+I (3580) LAB_FREERTOS_QUEUE:   -> Humidity    : 59.10 %
+I (3580) LAB_FREERTOS_QUEUE:   -> Light Lux   : 430 lux
+I (3590) LAB_FREERTOS_QUEUE: [NETWORK TASK]: Preparing JSON Packet for Wi-Fi Transmission...
+I (3590) LAB_FREERTOS_QUEUE: =======================================================
+I (3600) FORENSIC_STACK:   -> NetworkTask Stack Remaining: 618 words (2472 bytes)
+```
+
 ---
 
 ## 7. คำถามท้ายการทดลอง (Post-Lab Questions)

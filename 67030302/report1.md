@@ -9,6 +9,45 @@
 | **อุปกรณ์ที่ 1 (iPhone 13)** | 5A:12:8E:B4:9C:3A | 1 | 192.168.4.2 |
 | **อุปกรณ์ที่ 2 (Samsung Galaxy S22)** | DA:A1:19:63:F4:71 | 2 | 192.168.4.3 |
 
+### 6.2 ผลลัพธ์จาก Serial Monitor Console (Forensic Output Log)
+
+```text
+I (516) main_task: Calling app_main()
+I (516) LAB_SOFTAP: [FORENSIC]: Call nvs_flash_init()
+I (556) LAB_SOFTAP: [FORENSIC]: Call esp_netif_init()
+I (556) LAB_SOFTAP: [FORENSIC]: Call esp_event_loop_create_default()
+I (556) LAB_SOFTAP: [FORENSIC]: Call esp_netif_create_default_wifi_ap()
+I (566) LAB_SOFTAP: [FORENSIC]: SoftAP Interface created at 0x3ffbf360 (Default IP: 192.168.4.1)
+I (576) LAB_SOFTAP: [FORENSIC]: Call esp_wifi_init(&cfg)
+I (586) wifi:wifi driver task: 3ffc1ae4, prio:23, stack:6656, core=0
+I (606) wifi:wifi firmware version: e12a754
+I (606) wifi:wifi certification version: v7.0
+I (666) LAB_SOFTAP: [FORENSIC]: Call esp_event_handler_instance_register(WIFI_EVENT)
+I (676) LAB_SOFTAP: [FORENSIC]: Call esp_wifi_set_mode(WIFI_MODE_AP)
+I (686) LAB_SOFTAP: [FORENSIC]: Call esp_wifi_set_config(WIFI_IF_AP, &wifi_config)
+I (696) LAB_SOFTAP: [FORENSIC]: Call esp_wifi_start()
+I (766) wifi:mode : softAP (94:b5:55:f2:60:0d)
+I (776) LAB_SOFTAP: ==================================================================
+I (786) esp_netif_lwip: DHCP server started on interface WIFI_AP_DEF with IP: 192.168.4.1
+I (796) LAB_SOFTAP:   ESP32 SoftAP Running! SSID: "ESP32_AP_0302", Channel: 1
+I (806) LAB_SOFTAP: ==================================================================
+I (14520) wifi:new:<1,0>, old:<1,0>, ap:<1,1>, sta:<255,255>, prof:1, snd_ch_cfg:0x0
+I (14530) wifi:station: 5a:12:8e:b4:9c:3a join, AID=1, bgn, 20
+I (14540) LAB_SOFTAP: =======================================================
+I (14540) LAB_SOFTAP: [FORENSIC EVENT]: WIFI_EVENT_AP_STACONNECTED received!
+I (14550) LAB_SOFTAP:   -> Client MAC Address : 5A:12:8E:B4:9C:3A
+I (14560) LAB_SOFTAP:   -> Assigned AID       : 1
+I (14560) LAB_SOFTAP: =======================================================
+I (15210) esp_netif_lwip: DHCPS: Assigned IP 192.168.4.2 to 5a:12:8e:b4:9c:3a
+I (28430) wifi:station: da:a1:19:63:f4:71 join, AID=2, bgn, 20
+I (28440) LAB_SOFTAP: =======================================================
+I (28440) LAB_SOFTAP: [FORENSIC EVENT]: WIFI_EVENT_AP_STACONNECTED received!
+I (28450) LAB_SOFTAP:   -> Client MAC Address : DA:A1:19:63:F4:71
+I (28450) LAB_SOFTAP:   -> Assigned AID       : 2
+I (28460) LAB_SOFTAP: =======================================================
+I (29120) esp_netif_lwip: DHCPS: Assigned IP 192.168.4.3 to da:a1:19:63:f4:71
+```
+
 ---
 
 ## 7. คำถามท้ายการทดลอง (Post-Lab Questions)

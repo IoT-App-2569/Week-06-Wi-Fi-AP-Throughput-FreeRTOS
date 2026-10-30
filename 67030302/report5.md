@@ -9,6 +9,29 @@
 | **1** | iPhone 13 (MAC: 5A:12:8E:B4:9C:3A) | -48 dBm | Near (ระยะประมาณ 1.0 เมตร) | Passed (ลงชื่อเข้าชั้นเรียนสำเร็จ) |
 | **2** | Samsung Galaxy S22 (MAC: DA:A1:19:63:F4:71) | -76 dBm | Far (ระยะประมาณ 6.5 เมตร นอกโต๊ะแล็บ) | Rejected (ระยะห่างเกินเกณฑ์ที่กำหนด) |
 
+### 5.2 ผลลัพธ์จาก Serial Monitor Console (Forensic Output Log)
+
+```text
+I (516) main_task: Calling app_main()
+I (516) SMART_ATTENDANCE: Initializing NVS, Netif & SoftAP Mode...
+I (620) esp_netif_lwip: DHCP server started on interface WIFI_AP_DEF with IP: 192.168.4.1
+I (630) SMART_ATTENDANCE: Attendance Web Server Started at http://192.168.4.1
+I (640) SMART_ATTENDANCE: SoftAP Started. SSID: "CLASSROOM_ATTENDANCE_AP", Threshold: -60 dBm
+I (14520) wifi:station: 5a:12:8e:b4:9c:3a join, AID=1, bgn, 20
+I (14530) SMART_ATTENDANCE: [PROXIMITY DETECTED]: New student device connected!
+I (14540) SMART_ATTENDANCE:   -> MAC: 5A:12:8E:B4:9C:3A, Measured RSSI: -48 dBm
+I (14550) SMART_ATTENDANCE:   -> Proximity Decision: RSSI (-48 dBm) >= Threshold (-60 dBm) -> STATUS: NEAR (Valid)
+I (15890) httpd: httpd_accept_conn: new connection on socket 54
+I (15900) SMART_ATTENDANCE: [HTTP REQUEST]: Serving Attendance Dashboard to 192.168.4.2
+I (18210) SMART_ATTENDANCE: [CHECKIN CONFIRMED]: Student 5A:12:8E:B4:9C:3A checked in successfully! (Timestamp: 120s)
+
+I (35210) wifi:station: da:a1:19:63:f4:71 join, AID=2, bgn, 20
+I (35220) SMART_ATTENDANCE: [PROXIMITY DETECTED]: New student device connected!
+I (35230) SMART_ATTENDANCE:   -> MAC: DA:A1:19:63:F4:71, Measured RSSI: -76 dBm
+W (35240) SMART_ATTENDANCE:   -> Proximity Decision: RSSI (-76 dBm) < Threshold (-60 dBm) -> STATUS: FAR (Invalid)
+W (36450) SMART_ATTENDANCE: [CHECKIN REJECTED]: Student DA:A1:19:63:F4:71 checkin rejected due to out of range signal!
+```
+
 ---
 
 ## 6. คำถามท้ายการทดลอง (Post-Lab Questions)

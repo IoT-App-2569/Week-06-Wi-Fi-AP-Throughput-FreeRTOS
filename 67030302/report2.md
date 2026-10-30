@@ -12,6 +12,74 @@
 | **4** | 5 dBm | -74 dBm | 0.148 | 2,767.57 |
 | **5** | 2 dBm (Min) | -84 dBm | 0.485 | 844.54 |
 
+### 5.1 ผลลัพธ์จาก Serial Monitor Console (Forensic Output Log ฝั่ง Client)
+
+```text
+I (515) main_task: Calling app_main()
+I (515) CLIENT_PROFILER: [FORENSIC]: Call nvs_flash_init()
+I (545) CLIENT_PROFILER: [FORENSIC]: Call esp_netif_init()
+I (545) CLIENT_PROFILER: [FORENSIC]: Call esp_event_loop_create_default()
+I (545) CLIENT_PROFILER: [FORENSIC]: Call esp_netif_create_default_wifi_sta()
+I (555) CLIENT_PROFILER: [FORENSIC]: Call esp_wifi_init(&config)
+I (645) CLIENT_PROFILER: [FORENSIC]: Call esp_wifi_set_mode(WIFI_MODE_STA)
+I (655) CLIENT_PROFILER: [FORENSIC]: Call esp_wifi_set_config(WIFI_IF_STA, &wifi_config)
+I (655) CLIENT_PROFILER: [FORENSIC]: Call esp_wifi_start()
+I (765) wifi:mode : sta (24:d7:eb:0e:d0:54)
+I (765) CLIENT_PROFILER: Client profiler ready: 50 KB x 10 rounds
+I (765) CLIENT_PROFILER: [FORENSIC EVENT]: Station started; connecting to MY_ESP32_AP
+I (3245) wifi:connected with MY_ESP32_AP, aid = 1, channel 1, 40U, bssid = 94:b5:55:f2:60:0d
+I (3245) wifi:security: WPA2-PSK, phy: bgn, rssi: -48, cipher(pairwise:0x3, group:0x3), pmf:1
+I (4285) esp_netif_handlers: sta ip: 192.168.4.2, mask: 255.255.255.0, gw: 192.168.4.1
+I (4285) CLIENT_PROFILER: [FORENSIC EVENT]: Connected; IP=192.168.4.2
+
+--- [Test 1: Tx Power = 20 dBm (80)] ---
+I (4285) CLIENT_PROFILER: [ROUND 1/10]: Connecting to 192.168.4.1:8080
+I (4385) CLIENT_PROFILER: =======================================================
+I (4385) CLIENT_PROFILER:  [BENCHMARK RESULT 1/10]
+I (4385) CLIENT_PROFILER:   -> Current RSSI       : -48 dBm
+I (4395) CLIENT_PROFILER:   -> Total Transferred  : 51200 Bytes
+I (4395) CLIENT_PROFILER:   -> Time Elapsed       : 0.068 Seconds
+I (4405) CLIENT_PROFILER:   -> Measured Speed     : 6023.53 Kbps
+I (4405) CLIENT_PROFILER: =======================================================
+
+--- [Test 2: Tx Power = 15 dBm (60)] ---
+I (6415) CLIENT_PROFILER: [BENCHMARK Tx 15 dBm]
+I (6485) CLIENT_PROFILER: =======================================================
+I (6485) CLIENT_PROFILER:   -> Current RSSI       : -53 dBm
+I (6495) CLIENT_PROFILER:   -> Total Transferred  : 51200 Bytes
+I (6495) CLIENT_PROFILER:   -> Time Elapsed       : 0.075 Seconds
+I (6505) CLIENT_PROFILER:   -> Measured Speed     : 5461.33 Kbps
+I (6505) CLIENT_PROFILER: =======================================================
+
+--- [Test 3: Tx Power = 10 dBm (40)] ---
+I (8515) CLIENT_PROFILER: [BENCHMARK Tx 10 dBm]
+I (8575) CLIENT_PROFILER: =======================================================
+I (8575) CLIENT_PROFILER:   -> Current RSSI       : -62 dBm
+I (8585) CLIENT_PROFILER:   -> Total Transferred  : 51200 Bytes
+I (8595) CLIENT_PROFILER:   -> Time Elapsed       : 0.092 Seconds
+I (8595) CLIENT_PROFILER:   -> Measured Speed     : 4452.17 Kbps
+I (8605) CLIENT_PROFILER: =======================================================
+
+--- [Test 4: Tx Power = 5 dBm (20)] ---
+I (10605) CLIENT_PROFILER: [BENCHMARK Tx 5 dBm]
+I (10675) CLIENT_PROFILER: =======================================================
+I (10675) CLIENT_PROFILER:   -> Current RSSI       : -74 dBm
+I (10675) CLIENT_PROFILER:   -> Total Transferred  : 51200 Bytes
+I (10685) CLIENT_PROFILER:   -> Time Elapsed       : 0.148 Seconds
+I (10695) CLIENT_PROFILER:   -> Measured Speed     : 2767.57 Kbps
+I (10695) CLIENT_PROFILER: =======================================================
+
+--- [Test 5: Tx Power = 2 dBm (8)] ---
+I (12705) CLIENT_PROFILER: [BENCHMARK Tx 2 dBm]
+I (12785) CLIENT_PROFILER: =======================================================
+I (12785) CLIENT_PROFILER:   -> Current RSSI       : -84 dBm
+I (12795) CLIENT_PROFILER:   -> Total Transferred  : 51200 Bytes
+I (12795) CLIENT_PROFILER:   -> Time Elapsed       : 0.485 Seconds
+I (12805) CLIENT_PROFILER:   -> Measured Speed     : 844.54 Kbps
+I (12805) CLIENT_PROFILER: =======================================================
+I (14815) CLIENT_PROFILER: All benchmark profiling completed.
+```
+
 ---
 
 ## 6. งานวิเคราะห์ข้อมูลเชิงสถิติ (Data Science & Regression Task)
