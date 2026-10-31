@@ -1,0 +1,113 @@
+### report6.5
+
+คำถามท้ายการทดลอง (Post-Lab Questions)
+
+1. การใช้ **RF Signal Proximity (RSSI)** ร่วมกับ **HTTP Web Server** บน ESP32 แก้ปัญหาการฝากเช็กชื่อแทนกันในห้องเรียนได้อย่างไร?
+        แก้ไขโดยอาศัยหลักการจำกัดระยะทางทางกายภาพ (Physical Proximity) เนื่องจากความเข้มของสัญญาณวิทยุจะลดลงตามระยะห่าง เมื่อ ESP32 ตรวจสอบค่าความแรงของสัญญาณ (RSSI) ควบคู่กับการกดเช็กชื่อผ่าน HTTP Web Server จะบังคับให้นักศึกษาต้องอยู่ใกล้กับจุดติดตั้งอุปกรณ์ (ภายในห้องเรียนหรือบริเวณโต๊ะปฏิบัติการ) จริง ๆ เท่านั้น จึงจะผ่านเงื่อนไขและส่งข้อมูลสำเร็จ เพื่อนที่ฝากโทรศัพท์ไว้หรืออยู่นอกห้องจะไม่สามารถเชื่อมต่อหรือผ่านเกณฑ์ความแรงของสัญญาณได้
+
+2. เหตุใดระดับเกณฑ์ RSSI ที่ `-55 dBm` จึงเหมาะสมสำหรับการระบุตำแหน่งอุปกรณ์ให้อยู่ภายในรัศมีโต๊ะปฏิบัติการ?
+        ค่า -55 dBm สอดคล้องกับระยะทางที่ใกล้มาก (ประมาณ 1-2 เมตร) ซึ่งเป็นระยะที่ผู้ใช้งานนั่งอยู่หน้าโต๊ะปฏิบัติการหรืออยู่ใกล้ตัวอุปกรณ์ ESP32 หากตั้งค่าให้เข้มเกินไป (เช่น -35 dBm) อาจเกิดปัญหาใช้งานยากจากสัญญาณที่สวิงหรือตำแหน่งวางอุปกรณ์คลาดเคลื่อนเล็กน้อย แต่หากตั้งค่าให้อ่อนเกินไป (เช่น -75 dBm) สัญญาณจะทะลุผนังหรือขยายรัศมีกว้างเกินไป ทำให้คนนอกห้องหรือโต๊ะอื่นสามารถแอบกดเช็กชื่อแทนได้
+
+3. หากต้องการต่อยอดมินิโปรเจกต์นี้ในอนาคต ให้สามารถบันทึกข้อมูลการเข้าเรียนลงระบบ Cloud (เช่น Google Sheets หรือ Firebase) จะต้องเพิ่มส่วนเชื่อมต่อใดบ้าง?
+        Wi-Fi Client Connection: ปรับหรือเพิ่มฟังก์ชันให้ ESP32 สามารถเชื่อมต่ออินเทอร์เน็ตภายนอก (ผ่าน Router Wi-Fi ของห้องเรียน) เพื่อส่งข้อมูลออกไปยัง Cloud ได้
+        HTTP Client / Cloud SDK:
+        กรณีใช้ Google Sheets: ต้องสร้าง Google Apps Script เพื่อรับค่าผ่าน Web App URL แล้วใช้ไลบรารี HTTPClient บน ESP32 ส่งคำขอแบบ POST พร้อมข้อมูลรหัสประจำตัวและเวลา
+        กรณีใช้ Firebase: ต้องใช้ไลบรารีเฉพาะ เช่น Firebase ESP Client พร้อมระบุ Database URL และ Authentication Credentials (API Key หรือ Token)
+        Data Serialization (JSON): ใช้ไลบรารีอย่าง ArduinoJson เพื่อจัดรูปแบบแพ็กเกจข้อมูล (Payload) ให้เป็นระเบียบก่อนส่งไปยังปลายทางบน Cloud
+
+I (31) boot: ESP-IDF v5.1.2-dirty 2nd stage bootloader
+I (31) boot: compile time Oct 25 2026 16:24:32
+I (31) boot: Multicore bootloader
+I (36) boot: chip revision: v3.1
+I (40) boot.esp32: SPI Speed      : 40MHz
+I (44) boot.esp32: SPI Mode       : DIO
+I (49) boot.esp32: SPI Flash Size : 2MB
+I (53) boot: Enabling RNG early entropy source...
+I (59) boot: Partition Table:
+I (62) boot: ## Label            Usage          Type ST Offset   Length
+I (70) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (77) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (85) boot:  2 factory          factory app      00 00 00010000 00100000
+I (92) boot: End of partition table
+I (96) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=1fdbch (130492) map
+I (152) esp_image: segment 1: paddr=0002fde4 vaddr=3ffb0000 size=00234h (  564) load
+I (152) esp_image: segment 2: paddr=00030020 vaddr=400d0020 size=82f60h (536416) map
+I (351) esp_image: segment 3: paddr=000b2f88 vaddr=3ffb0234 size=03848h (14408) load
+I (357) esp_image: segment 4: paddr=000b67d8 vaddr=40080000 size=15c3ch (89148) load
+I (405) boot: Loaded app from partition at offset 0x10000
+I (406) boot: Disabling RNG early entropy source...
+I (417) cpu_start: Multicore app
+I (417) cpu_start: Pro cpu up.
+I (418) cpu_start: Starting app cpu, entry point is 0x40081390
+--- 0x40081390: call_start_cpu1 at /Users/kittikarnkaewnual/esp/esp-idf/components/esp_system/port/cpu_start.c:157
+I (0) cpu_start: App cpu up.
+I (435) cpu_start: Pro cpu start user code
+I (435) cpu_start: cpu freq: 160000000 Hz
+I (435) cpu_start: Application information:
+I (440) cpu_start: Project name:     wifi_softap_tracking
+I (446) cpu_start: App version:      029da6d
+I (451) cpu_start: Compile time:     Oct 25 2026 16:24:25
+I (457) cpu_start: ELF file SHA256:  2fa5f79acd845e1d...
+I (463) cpu_start: ESP-IDF:          v5.1.2-dirty
+I (469) cpu_start: Min chip rev:     v0.0
+I (473) cpu_start: Max chip rev:     v3.99 
+I (478) cpu_start: Chip rev:         v3.1
+I (483) heap_init: Initializing. RAM available for dynamic allocation:
+I (490) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (496) heap_init: At 3FFB7B18 len 000284E8 (161 KiB): DRAM
+I (502) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (509) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (515) heap_init: At 40095C3C len 0000A3C4 (40 KiB): IRAM
+I (523) spi_flash: detected chip: generic
+I (526) spi_flash: flash io: dio
+W (530) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (544) app_start: Starting scheduler on CPU0
+I (548) app_start: Starting scheduler on CPU1
+I (548) main_task: Started on CPU0
+I (558) main_task: Calling app_main()
+I (558) LAB_SOFTAP: [FORENSIC]: Call nvs_flash_init()
+I (598) LAB_SOFTAP: [FORENSIC]: Call esp_netif_init()
+I (608) LAB_SOFTAP: [FORENSIC]: Call esp_event_loop_create_default()
+I (608) LAB_SOFTAP: [FORENSIC]: Call esp_netif_create_default_wifi_ap()
+I (608) LAB_SOFTAP: [FORENSIC]: SoftAP Interface created at 0x3ffbd598 (Default IP: 192.168.4.1)
+I (618) LAB_SOFTAP: [FORENSIC]: Call esp_wifi_init(&cfg)
+I (638) wifi:wifi driver task: 3ffbfc38, prio:23, stack:6656, core=0
+I (658) wifi:wifi firmware version: 91b9630
+I (658) wifi:wifi certification version: v7.0
+I (658) wifi:config NVS flash: enabled
+I (658) wifi:config nano formating: disabled
+I (668) wifi:Init data frame dynamic rx buffer num: 32
+I (668) wifi:Init static rx mgmt buffer num: 5
+I (668) wifi:Init management short buffer num: 32
+I (678) wifi:Init dynamic tx buffer num: 32
+I (678) wifi:Init static rx buffer size: 1600
+I (688) wifi:Init static rx buffer num: 10
+I (688) wifi:Init dynamic rx buffer num: 32
+I (698) wifi_init: rx ba win: 6
+I (698) wifi_init: tcpip mbox: 32
+I (698) wifi_init: udp mbox: 6
+I (708) wifi_init: tcp mbox: 6
+I (708) wifi_init: tcp tx win: 5744
+I (708) wifi_init: tcp rx win: 5744
+I (718) wifi_init: tcp mss: 1440
+I (718) wifi_init: WiFi IRAM OP enabled
+I (728) wifi_init: WiFi RX IRAM OP enabled
+I (728) LAB_SOFTAP: [FORENSIC]: Call esp_event_handler_instance_register(WIFI_EVENT)
+I (738) LAB_SOFTAP: [FORENSIC]: Call esp_wifi_set_mode(WIFI_MODE_AP)
+I (748) LAB_SOFTAP: [FORENSIC]: Call esp_wifi_set_config(WIFI_IF_AP, &wifi_config)
+I (758) LAB_SOFTAP: [FORENSIC]: Call esp_wifi_start()
+I (758) phy_init: phy_version 4780,16b31a7,Sep 22 2023,20:42:16
+I (838) wifi:mode : softAP (84:1f:e8:39:b4:49)
+I (848) wifi:Total power save buffer number: 16
+I (848) wifi:Init max length of beacon: 752/752
+I (848) wifi:Init max length of beacon: 752/752
+I (848) LAB_SOFTAP: ==================================================================
+I (858) esp_netif_lwip: DHCP server started on interface WIFI_AP_DEF withIP: 192.168.4.1
+I (868) LAB_SOFTAP:   ESP32 SoftAP Running! SSID: "MY_ESP32_AP", Channel:1
+I (878) LAB_SOFTAP: ==================================================================
+I (888) LAB_SOFTAP: [TCP SERVER]: Listening on 192.168.4.1:8080
+I (888) main_task: Returned from app_main()
+
+kittikarnkaewnual@MM-2 Week-06-Wi-Fi-AP-Throughput-FreeRTOS % nc -v 192.168.4.1 8080
+Connection to 192.168.4.1 port 8080 [tcp/http-alt] succeeded!
+Hello ESP32
