@@ -660,8 +660,10 @@ I (9405) FORENSIC_STACK:   -> NetworkTask Stack Remaining: 3136 words (3136 byte
 
 | **ภาพหน้าจอ Web Dashboard** | **ภาพหน้าจอ JSON API (`/api/data`)** |
 | --- | --- |
-| ![ภาพหน้าจอ Web Dashboard]<img width="1170" height="1924" alt="image" src="https://github.com/user-attachments/assets/fb8e8c86-52ac-418d-8539-ba99047b73e4" />
- | ![ภาพหน้าจอ JSON API /api/data]<img width="1169" height="274" alt="image" src="https://github.com/user-attachments/assets/d816b274-a845-42a7-a77a-1dedea15b2c4" /> |
+| ![ภาพหน้าจอ Web Dashboard]
+<img width="1170" height="1924" alt="image" src="https://github.com/user-attachments/assets/fb8e8c86-52ac-418d-8539-ba99047b73e4" />
+ | ![ภาพหน้าจอ JSON API /api/data]
+ <img width="1169" height="274" alt="image" src="https://github.com/user-attachments/assets/d816b274-a845-42a7-a77a-1dedea15b2c4" /> |
 
 
 *ภาพที่ 6.4: ภาพหน้าจอ Web Dashboard แสดงผลค่าเซนเซอร์แบบ Real-Time และผลลัพธ์การเรียกดู RESTful JSON API*
@@ -900,7 +902,8 @@ I (121030) HTTP_SERVER: [FORENSIC]: Response sent: {"temperature":29.40,"humidit
 
 ### 1.2 ภาพถ่ายหน้าจอการทดลอง (Screenshot)
 
-![ภาพที่ 6.5: ภาพหน้าจอ Dashboard ระบบเช็กชื่อ Smart RF Proximity Attendance]<img width="1170" height="1520" alt="image" src="https://github.com/user-attachments/assets/0a77bc92-f49c-4623-9178-23d9901ce667" />
+![ภาพที่ 6.5: ภาพหน้าจอ Dashboard ระบบเช็กชื่อ Smart RF Proximity Attendance]
+<img width="1170" height="1520" alt="image" src="https://github.com/user-attachments/assets/0a77bc92-f49c-4623-9178-23d9901ce667" />
 
 
 *ภาพที่ 6.5: ภาพหน้าจอ Dashboard ระบบเช็กชื่อ Smart RF Proximity Attendance*
