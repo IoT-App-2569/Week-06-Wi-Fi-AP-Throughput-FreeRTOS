@@ -1,4 +1,4 @@
-# ใบงานที่ 6.4: IoT Sensor Dashboard — แสดงผลค่าเซนเซอร์แบบ Real-Time ผ่าน Web Browser บนมือถือ
+﻿# ใบงานที่ 6.4: IoT Sensor Dashboard — แสดงผลค่าเซนเซอร์แบบ Real-Time ผ่าน Web Browser บนมือถือ
 
 ## 0. กล่าวนำ (Introduction)
 
@@ -31,8 +31,28 @@
 
 ## 3. สถาปัตยกรรมระบบ (System Architecture)
 
-<p align="center"><img src="images/Fig_08-Labsheet-06-4-IoT-Sensor-Dashboard_2026-10-25T10-33-36_academic.svg" alt="08-Labsheet-06-4-IoT-Sensor-Dashboard"  style="width: 100%; height: auto;" ></p>
-<p align="center"><b></b>สถาปัตยกรรมระบบ (System Architecture)</p>
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Sens as vSensorTask
+    participant Queue as FreeRTOS Queue
+    participant Net as vNetworkTask
+    participant HTTP as HTTP Server (esp_http_server)
+    participant Phone as Browser (มือถือ)
+
+    loop ทุกๆ 1.5 วินาที
+        Sens->>Queue: xQueueSend(&sensor_data)
+        Queue->>Net: xQueueReceive(&rx_data)
+        Net->>Net: Mutex Lock → อัพเดต g_latest_data → Mutex Unlock
+    end
+
+    Phone->>HTTP: GET /api/data
+    HTTP->>Net: Mutex Lock → อ่าน g_latest_data → Mutex Unlock
+    HTTP-->>Phone: JSON: {temp, hum, lux, ts}
+
+    Phone->>HTTP: GET /
+    HTTP-->>Phone: HTML Dashboard (Auto-refresh ทุก 2s)
+```
 
 ---
 
@@ -67,7 +87,7 @@ xSemaphoreGive(mutex)           xSemaphoreGive(mutex)
 6. ทดสอบ JSON API โดยเปิด `http://192.168.4.1/api/data` ดู Raw JSON
 
 ตัวอย่างหน้า browser
-![](images/253776.jpg)
+![ESP32 Sensor Dashboard บนมือถือ](images/dashboard_screenshot.jpg)
 
 
 ---

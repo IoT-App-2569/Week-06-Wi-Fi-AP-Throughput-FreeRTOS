@@ -1,5 +1,10 @@
 # Week 06: Wi-Fi SoftAP, RF Performance Profiling & Sensor Fusion with FreeRTOS
 
+## ข้อมูลผู้จัดทำ
+
+- ชื่อ: pattarapon
+- รหัสนักศึกษา: 67030172
+
 ## 1. บทนำ (Introduction)
 ในสัปดาห์ที่ 6 นี้ เราจะย้ายจากการทำงานในโหมด Station (`WIFI_STA`) มาสู่การกำหนดให้ ESP32 ทำงานเป็น **Access Point (SoftAP Mode)** เพื่อสร้างเครือข่ายไร้สายส่วนตัวของตนเอง 
 
