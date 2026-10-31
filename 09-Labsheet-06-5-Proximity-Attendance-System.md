@@ -28,26 +28,8 @@
 
 ## 3. สถาปัตยกรรมระบบ (System Fusion Architecture)
 
-```mermaid
-sequenceDiagram
-    autonumber
-    participant Student as สมาร์ตโฟนนักศึกษา
-    participant AP as ESP32 SoftAP & Web Server
-    participant RTOS as FreeRTOS Queue / Task
-    participant Monitor as Instructor Dashboard
-
-    Student->>AP: 1. เชื่อมต่อ Wi-Fi "CLASSROOM_ATTENDANCE_AP"
-    AP->>RTOS: 2. ดักจับ Event: สกัด MAC Address + วัด RSSI
-    
-    alt กรณี RSSI > -55 dBm (อยู่ในรัศมีโต๊ะทดลอง)
-        Student->>AP: 3. เปิดเว็บ 192.168.4.1 กด "Confirm Check-in"
-        AP->>RTOS: 4. บันทึกข้อมูล: [ID, MAC, RSSI, Status: PASSED]
-        AP-->>Student: 5. แสดงผล: "ลงชื่อสำเร็จ (Distance: Near)"
-    else กรณี RSSI < -70 dBm (อยู่นอกห้องเรียน)
-        Student->>AP: 3. เปิดเว็บ 192.168.4.1
-        AP-->>Student: 5. ปฏิเสธ: "สัญญาณอ่อนเกินไป คุณไม่ได้อยู่ในห้องเรียน!"
-    end
-```
+<p align="center"><img src="images/Fig_09-Labsheet-06-5-Proximity-Attendance-System_2026-10-25T10-34-11_academic.svg" alt="09-Labsheet-06-5-Proximity-Attendance-System" width="800" style="max-width: 800px; width: 100%; height: auto;" ></p>
+<p align="center"><b></b>สถาปัตยกรรมระบบ (System Fusion Architecture)</p>
 
 ---
 

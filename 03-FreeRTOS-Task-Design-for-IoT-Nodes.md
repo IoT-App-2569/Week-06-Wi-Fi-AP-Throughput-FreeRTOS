@@ -8,19 +8,8 @@
 
 ## 1. ผังการออกแบบระบบแบบ Multi-Task (Task Architecture Diagram)
 
-```mermaid
-graph TD
-    subgraph Core 1 [Application Tasks Core]
-        SensTask["Sensor Collector Task<br/>(Reads Temp, Humidity, Motion)"]
-        SensTask -->|xQueueSend()| SensQueue[("FreeRTOS Queue<br/>(sensor_data_t)")]
-    end
-
-    subgraph Core 0 [System & Network Core]
-        SensQueue -->|xQueueReceive()| NetTask["Wi-Fi / Web Server Task<br/>(Responds HTTP / TCP Benchmark)"]
-        WifiDrv["ESP-IDF Wi-Fi Driver & SoftAP"]
-        WifiDrv <--> NetTask
-    end
-```
+<p align="center"><img src="images/Fig_03-FreeRTOS-Task-Design-for-IoT-Nodes_2026-10-25T10-29-54_academic.svg" alt="03-FreeRTOS-Task-Design-for-IoT-Nodes" width="750" style="max-width: 800px; width: 100%; height: auto;" ></p>
+<p align="center"><b></b> ผังการออกแบบระบบแบบ Multi-Task (Task Architecture Diagram)</p>
 
 ---
 

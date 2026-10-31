@@ -24,17 +24,8 @@
 
 ## 3. ขั้นตอนการทดลอง (Experimental Procedures)
 
-```mermaid
-sequenceDiagram
-    autonumber
-    participant Client as Node B (Client Profiler)
-    participant AP as Node A (SoftAP Server)
-
-    note over AP: ปรับกำลังส่ง Tx Power (เช่น 20, 15, 10, 5, 2 dBm)
-    Client->>AP: ส่งสตรีม TCP Benchmark Payload (50 KB)
-    AP-->>Client: ตอบรับ ACK + ปริมาณไบต์
-    note over Client: คำนวณเวลาที่ใช้ (ms) -> หา Throughput (Kbps)<br/>อ่านค่า RSSI (dBm) จาก ap_info
-```
+<p align="center"><img src="images/Fig_06-Labsheet-06-2-RSSI-Speed-Profiling_2026-10-25T10-33-04_academic.svg" alt="06-Labsheet-06-2-RSSI-Speed-Profiling" width="800" style="max-width: 800px; width: 100%; height: auto;" ></p>
+<p align="center"><b></b>ขั้นตอนการทดลอง (Experimental Procedures)</p>
 
 ### ขั้นตอนการทดสอบ 5 ระดับกำลังส่ง (Software Attenuation Test):
 1. **Node A (Server)**: รันโปรแกรมตั้งเป็น SoftAP และคอยรับ TCP Benchmark Connection
