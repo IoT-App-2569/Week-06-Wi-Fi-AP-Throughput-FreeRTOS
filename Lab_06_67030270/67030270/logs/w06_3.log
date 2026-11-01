@@ -1,0 +1,16 @@
+ets Jul 29 2019 12:21:46
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+I (27) boot: ESP-IDF v6.1-beta1-685-g6a9c44fe7e7 2nd stage bootloader
+I (410) app_init: Project name: freertos_sensor_queue
+I (415) app_init: Student: นายกฤษฏิณัช สำราญกิจ (67030270) - โต๊ะ 2
+I (620) LAB_FREERTOS_QUEUE: [QUEUE CREATED]: Sensor Queue Initialized (Size=10, ItemSize=16 bytes)
+I (630) LAB_FREERTOS_QUEUE: [TASK CREATED]: Sensor Collector Task Started on Core 1
+I (640) LAB_FREERTOS_QUEUE: [TASK CREATED]: Network Dispatcher Task Started on Core 0
+I (3824) LAB_FREERTOS_QUEUE: [SENSOR TASK]: Pushing Data -> Temp: 33.9 C, Hum: 53.8 %, Lux: 645
+I (3824) FORENSIC_STACK:   -> SensorTask Stack Remaining: 1188 words (4752 bytes)
+I (4824) LAB_FREERTOS_QUEUE: [NETWORK TASK]: Data Received from Queue!
+I (4834) LAB_FREERTOS_QUEUE:   -> Timestamp   : 4824 ms
+I (4844) LAB_FREERTOS_QUEUE:   -> Temperature : 33.90 degC
+I (4854) LAB_FREERTOS_QUEUE:   -> Humidity    : 53.80 %
+I (4864) LAB_FREERTOS_QUEUE:   -> Light Lux   : 645 lux
+I (4874) FORENSIC_STACK:   -> NetworkTask Stack Remaining: 2240 words (8960 bytes)
