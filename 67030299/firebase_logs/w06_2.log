@@ -1,0 +1,15 @@
+ets Jul 29 2019 12:21:46
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+I (27) boot: ESP-IDF v6.1-beta1-685-g6a9c44fe7e7 2nd stage bootloader
+I (410) app_init: Project name: rssi_speed_profiler
+I (415) app_init: Student: นางสาวธนพร พิศมัย (67030299) - โต๊ะ 2
+I (712) CLIENT_PROFILER: Client profiler ready: 50 KB x 5 rounds
+I (712) CLIENT_PROFILER: [FORENSIC EVENT]: Station started; connecting to ESP32_AP_0299
+I (3132) CLIENT_PROFILER: Target AP Found! BSSID: 84:1f:e8:39:81:71, Channel: 1
+I (3142) CLIENT_PROFILER: Connected to SoftAP successfully! IP: 192.168.4.2
+I (4200) CLIENT_PROFILER: [BENCHMARK RUN 1]: Tx Power = 20 dBm (Max) -> RSSI: 0 dBm, Throughput: 345.80 Kbps, Time: 1.184 s
+I (5500) CLIENT_PROFILER: [BENCHMARK RUN 2]: Tx Power = 15 dBm -> RSSI: -1 dBm, Throughput: 338.40 Kbps, Time: 1.210 s
+I (6800) CLIENT_PROFILER: [BENCHMARK RUN 3]: Tx Power = 10 dBm -> RSSI: -2 dBm, Throughput: 1540.20 Kbps, Time: 0.266 s
+I (8100) CLIENT_PROFILER: [BENCHMARK RUN 4]: Tx Power = 5 dBm -> RSSI: 1 dBm, Throughput: 845.50 Kbps, Time: 0.484 s
+I (9400) CLIENT_PROFILER: [BENCHMARK RUN 5]: Tx Power = 2 dBm (Min) -> RSSI: 0 dBm, Throughput: 1430.10 Kbps, Time: 0.286 s
+I (10000) CLIENT_PROFILER: [STATISTICS]: Linear Model y = -148.71x + 840.52, R^2 = 0.0874
