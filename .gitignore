@@ -1,7 +1,10 @@
 # ESP-IDF build output
 **/build/**
+build/**
+build-v6/**
 /sdkconfig
 /sdkconfig.old
+.esp/**
 
 # CMake cache
 CMakeFiles/
@@ -13,23 +16,14 @@ install_manifest.txt
 .ninja_deps
 .ninja_log
 
-# VSCode
+# IDE & Editor files
 .vscode/
-
-# CLion / JetBrains
 .idea/
+.cache/**
 
 # Python virtual environment
 venv/
 .env/
-
-# Logs
-*.log
-
-# Generated binaries
-*.bin
-*.elf
-*.map
 
 # ESP-IDF Python tools cache
 __pycache__/
@@ -42,7 +36,8 @@ partition_table/
 dependencies.lock
 managed_components/
 
-# Temporary files
+# Temporary files & notes
 *.tmp
 *.bak
+.obsidian/**
 /.obsidian
