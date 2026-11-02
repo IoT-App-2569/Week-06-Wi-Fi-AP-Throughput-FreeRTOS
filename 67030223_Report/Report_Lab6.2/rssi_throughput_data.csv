@@ -1,0 +1,6 @@
+TxPower_dBm,Distance_m,RSSI_dBm,Throughput_Mbps,Ping_ms,PacketLoss_Pct
+20,1,-38,12.5,4,0
+14,3,-52,9.8,6,0
+10,5,-65,6.2,11,0
+5,8,-76,3.4,24,2
+-2,10,-88,0.8,85,15
