@@ -59,11 +59,11 @@ sequenceDiagram
 
 | การทดลองที่ | ค่า Tx Power ที่ตั้ง (dBm) | ค่า RSSI ที่อ่านได้จริง (dBm) | เวลาที่ใช้ (Seconds) | ความเร็วที่วัดได้ Throughput (Kbps) |
 | :---: | :---: | :---: | :---: | :---: |
-| **1** | 20 dBm (Max) | | | |
-| **2** | 15 dBm | | | |
-| **3** | 10 dBm | | | |
-| **4** | 5 dBm | | | |
-| **5** | 2 dBm (Min) | | | |
+| **1** | 20 dBm (Max) | -19.2 dBm | 0.110 Seconds | 3751.24 Kbps |
+| **2** | 15 dBm | -33.2 dBm | 0.098 Seconds | 4226.31 Kbps |
+| **3** | 10 dBm | -37.3 dBm | 0.120 Seconds | 3400.31 Kbps |
+| **4** | 5 dBm | -47.0 dBm | 0.115 Seconds | 3670.66 Kbps |
+| **5** | 2 dBm (Min) | -64.4 dB | 0.185 Seconds | 2506.83 Kbps |
 
 ---
 

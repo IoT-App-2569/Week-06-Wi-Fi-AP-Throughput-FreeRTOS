@@ -44,7 +44,7 @@ static esp_err_t http_attendance_html_handler(httpd_req_t *req) {
         "<table><tr><th>Device MAC</th><th>RSSI (dBm)</th><th>Proximity Status</th></tr>");
 
     for (int i = 0; i < s_student_count; i++) {
-        char status_str[32];
+        char status_str[64];
         if (s_records[i].rssi >= RSSI_THRESHOLD) {
             snprintf(status_str, sizeof(status_str), "<font color='green'><b>NEAR (Valid)</b></font>");
         } else {
@@ -56,6 +56,18 @@ static esp_err_t http_attendance_html_handler(httpd_req_t *req) {
     }
 
     snprintf(resp + len, sizeof(resp) - len, "</table></div></body></html>");
+    httpd_resp_send(req, resp, HTTPD_RESP_USE_STRLEN);
+    return ESP_OK;
+}
+
+// 1. วางฟังก์ชันนี้ไว้ก่อนหน้า start_web_server()
+static esp_err_t http_checkin_post_handler(httpd_req_t *req) {
+    ESP_LOGI(TAG, "Check-in button clicked!");
+
+    const char *resp = "<html><head><meta http-equiv='refresh' content='2;url=/'></head>"
+                       "<body style='font-family:Arial;text-align:center;padding:50px;'>"
+                       "<h2>✅ Check-in Successful!</h2>"
+                       "<p>Redirecting back...</p></body></html>";
     httpd_resp_send(req, resp, HTTPD_RESP_USE_STRLEN);
     return ESP_OK;
 }
@@ -72,6 +84,15 @@ static void start_web_server(void) {
             .user_ctx = NULL
         };
         httpd_register_uri_handler(server, &uri_get);
+
+        httpd_uri_t uri_post = {
+            .uri      = "/checkin",
+            .method   = HTTP_POST,
+            .handler  = http_checkin_post_handler,
+            .user_ctx = NULL
+        };
+        httpd_register_uri_handler(server, &uri_post);
+        
         ESP_LOGI(TAG, "Attendance Web Server Started at http://192.168.4.1");
     }
 }
